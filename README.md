@@ -20,7 +20,7 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
         1.1.4. La lista visualizza k progetti (con k scelto dall’utente; esempio: 5 di default, 10, 20).
    1.2. Lista dei team    
         1.2.1. Un team ha un nome ed è sempre composto da almeno due dipendenti.
-               1.2.1.1 Per i dipendenti si deve tenere di conto di almeno delle seguenti informazioni: matricola, nome, cognome, ruolo nel team.
+               1.2.1.1. Per i dipendenti si deve tenere di conto di almeno delle seguenti informazioni: matricola, nome, cognome, ruolo nel team.
                1.2.1.2. Un dipendente può stare in al più due team.
         1.2.2. La lista visualizza i primi tre team per dimensione (numero di dipendenti all’interno).
    1.3. Accesso rapido per aggiungere un nuovo progetto.    
