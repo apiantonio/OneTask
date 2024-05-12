@@ -42,7 +42,7 @@ Funzionalità dell’app
 Vincoli tecnici
 +	L’app deve essere sviluppata utilizzando React Native o Flutter.
 +	L’interfaccia deve essere responsive ed adattarsi a diverse dimensioni di schermo.
-  -	L’app deve adattarsi sia in portrait che in landscape mode.
+ -	L’app deve adattarsi sia in portrait che in landscape mode.
 +	Per la persistenza dei dati, è consigliato usare SQLite.
 +	Librerie e package esterni possono essere utilizzati.
 
