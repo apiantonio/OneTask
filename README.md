@@ -35,7 +35,8 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
 4. Schermata statistiche
    4.1. Almeno una statistica a scelta.
    4.2. Un grafico a scelta.
-Funzionalità dell’app
+
+### Funzionalità dell’app
 * L’utente deve poter inserire, modificare o eliminare progetti, task e team.
 * L’utente deve poter associare accedere ad un progetto o un team, e quindi poterlo modificare, senza dover passare dalla funzione di ricerca.
 * L’app può inviare notifiche push per ricordare all’utente delle informazioni (esempio: l’utente può scegliere di ricevere una notifica push per ogni progetto la cui scadenza è tra 5 giorni).
