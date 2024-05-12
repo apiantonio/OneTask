@@ -40,6 +40,7 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
 * L’utente deve poter inserire, modificare o eliminare progetti, task e team.
 * L’utente deve poter associare accedere ad un progetto o un team, e quindi poterlo modificare, senza dover passare dalla funzione di ricerca.
 * L’app può inviare notifiche push per ricordare all’utente delle informazioni (esempio: l’utente può scegliere di ricevere una notifica push per ogni progetto la cui scadenza è tra 5 giorni).
+
 ### Vincoli tecnici
 * L’app deve essere sviluppata utilizzando React Native o Flutter.
 * L’interfaccia deve essere responsive ed adattarsi a diverse dimensioni di schermo.
@@ -48,7 +49,6 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
 * Librerie e package esterni possono essere utilizzati.
 
 > [!NOTE]
-> ## APPUNTI PERSONALI
 > - Nell’aggiunta di un nuovo progetto lo stato sarà di default attivo
 > - Nell’aggiunta di un nuovo team bisogna dare un segnale di allerta nel caso in cui il dipendente già partecipi a 2 team
 > - Nella modifica di un team bisogna prestare attenzione che non si aggiungano persone che partecipano già a 2 team
