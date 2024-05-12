@@ -40,11 +40,11 @@ Funzionalità dell’app
 ●	L’utente deve poter associare accedere ad un progetto o un team, e quindi poterlo modificare, senza dover passare dalla funzione di ricerca.
 ●	L’app può inviare notifiche push per ricordare all’utente delle informazioni (esempio: l’utente può scegliere di ricevere una notifica push per ogni progetto la cui scadenza è tra 5 giorni).
 Vincoli tecnici
-+	L’app deve essere sviluppata utilizzando React Native o Flutter.
-+	L’interfaccia deve essere responsive ed adattarsi a diverse dimensioni di schermo.
+1	L’app deve essere sviluppata utilizzando React Native o Flutter.
+2	L’interfaccia deve essere responsive ed adattarsi a diverse dimensioni di schermo.
   - L’app deve adattarsi sia in portrait che in landscape mode.
-+	Per la persistenza dei dati, è consigliato usare SQLite.
-+	Librerie e package esterni possono essere utilizzati.
+3	Per la persistenza dei dati, è consigliato usare SQLite.
+4	Librerie e package esterni possono essere utilizzati.
 
 APPUNTI PERSONALI
 -	Nell’aggiunta di un nuovo progetto lo stato sarà di default attivo
