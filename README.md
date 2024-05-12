@@ -11,7 +11,7 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
 ### Feature Interfaccia Utente
 **L’applicazione dovrebbe essere composta almeno dalle seguenti schermate principali:**
 1. Schermata principale (dashboard)
-  1.1. Lista dei progetti modificati recentemente e attivi
+    1. Lista dei progetti modificati recentemente e attivi
         1.1.1. Ogni progetto ha diverse informazioni (nome, descrizione, team associato, data di rilascio, etc) ma nella dashboard si mostra solo un rapido sommario.
         1.1.2. Lo stato di un progetto può essere: attivo, sospeso, archiviato. Un progetto archiviato può essere ulteriormente etichettato come completo oppure fallito.
                1.1.2.1. Quando si archivia un progetto con status fallito, si deve fornire una motivazione al riguardo (es, nessun team a disposizione).
