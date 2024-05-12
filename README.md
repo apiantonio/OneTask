@@ -10,7 +10,7 @@ Informazioni varie
 L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile multipiattaforma per la gestione dei progetti e task all’interno di un’azienda. L'app dovrebbe offrire strumenti per pianificare, monitorare e revisionare i progressi dei progetti e le attività dei team.
 ### Feature Interfaccia Utente
 **L’applicazione dovrebbe essere composta almeno dalle seguenti schermate principali:**
-1. Schermata principale (dashboard)
+1. **Schermata principale (dashboard)**
     1. Lista dei progetti modificati recentemente e attivi
         1. Ogni progetto ha diverse informazioni (nome, descrizione, team associato, data di rilascio, etc) ma nella dashboard si mostra solo un rapido sommario.
         2. Lo stato di un progetto può essere: attivo, sospeso, archiviato. Un progetto archiviato può essere ulteriormente etichettato come completo oppure fallito.
@@ -24,15 +24,15 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
             2. Un dipendente può stare in al più due team.
         2. La lista visualizza i primi tre team per dimensione (numero di dipendenti all’interno).
     3. Accesso rapido per aggiungere un nuovo progetto.    
-2. Schermata gestione progetto
+2. **Schermata gestione progetto**
     1. Lista completa dei progetti e dei team.
     2. Funzione di filtraggio e ricerca del progetto e team.
     3. Possibilità di vedere tutti i dettagli di un progetto o team.
         1. In questa schermata, dato un progetto vengono mostrati tutti i task.
-3. Schermata aggiunta e modifica progetto e team
+3. **Schermata aggiunta e modifica progetto e team**
     1. Deve permettere di aggiungere un nuovo progetto oppure modificarne uno esistente (quest’ultimo scelto dalla schermata 2).
         1. Nella parte di modifica progetto, si deve poter modificare anche i task.
-4. Schermata statistiche
+4. **Schermata statistiche**
     1. Almeno una statistica a scelta.
     2. Un grafico a scelta.
 
@@ -47,10 +47,11 @@ L’obiettivo di questo tema di progetto è sviluppare un’applicazione mobile 
 * Per la persistenza dei dati, è consigliato usare SQLite.
 * Librerie e package esterni possono essere utilizzati.
 
-## APPUNTI PERSONALI
-- Nell’aggiunta di un nuovo progetto lo stato sarà di default attivo
-- Nell’aggiunta di un nuovo team bisogna dare un segnale di allerta nel caso in cui il dipendente già partecipi a 2 team
-- Nella modifica di un team bisogna prestare attenzione che non si aggiungano persone che partecipano già a 2 team
-- Non si può eliminare un team che è associato ad un progetto con stato attivo/sospeso
-- Quando si modifica un progetto si deve dare la possibilità di cambiarne lo stato e se attivo di completarne i task.
+> [!NOTE]
+> ## APPUNTI PERSONALI
+> - Nell’aggiunta di un nuovo progetto lo stato sarà di default attivo
+> - Nell’aggiunta di un nuovo team bisogna dare un segnale di allerta nel caso in cui il dipendente già partecipi a 2 team
+> - Nella modifica di un team bisogna prestare attenzione che non si aggiungano persone che partecipano già a 2 team
+> - Non si può eliminare un team che è associato ad un progetto con stato attivo/sospeso
+> - Quando si modifica un progetto si deve dare la possibilità di cambiarne lo stato e se attivo di completarne i task.
 
