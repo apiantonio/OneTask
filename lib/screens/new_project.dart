@@ -2,7 +2,6 @@ import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
-import '../widgets/drawer.dart';
 import '../widgets/todo_section.dart';
 
 class NewProject extends StatelessWidget {
@@ -10,16 +9,9 @@ class NewProject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'Nuovo progetto';
-
-    return MaterialApp(
-      title: appTitle,
-      debugShowCheckedModeBanner: false, //così non si vede la striscia in alto a dx di debug
-      home: Scaffold(
+    return Scaffold(
         appBar: OTAppBar(title: 'Nuovo Progetto'),
-        drawer: OTDrawer(),
         body: const NewProjectForm(),
-      ),
     );
   }
 }
