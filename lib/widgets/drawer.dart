@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_db_sqlite/screens/add_user.dart';
+import 'package:OneTask/screens/add_user.dart';
 import '../main.dart';
 
 class OTDrawer extends StatefulWidget {

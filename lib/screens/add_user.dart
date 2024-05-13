@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:test_db_sqlite/services/database_helper.dart'; 
-import 'package:test_db_sqlite/widgets/add_user_form.dart';
-import 'package:test_db_sqlite/widgets/appbar.dart';
+import 'package:OneTask/services/database_helper.dart'; 
+import 'package:OneTask/widgets/add_user_form.dart';
+import 'package:OneTask/widgets/appbar.dart';
 
 class AddUser extends StatelessWidget {
   final dbHelper = DatabaseHelper.instance;

@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:test_db_sqlite/model/utente.dart';  
+import 'package:OneTask/model/utente.dart';  
 
 // singleton che gestisce il database
 class DatabaseHelper {
