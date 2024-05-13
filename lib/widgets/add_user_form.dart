@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_db_sqlite/services/database_helper.dart';
+import '../services/database_helper.dart';
 import 'package:test_db_sqlite/model/utente.dart';
 
 // Questo widget rappresenterà il form per l'inserimento di un utente

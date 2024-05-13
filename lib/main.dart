@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_db_sqlite/screens/new_project.dart';
+import './screens/new_project.dart';
 import './widgets/appbar.dart';
 import './widgets/drawer.dart';
 
