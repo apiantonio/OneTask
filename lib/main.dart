@@ -24,21 +24,25 @@ class OTDashboard extends StatelessWidget {
           children: [
             Builder(
               builder: (context) => FloatingActionButton(
+                /*questo herotag serve perchè abbiamo due floating nello stesso subtree e senza genera eccezione*/
+                heroTag: 'unique_tag_1',
                 onPressed: () {
                   Navigator.push(
                     context, 
-                    MaterialPageRoute(builder: (context) => const NewProject()));
+                    MaterialPageRoute(builder: (context) => const NewProject())
+                  );
                 },
-                child: const Icon(Icons.create_new_folder),
                 tooltip: 'Nuovo progetto',
+                child: const Icon(Icons.create_new_folder),
               ),
             ),
             FloatingActionButton(
+              heroTag: 'unique_tag_2',
               onPressed: () {
                 /*da fare per la pagina nuovo team*/
               },
-              child: const Icon(Icons.group),
               tooltip: 'Nuovo team',
+              child: const Icon(Icons.group),
             )
           ],
         ),
