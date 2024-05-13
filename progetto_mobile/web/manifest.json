@@ -1,6 +1,6 @@
 {
-    "name": "progetto_mobile",
-    "short_name": "progetto_mobile",
+    "name": "test_db_sqlite",
+    "short_name": "test_db_sqlite",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
