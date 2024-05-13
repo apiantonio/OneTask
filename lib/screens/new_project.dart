@@ -7,8 +7,6 @@ class NewProject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'Nuovo progetto';
-
     return Scaffold(
         appBar: OTAppBar(title: 'Nuovo Progetto'),
         body: const NewProjectForm(),
