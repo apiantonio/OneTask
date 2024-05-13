@@ -120,10 +120,10 @@ class _addUserFormState extends State<addUserForm> {
     // Controlla se la matricola c'è già nel db 
     Utente? utentePresente = await DatabaseHelper.instance.selectUtenteByMatricola(newUtente.matricola);
     
-    if (utentePresente == null) {
+    if (utentePresente != null) {
       // Mostra un messaggio di errore se la matricola esiste già
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Matricola già presente nel database!')),
+        const SnackBar(content: Text('Inserisci una matricola non già associata ad un utente!')),
       );
     } else {
       // Usa il DatabaseHelper per inserire l'utente nel database

@@ -1,0 +1,40 @@
+// questa classe rappresenta un progetto
+class Progetto {
+  final String nome; 
+  final String team;
+  final String scadenza; // la data di scadenza è rappresentata come String perché in SQLite le date sono campi di testo
+  final String stato;
+  final String descrizione;
+  final bool completato; // completato è un booleano che dovrà essere convertito a int per compatibilià con sqlite
+  final String? motivazioneFallimento; // motivazioneFallimento può essere NULL
+
+  const Progetto({
+    required this.nome, // nome obbligatorio, è la chiave primaria di un progetto
+    required this.team, // team del progetto obbligatorio
+    required this.scadenza, // data scadenza obbligatoria
+    this.stato = 'attivo', // lo stato di un progetto è di default attivo
+    required this.descrizione, // la descrizione del progetto è obbligatoria
+    this.completato = false, // inizialmente il progetto non è ovviamente non completato
+    this.motivazioneFallimento, // inizialmente la motivazioneFallimento è impostata a NULL
+  });
+
+  // converte un progetto in una mappa
+  Map<String, Object?> toMap() {
+    return {
+      'nome': nome,
+      'team': team,
+      'scadenza': scadenza,
+      'stato': stato,
+      'descrizione': descrizione,
+      'completato': completato ? 1 : 0, // Converti da booleano a integer perché in SQLite non esiste il tipo booleano che viene invece rappresentato come integer
+      'motivazioneFallimento': motivazioneFallimento
+    };
+  }
+
+  // metodo to string di utilità
+  @override
+  String toString() {
+    return 'Progetto{nome: $nome, team: $team, scadenza: $scadenza, stato: $stato, descrizione: $descrizione,'
+        'completato: $completato, motivazioneFallimento: $motivazioneFallimento}';
+  }
+}
