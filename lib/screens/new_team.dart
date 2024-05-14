@@ -59,6 +59,10 @@ class NewTeamFormState extends State<NewTeamForm> {
                   }
                   return null;
                 },
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Inserisci il nome del team',
+                ),
               ),
         ],
       ),
