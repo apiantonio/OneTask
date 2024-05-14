@@ -51,6 +51,7 @@ class NewTeamFormState extends State<NewTeamForm> {
               },
               child: const Text('Aggiungi Team'),
               ),
+              /*campo aggiunta nome team*/
               TextFormField(
                 controller: _nomeController,
                 validator: (value) {
@@ -64,6 +65,20 @@ class NewTeamFormState extends State<NewTeamForm> {
                   labelText: 'Inserisci il nome del team',
                 ),
               ),
+
+              const SizedBox(
+                height: 5,
+              ),
+
+              const Text(
+                'Scegli i partecipanti',   
+                softWrap: true,   //se non c'è abbastanza spazio manda a capo
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
         ],
       ),
     ),
