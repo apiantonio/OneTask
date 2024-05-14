@@ -1,14 +1,14 @@
 // questa classe rappresenta un progetto
 class Progetto {
   final String nome; 
-  final String team;
-  final String scadenza; // la data di scadenza è rappresentata come String perché in SQLite le date sono campi di testo
-  final String stato;
-  final String descrizione;
-  final bool completato; // completato è un booleano che dovrà essere convertito a int per compatibilià con sqlite
-  final String? motivazioneFallimento; // motivazioneFallimento può essere NULL
+  String team;
+  String scadenza; // la data di scadenza è rappresentata come String perché in SQLite le date sono campi di testo
+  String stato;
+  String descrizione;
+  bool completato; // completato è un booleano che dovrà essere convertito a int per compatibilià con sqlite
+  String? motivazioneFallimento; // motivazioneFallimento può essere NULL
 
-  const Progetto({
+  Progetto({
     required this.nome, // nome obbligatorio, è la chiave primaria di un progetto
     required this.team, // team del progetto obbligatorio
     required this.scadenza, // data scadenza obbligatoria

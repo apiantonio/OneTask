@@ -1,4 +1,6 @@
+import 'package:OneTask/model/partecipazione.dart';
 import 'package:OneTask/model/progetto.dart';
+import 'package:OneTask/model/task.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -47,7 +49,7 @@ class DatabaseHelper {
           )''');
           await db.execute('''
           CREATE TABLE task (
-            codice INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
             attivita TEXT NOT NULL,
             completato INTEGER NOT NULL
@@ -57,7 +59,9 @@ class DatabaseHelper {
     );
   }
 
-  /*## INTERAZIONE CON GLI UTENTI ##*/
+  /*
+    ### INTERAZIONE CON GLI UTENTI ###
+  */
   // Inserisci un utente nella tabella utente
   Future<void> insertUtente(Utente utente) async {
     final db = await database;
@@ -125,7 +129,9 @@ class DatabaseHelper {
     ];
   }
 
-  /*## INTERAZIONE CON I PROGETTI ##*/
+  /*
+    ### INTERAZIONE CON I PROGETTI ###
+  */
   // Inserisci un nuovo progetto nel db
   Future<void> insertProgetto(Progetto progetto) async {
     final db = await database;
@@ -182,7 +188,7 @@ class DatabaseHelper {
   }
 
   // Restituisce una lista contenti tutti i progetti memorizzati nel db
-  Future<List<Progetto>> getAllProgetto() async {
+  Future<List<Progetto>> getAllProgetti() async {
   final db = await database;
 
   final List<Map<String, Object?>> progettoMaps = await db.query('progetto');
@@ -208,7 +214,9 @@ class DatabaseHelper {
     ];
   }
 
-  /*## INTERAZIONE CON I TEAM */
+  /*
+    ### INTERAZIONE CON I TEAM ###
+  */
   // Inserisci un nuovo team nel db
   Future<void> insertTeam(Team team) async {
     final db = await database;
@@ -257,6 +265,161 @@ class DatabaseHelper {
       );
     }
   }
+
+  // Restituisce una lista contenente tutti i team della tabella 'team' 
+  Future<List<Team>> getAllTeams() async {
+    final db = await database;
+
+    final List<Map<String, Object?>> teamMaps = await db.query('team');
+
+    return [
+      for (final {
+            'nome': nome as String,
+          } in teamMaps)
+        Team(nome: nome),
+    ];
+  }
   
+  /*
+    ### INTERAZIONE CON LE TASK ###
+  */
+  // Inserisci un utente nella tabella task
+  Future<void> insertTask(Task task) async {
+    final db = await database;
+    await db.insert(
+      'task',
+      task.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // Esegue un UPDATE sulla tabella utente
+  Future<int> updateTask(Task task) async {
+    final db = await database;
+    return await db.update(
+      'task', 
+      task.toMap(),
+      where: 'id = ?',
+      whereArgs: [task.id],
+      conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  // Elimina un task dalla tabella utente
+  Future<int> deleteTask(Task task) async {
+    final db = await database;
+    return await db.delete(
+      'task',
+      where: 'id = ?',
+      whereArgs: [task.id],
+    );
+  }
+
+  // Cerca un Utente data una matricola
+  Future<Task?> selectTaskById(int id) async {
+    final db = await database;
+    final List<Map<String, Object?>> task = await db.query(
+      'task',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (task.isEmpty) {
+      return null;
+    } else {
+      return Task(
+        id: task[0]['id'] as int,
+        description: task[0]['description'] as String,
+        completed: (task[0]['completed'] as int) == 1,
+      );
+    }
+  }
+
+  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  Future<List<Task>> getAllTasks() async {
+    final db = await database;
+
+    final List<Map<String, Object?>> taskMaps = await db.query('task');
+
+    return [
+      for (final {
+            'id': id as int,
+            'description': description as String,
+            'completed': completed as int,
+          } in taskMaps)
+        Task(id: id, description: description, completed: completed == 1),
+    ];
+  }
+
+  /*
+    ### INTERAZIONE CON PARTECIPAZIONE ###
+    Note: questa tabella associa utente e team
+  */
+  // inserisci nuova partecipazione
+  Future<void> insertPartecipazione(Partecipazione part) async {
+    final db = await database;
+    await db.insert(
+      'partecipazione',
+      part.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // Esegue un UPDATE sulla tabella partecipazione
+  Future<int> updatePartecipazione(Partecipazione part) async {
+    final db = await database;
+    return await db.update(
+      'partecipazione', 
+      part.toMap(),
+      where: 'utente = ? AND team = ?',
+      whereArgs: [part.utente, part.team],
+      conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  // Elimina un utente dalla tabella partecipazione
+  Future<int> deletePartecipazione(Partecipazione part) async {
+    final db = await database;
+    return await db.delete(
+      'partecipazione',
+      where: 'utente = ? AND team = ?',
+      whereArgs: [part.utente, part.team],
+    );
+  }
+
+  // Cerca un Utente data una matricola
+  Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(int matricolaUtente, String nomeTeam) async {
+    final db = await database;
+    final List<Map<String, Object?>> parts = await db.query(
+      'partecipazione',
+      where: 'utente = ? AND team = ?',
+      whereArgs: [matricolaUtente, nomeTeam],
+    );
+
+    if (parts.isEmpty) {
+      return null;
+    } else {
+      return Partecipazione(
+        utente: parts[0]['utente'] as int, 
+        team: parts[0]['team'] as String,
+        ruolo: (parts[0]['ruolo'] as int) == 1
+      );
+    }
+  }
+
+  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  Future<List<Partecipazione>> getAllPartecipazioni() async {
+    final db = await database;
+
+    final List<Map<String, Object?>> utenteMaps = await db.query('partecipazione');
+
+    return [
+      for (final {
+            'utente': utente as int,
+            'team': team as String,
+            'ruolo': ruolo as bool,
+          } in utenteMaps)
+        Partecipazione(utente: utente, team: team, ruolo: ruolo == 1),
+    ];
+  }
+
   
 }
