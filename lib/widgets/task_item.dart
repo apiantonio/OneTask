@@ -1,4 +1,3 @@
-
 import 'package:OneTask/model/task.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,8 @@
+import 'package:OneTask/model/utente.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
+import '../services/database_helper.dart';
+import '../widgets/user_item.dart';
 
 class NewTeam extends StatelessWidget {
   const NewTeam({super.key});
@@ -25,6 +28,7 @@ class NewTeamForm extends StatefulWidget {
 
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
+  final listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
 
   TextEditingController _nomeController = TextEditingController();
 
@@ -79,6 +83,34 @@ class NewTeamFormState extends State<NewTeamForm> {
                 ),
               ),
 
+              Container(
+                //margin: EdgeInsets.only(bottom: 20),
+                height: MediaQuery.of(context).size.height,
+                  child: FutureBuilder<List<Utente>>(
+                      future: listUtentiFuture,
+                      builder: (context, snapshot) {
+                        if(snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        else if(snapshot.hasError){
+                          return Text('Errore caricamento utenti dal db');
+                        }else{
+                          //se non da problemi crea/restituisci la lista di utenti
+                          List<Utente> Utenti = snapshot.data ?? [];
+                          return ListView(
+                              children: Utenti.map((Utente) =>
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 8.0),
+                                  child: UserItem(
+                                    utente: Utente,
+                                  )
+                                ),
+                              ).toList(),
+                          );
+                        }
+                      }
+                    ),
+                  ),
         ],
       ),
     ),

@@ -110,7 +110,7 @@ class DatabaseHelper {
   }
 
   // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
-  Future<List<Utente>> getAllutenti() async {
+  Future<List<Utente>> getAllUtenti() async {
     final db = await database;
 
     final List<Map<String, Object?>> utenteMaps = await db.query('utente');
