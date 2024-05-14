@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import './screens/new_project.dart';
 import './widgets/appbar.dart';
 import './widgets/drawer.dart';
+import './screens/new_team.dart';
+
 
 void main() {
   runApp(const OTDashboard());  
@@ -36,17 +38,19 @@ class OTDashboard extends StatelessWidget {
                 child: const Icon(Icons.create_new_folder),
               ),
             ),
-            FloatingActionButton(
-              heroTag: 'unique_tag_2',
-              onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => const NewProject())
-                );
-              },
-              tooltip: 'Nuovo team',
-              child: const Icon(Icons.group),
-            )
+            Builder(
+              builder: (context) => FloatingActionButton(
+                heroTag: 'unique_tag_2',
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const NewTeam())
+                  );
+                },
+                tooltip: 'Nuovo team',
+                child: const Icon(Icons.group),
+              )
+            ),
           ],
         ),
       ),
