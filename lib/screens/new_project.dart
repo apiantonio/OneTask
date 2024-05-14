@@ -2,7 +2,7 @@ import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
-import '../widgets/todo_section.dart';
+import '../widgets/task_section.dart';
 
 class NewProject extends StatelessWidget {
   const NewProject({super.key});
@@ -148,7 +148,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TodoApp(),
+              TaskApp(),
             ],
           ),
         ),

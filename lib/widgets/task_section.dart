@@ -1,19 +1,19 @@
+import 'package:OneTask/model/task.dart';
+import 'package:OneTask/widgets/task_item.dart';
 import 'package:flutter/material.dart';
-import '../widgets/todo_item.dart';
-import '../model/todo.dart';
 
-class TodoApp extends StatefulWidget{
-  const TodoApp({super.key});
+class TaskApp extends StatefulWidget{
+  const TaskApp({super.key});
 
   @override
-  State<TodoApp> createState() => _ToDoAppState();
+  State<TaskApp> createState() => _TaskAppState();
 }
 
-class _ToDoAppState extends State<TodoApp> {
-  //mi restituisce una lista di Todo
-  final List<Todo> todos = Todo.todoList(); 
+class _TaskAppState extends State<TaskApp> {
+  //mi restituisce una lista di Task
+  final List<Task> Tasks = Task.taskList(); 
   //questo controller mi serve per la gestione del campo di inserimento di un task
-  final TextEditingController _todoController = TextEditingController();
+  final TextEditingController _TaskController = TextEditingController();
   var count = 0;
 
   @override
@@ -42,7 +42,7 @@ class _ToDoAppState extends State<TodoApp> {
                   ),
 
                   child: TextField(
-                    controller: _todoController,
+                    controller: _TaskController,
                     maxLength: 30,   //massimo 30 caratteri
                     decoration: InputDecoration(
                       border: InputBorder.none,   //nessun bordo perchè è nel container (che mi serve per mettere ombreggiatura)
@@ -60,7 +60,7 @@ class _ToDoAppState extends State<TodoApp> {
                 ),
 
                 onPressed: () {     //se premuto
-                    _addTodo(_todoController.text); // Chiamiamo la funzione per aggiungere un todo all'interno di setState
+                    _addTask(_TaskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
                 },
 
                 style: ButtonStyle(
@@ -85,16 +85,16 @@ class _ToDoAppState extends State<TodoApp> {
             //margin: EdgeInsets.only(bottom: 20),
             height: MediaQuery.of(context).size.height,
             child: ListView (
-              //uso la funzione map per scorrere tutti i todo della lista visto che ListView non supporta il for
-              //trasforma ciascun todo in un TodoItem
-              children: todos.map((todo) => 
-              //uso un container in cui inglobare i singoli TodoItem perchè voglio spaziatura tra loro
+              //uso la funzione map per scorrere tutti i Task della lista visto che ListView non supporta il for
+              //trasforma ciascun Task in un TaskItem
+              children: Tasks.map((Task) => 
+              //uso un container in cui inglobare i singoli TaskItem perchè voglio spaziatura tra loro
                 Container(
                   margin: EdgeInsets.only(bottom: 8.0),   //spazio verticale tra i container
-                  child: TodoItem(
-                    todo: todo,
-                    onChangeTodo: _changeStateTodo,
-                    onDeleteTodo: _deleteTodo,
+                  child: TaskItem(
+                    task: Task,
+                    onChangeTask: _changeStateTask,
+                    onDeleteTask: _deleteTask,
                   ),
                 ),
               ).toList(),
@@ -104,27 +104,27 @@ class _ToDoAppState extends State<TodoApp> {
       );
   }
 
-  //metodo invocato quando clicchiamo sul task
-  void _changeStateTodo(Todo todo) {
+  //meTask invocato quando clicchiamo sul task
+  void _changeStateTask(Task Task) {
     setState(() {
-      todo.completed = !todo.completed; 
+      Task.completed = !Task.completed; 
     });
   }
 
-  //metodo invocato quando premiamo il - accanto a ciascun task
-  void _deleteTodo(Todo todo) {
+  //meTask invocato quando premiamo il - accanto a ciascun task
+  void _deleteTask(Task Task) {
     setState(() {
-      todos.remove(todo); // Rimuoviamo il todo dalla lista di todos
+      Tasks.remove(Task); // Rimuoviamo il Task dalla lista di Tasks
     });
   }
 
-  //metodo invocato quando si preme il +. Di default i task appena creati non hanno il check
-  void _addTodo(String descr) {
+  //meTask invocato quando si preme il +. Di default i task appena creati non hanno il check
+  void _addTask(String descr) {
     setState(() {
       if(descr.isNotEmpty){
-        todos.add(Todo(id: count++,description: descr)); // Aggiungiamo un nuovo todo alla lista di todos
+        Tasks.add(Task(id: count++,description: descr)); // Aggiungiamo un nuovo Task alla lista di Tasks
       }
     });
-    _todoController.clear();
+    _TaskController.clear();
   }
 }
