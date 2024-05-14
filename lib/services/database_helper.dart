@@ -385,7 +385,7 @@ class DatabaseHelper {
     );
   }
 
-  // Cerca un Utente data una matricola
+  // cerca una partecipazione data utente e team 
   Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(int matricolaUtente, String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
@@ -404,6 +404,18 @@ class DatabaseHelper {
       );
     }
   }
+
+  // seleziona gli utenti di un team dato il nome del team
+  Future<List<Utente>?> selectUtentiByTeam(String nomeTeam) async {
+    final db = await database;
+    final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
+        SELECT *
+        FROM utente
+        WHERE utente in (SELECT utente FROM partecipazione WHERE team = ?)
+    '''
+    , [nomeTeam]);
+  }
+
 
   // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Partecipazione>> getAllPartecipazioni() async {
