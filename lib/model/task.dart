@@ -1,7 +1,7 @@
 //questa classe si occupa dei singoli task
 class Task {
   //ciascun task ha un id numerico univoco, una descrizione ed un booleano per lo stato
-  int id;
+  final int id;
   String description;
   bool completed;
   
@@ -18,7 +18,10 @@ class Task {
   }
 
   // to string
-  
+   @override
+  String toString() {
+    return 'Task{id: $id, description: $description, completed: ${completed ? "yes" : "no"}}';
+  }
 
   // Restituisce una lista vuota tipata per dei Task
   static List<Task> taskList() {

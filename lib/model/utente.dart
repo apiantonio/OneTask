@@ -1,14 +1,14 @@
 // classe che rappresenta l'utente
 class Utente {
   final int matricola;
-  final String nome;
-  final String cognome;
+  String nome;
+  String cognome;
 
-  const Utente({
+  Utente({
       required this.matricola,
       required this.cognome,
       required this.nome,
-    });
+  });
 
   // Converte un Utente in una Map; le chiavi sono le colonne
   // della tabella 'utenti' nel database
