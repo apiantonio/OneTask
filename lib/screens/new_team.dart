@@ -26,8 +26,43 @@ class NewTeamForm extends StatefulWidget {
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
 
+  TextEditingController _nomeController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        //per settare una distanza fissa dai bordi dello schermo
+        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        //mettere Column in Padding perchè quest'ultimo non accetta children ma un solo child
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
+          children: [
+            ElevatedButton(
+              onPressed: () {
+              // .validate() ritorna true se il form è valido, altrimenti false
+                if (_formKey.currentState!.validate()) {
+                  // Se è valido, mostriamo una SnackBar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Sto processando i dati...')),
+                  );
+                }
+              },
+              child: const Text('Aggiungi Team'),
+              ),
+              TextFormField(
+                controller: _nomeController,
+                validator: (value) {
+                  if(value == null || value.isEmpty) {
+                    return "Per favore, inserisci un nome al team.";
+                  }
+                  return null;
+                },
+              ),
+        ],
+      ),
+    ),
+    );
   }
 }
