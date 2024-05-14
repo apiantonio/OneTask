@@ -89,6 +89,9 @@ class _addUserFormState extends State<addUserForm> {
                 if (value.length != 5) {
                   return 'La matricola deve essere di 5 cifre';
                 }
+                if (!RegExp(r'^[0-9]{5}$').hasMatch(value)) {
+                  return 'La matricola deve contenere solo cifre numeriche';
+                }
                 return null;
               },
             ),
@@ -112,7 +115,7 @@ class _addUserFormState extends State<addUserForm> {
   void _addUtenteToDatabase() async {
     // Crea il nuovo utente con i valori inseriti nel form
     Utente newUtente = Utente(
-      matricola: int.parse(_matricolaController.text),
+      matricola: _matricolaController.text,
       nome: _nomeController.text,
       cognome: _cognomeController.text,
     );

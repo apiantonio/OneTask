@@ -1,6 +1,6 @@
 // classe che rappresenta l'utente
 class Utente {
-  final int matricola;
+  final String matricola;
   String nome;
   String cognome;
 

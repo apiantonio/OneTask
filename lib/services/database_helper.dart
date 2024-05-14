@@ -14,48 +14,67 @@ class DatabaseHelper {
   static Database? _database;
   Future<Database> get database async => _database ??= await _initDatabase();
 
+  // variabile globale per impostare la versione del DB
+  static final _dbVersion = 3;
+
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
-    return openDatabase(
+    print("initDataBase executed");
+
+    /*## DA USARE QUANDO SI CAMBIA VERSIONE DEL DB ##*/
+    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    
+    return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
       // il db si chiamerà OneTask_database
       join(await getDatabasesPath(), 'OneTask_database.db'),
-      onCreate: (db, version) async {
-        // creo le tabelle del database
-        await db.execute(
-          'CREATE TABLE utente (matricola INTEGER PRIMARY KEY, nome TEXT, cognome TEXT)'
-        );
-        await db.execute(
-          'CREATE TABLE team (nome TEXT PRIMARY KEY)'
-        );
-        await db.execute('''
-          CREATE TABLE partecipazione (
-            utente INTEGER NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
-            team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
-            ruolo BOOLEAN NOT NULL,
-            PRIMARY KEY(utente, team)
-          )''');
-        await db.execute('''
-          CREATE TABLE progetto (
-            nome TEXT PRIMARY KEY,
-            team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
-            scadenza TEXT NOT NULL,
-            stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'scaduto', 'archiviato')),
-            descrizione TEXT NOT NULL,
-            completato INTEGER CHECK (completato IS NULL OR
-              (completato IS NOT NULL AND stato = 'archiviato')),
-            motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
-              (motivazioneFallimento IS NOT NULL AND completato = false))
-          )''');
+        version: _dbVersion,
+        onCreate: (db, version) async {
+          // creo le tabelle del database
+          // Tabella utente, NOTA: GLOB è un operatore
           await db.execute('''
-          CREATE TABLE task (
-            id INTEGER PRIMARY KEY,
-            progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
-            attivita TEXT NOT NULL,
-            completato INTEGER NOT NULL
-          )''');
+            CREATE TABLE utente (
+              matricola CHAR(5) PRIMARY KEY CHECK (
+                  LENGTH(matricola) = 5 AND
+                  SUBSTR(matricola, 1, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                  SUBSTR(matricola, 2, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                  SUBSTR(matricola, 3, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                  SUBSTR(matricola, 4, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                  SUBSTR(matricola, 5, 1) IN ('0','1','2','3','4','5','6','7','8','9')
+                ),
+            nome TEXT, 
+            cognome TEXT)'''
+          );
+          await db.execute(
+            'CREATE TABLE team (nome TEXT PRIMARY KEY)'
+          );
+          await db.execute('''
+            CREATE TABLE partecipazione (
+              utente INTEGER NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
+              team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
+              ruolo BOOLEAN NOT NULL,
+              PRIMARY KEY(utente, team)
+            )''');
+          await db.execute('''
+            CREATE TABLE progetto (
+              nome TEXT PRIMARY KEY,
+              team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
+              scadenza TEXT NOT NULL,
+              stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'scaduto', 'archiviato')),
+              descrizione TEXT NOT NULL,
+              completato INTEGER CHECK (completato IS NULL OR
+                (completato IS NOT NULL AND stato = 'archiviato')),
+              motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
+                (motivazioneFallimento IS NOT NULL AND completato = false))
+            )''');
+            await db.execute('''
+            CREATE TABLE task (
+              id INTEGER PRIMARY KEY,
+              progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
+              attivita TEXT NOT NULL,
+              completato INTEGER NOT NULL
+            )''');
       },
-      version: 1,
     );
   }
 
@@ -69,7 +88,11 @@ class DatabaseHelper {
       'utente',
       utente.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    ).then((value) {
+      print("Inserito: $utente.");
+    }).catchError((error) {
+      print("Errore inserimento: $utente. Errore: $error");
+    });
   }
 
   // Esegue un UPDATE sulla tabella utente
@@ -94,19 +117,19 @@ class DatabaseHelper {
   }
 
   // Cerca un Utente data una matricola
-  Future<Utente?> selectUtenteByMatricola(int matricola) async {
+  Future<Utente?> selectUtenteByMatricola(String matricola) async {
     final db = await database;
-    final List<Map<String, Object?>> utente = await db.query(
+    final List<Map<String, Object?>>? utente = await db.query(
       'utente',
       where: 'matricola = ?',
       whereArgs: [matricola],
     );
 
-    if (utente.isEmpty) {
+    if (utente == null || utente.isEmpty) {
       return null;
     } else {
       return Utente(
-        matricola: utente[0]['matricola'] as int,
+        matricola: utente[0]['matricola'] as String,
         nome: utente[0]['nome'] as String,
         cognome: utente[0]['cognome'] as String,
       );
@@ -121,7 +144,7 @@ class DatabaseHelper {
 
     return [
       for (final {
-            'matricola': matricola as int,
+            'matricola': matricola as String,
             'nome': nome as String,
             'cognome': cognome as String,
           } in utenteMaps)
