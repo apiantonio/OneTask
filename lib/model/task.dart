@@ -12,7 +12,15 @@ class Task {
     this.completed = false,
   });
   
-  //restituisce la lista
+  // rappresenta un task come mappa
+  Map<String, Object?> toMap() {
+    return {'id': id, 'description': description, 'completed': completed ? 1 : 0};
+  }
+
+  // to string
+  
+
+  // Restituisce una lista vuota tipata per dei Task
   static List<Task> taskList() {
     return [];
   }

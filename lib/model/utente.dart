@@ -18,6 +18,6 @@ class Utente {
 
   @override
   String toString() {
-    return 'Utente{matricola: $matricola, nome: $nome, cognome: ${cognome}}';
+    return 'Utente{matricola: $matricola, nome: $nome, cognome: $cognome}}';
   }
 }
