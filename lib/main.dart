@@ -39,7 +39,10 @@ class OTDashboard extends StatelessWidget {
             FloatingActionButton(
               heroTag: 'unique_tag_2',
               onPressed: () {
-                /*da fare per la pagina nuovo team*/
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const NewProject())
+                );
               },
               tooltip: 'Nuovo team',
               child: const Icon(Icons.group),
