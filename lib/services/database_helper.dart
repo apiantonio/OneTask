@@ -1,4 +1,5 @@
 import 'package:OneTask/model/progetto.dart';
+import 'package:OneTask/model/team.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:OneTask/model/utente.dart';  
@@ -56,6 +57,7 @@ class DatabaseHelper {
     );
   }
 
+  /*## INTERAZIONE CON GLI UTENTI ##*/
   // Inserisci un utente nella tabella utente
   Future<void> insertUtente(Utente utente) async {
     final db = await database;
@@ -70,7 +72,7 @@ class DatabaseHelper {
   Future<int> updateUtente(Utente utente) async {
     final db = await database;
     return await db.update(
-      "utente", 
+      'utente', 
       utente.toMap(),
       where: 'matricola = ?',
       whereArgs: [utente.matricola],
@@ -81,7 +83,7 @@ class DatabaseHelper {
   Future<int> deleteUtente(Utente utente) async {
     final db = await database;
     return await db.delete(
-      "utente",
+      'utente',
       where: 'matricola = ?',
       whereArgs: [utente.matricola],
     );
@@ -123,6 +125,7 @@ class DatabaseHelper {
     ];
   }
 
+  /*## INTERAZIONE CON I PROGETTI ##*/
   // Inserisci un nuovo progetto nel db
   Future<void> insertProgetto(Progetto progetto) async {
     final db = await database;
@@ -183,28 +186,77 @@ class DatabaseHelper {
   final db = await database;
 
   final List<Map<String, Object?>> progettoMaps = await db.query('progetto');
+    return [
+      for (final {
+        'nome': nome as String,
+        'team': team as String,
+        'scadenza': scadenza as String,
+        'stato': stato as String,
+        'descrizione': descrizione as String,
+        'completato': completato as int,
+        'motivazioneFallimento': motivazioneFallimento as String?,
+      } in progettoMaps)
+        Progetto(
+          nome: nome,
+          team: team,
+          scadenza: scadenza,
+          stato: stato,
+          descrizione: descrizione,
+          completato: completato == 1, // 'completato' deve essere un booleano ma nella tabella è un integer che assume valori 0 o 1
+          motivazioneFallimento: motivazioneFallimento,
+        ),
+    ];
+  }
 
-  return [
-    for (final {
-      'nome': nome as String,
-      'team': team as String,
-      'scadenza': scadenza as String,
-      'stato': stato as String,
-      'descrizione': descrizione as String,
-      'completato': completato as int,
-      'motivazioneFallimento': motivazioneFallimento as String?,
-    } in progettoMaps)
-      Progetto(
-        nome: nome,
-        team: team,
-        scadenza: scadenza,
-        stato: stato,
-        descrizione: descrizione,
-        completato: completato == 1, // 'completato' deve essere un booleano ma nella tabella è un integer che assume valori 0 o 1
-        motivazioneFallimento: motivazioneFallimento,
-      ),
-  ];
-}
+  /*## INTERAZIONE CON I TEAM */
+  // Inserisci un nuovo team nel db
+  Future<void> insertTeam(Team team) async {
+    final db = await database;
+    await db.insert(
+      'team',
+      team.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
+  // Esegue un UPDATE sulla tabella team
+  Future<int> updateTeam(Team team) async {
+    final db = await database;
+    return await db.update(
+      'team', 
+      team.toMap(),
+      where: 'nome = ?',
+      whereArgs: [team.nome],
+      conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  // Elimina un team dalla tabella team
+  Future<int> deleteTeam(Team team) async {
+    final db = await database;
+    return await db.delete(
+      'team',
+      where: 'nome = ?',
+      whereArgs: [team.nome],
+    );
+  }
+
+  // Cerca un team dato un nome
+  Future<Team?> selectTeamByNome(String nome) async {
+    final db = await database;
+    final List<Map<String, Object?>> team = await db.query(
+      'team',
+      where: 'nome = ?',
+      whereArgs: [nome],
+    );
+
+    if (team.isEmpty) {
+      return null;
+    } else {
+      return Team(
+        nome: team[0]['nome'] as String,
+      );
+    }
+  }
+  
   
 }
