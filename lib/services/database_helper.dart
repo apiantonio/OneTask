@@ -15,14 +15,14 @@ class DatabaseHelper {
   Future<Database> get database async => _database ??= await _initDatabase();
 
   // variabile globale per impostare la versione del DB
-  static final _dbVersion = 3;
+  static final _dbVersion = 4;
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
 
     /*## DA USARE QUANDO SI CAMBIA VERSIONE DEL DB ##*/
-    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     
     return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
@@ -65,7 +65,7 @@ class DatabaseHelper {
               completato INTEGER CHECK (completato IS NULL OR
                 (completato IS NOT NULL AND stato = 'archiviato')),
               motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
-                (motivazioneFallimento IS NOT NULL AND completato = false))
+                (motivazioneFallimento IS NOT NULL AND completato = 0))
             )''');
             await db.execute('''
             CREATE TABLE task (
