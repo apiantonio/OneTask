@@ -76,6 +76,19 @@ class NewTeamFormState extends State<NewTeamForm> {
               ),
 
               const Text(
+                'Scegli un responsabile',
+                softWrap: true,   //se non c'è abbastanza spazio manda a capo
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 5,
+              ),
+
+              const Text(
                 'Scegli i partecipanti',   
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
                 style: TextStyle(
