@@ -4,7 +4,8 @@ import 'package:OneTask/model/task.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:OneTask/model/utente.dart';  
+import 'package:OneTask/model/utente.dart';
+import 'package:sqflite/sqlite_api.dart';  
 
 // singleton che gestisce il database
 class DatabaseHelper {
@@ -15,7 +16,7 @@ class DatabaseHelper {
   Future<Database> get database async => _database ??= await _initDatabase();
 
   // variabile globale per impostare la versione del DB
-  static final _dbVersion = 4;
+  static final _dbVersion = 7;
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
@@ -50,7 +51,7 @@ class DatabaseHelper {
           );
           await db.execute('''
             CREATE TABLE partecipazione (
-              utente INTEGER NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
+              utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
               team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
               ruolo BOOLEAN NOT NULL,
               PRIMARY KEY(utente, team)
@@ -181,7 +182,7 @@ class DatabaseHelper {
     final db = await database;
     return await db.delete(
       'progetto',
-      where: 'mome = ?',
+      where: 'nome = ?',
       whereArgs: [progetto.nome],
     );
   }
@@ -204,7 +205,9 @@ class DatabaseHelper {
         scadenza: progetto[0]['scadenza'] as String,
         stato: progetto[0]['stato'] as String,
         descrizione: progetto[0]['descrizione'] as String,
-        completato: (progetto[0]['completato'] as int) == 1, // 'completato' deve essere un booleano ma nella tabella è un integer
+        completato: progetto[0]['completato'] == null 
+          ? null // se completato è null allora il valore è null
+          : (progetto[0]['completato'] as int) == 1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
         motivazioneFallimento: progetto[0]['motivazioneFallimento'] as String?,
       );
     }
@@ -222,7 +225,7 @@ class DatabaseHelper {
         'scadenza': scadenza as String,
         'stato': stato as String,
         'descrizione': descrizione as String,
-        'completato': completato as int,
+        'completato': completato as int?,
         'motivazioneFallimento': motivazioneFallimento as String?,
       } in progettoMaps)
         Progetto(
@@ -231,8 +234,10 @@ class DatabaseHelper {
           scadenza: scadenza,
           stato: stato,
           descrizione: descrizione,
-          completato: completato == 1, // 'completato' deve essere un booleano ma nella tabella è un integer che assume valori 0 o 1
-          motivazioneFallimento: motivazioneFallimento,
+          completato: completato == null 
+            ? null // se completato è null allora il valore è null
+            : completato == 1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
+           motivazioneFallimento: motivazioneFallimento,
         ),
     ];
   }
@@ -409,7 +414,7 @@ class DatabaseHelper {
   }
 
   // cerca una partecipazione data utente e team 
-  Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(int matricolaUtente, String nomeTeam) async {
+  Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(String matricolaUtente, String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
       'partecipazione',
@@ -421,7 +426,7 @@ class DatabaseHelper {
       return null;
     } else {
       return Partecipazione(
-        utente: parts[0]['utente'] as int, 
+        utente: parts[0]['utente'] as String, 
         team: parts[0]['team'] as String,
         ruolo: (parts[0]['ruolo'] as int) == 1
       );
@@ -431,14 +436,24 @@ class DatabaseHelper {
   // seleziona gli utenti di un team dato il nome del team
   Future<List<Utente>?> selectUtentiByTeam(String nomeTeam) async {
     final db = await database;
+    // uso una query per estrarre gli utenti che partecipano al team richiesto
+    // la query non restituisce direttamente una lista du utenti ma una lista
+    // contenete mappe che contengono i dati di ciascun utente
+    // sarà dunque necessario rimappare ogni mappa in una istanza di Utente
     final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
-        SELECT *
-        FROM utente
-        WHERE utente in (SELECT utente FROM partecipazione WHERE team = ?)
+        SELECT matricola, nome, cognome
+        FROM utente JOIN partecipazione 
+          ON utente.matricola = partecipazione.utente
+        WHERE partecipazione.team = ?
     '''
     , [nomeTeam]);
+    // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
+    return utentiDelTeam.map((m) => Utente(
+      matricola: m['matricola'] as String,
+      nome: m['nome'] as String,
+      cognome: m['cognome'] as String,
+    )).toList();
   }
-
 
   // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Partecipazione>> getAllPartecipazioni() async {
@@ -448,7 +463,7 @@ class DatabaseHelper {
 
     return [
       for (final {
-            'utente': utente as int,
+            'utente': utente as String,
             'team': team as String,
             'ruolo': ruolo as bool,
           } in utenteMaps)
@@ -456,5 +471,36 @@ class DatabaseHelper {
     ];
   }
 
-  
+  /**
+   * ## METODO DI TESTING
+   */
+  Future<void> populateDatabase() async {
+    
+    // Crea alcune istanze di Utente
+    Utente utente1 = Utente(matricola: '00001', nome: 'Mario', cognome: 'Rossi');
+    Utente utente2 = Utente(matricola: '00002', nome: 'Luigi', cognome: 'Verdi');
+    Utente utente3 = Utente(matricola: '00003', nome: 'Anna', cognome: 'Bianchi');
+
+    // Crea alcune istanze di Team
+    Team team1 = Team(nome: 'Team Alpha');
+    Team team2 = Team(nome: 'Team Beta');
+
+    // Inserisci gli utenti nel database
+    await insertUtente(utente1);
+    await insertUtente(utente2);
+    await insertUtente(utente3);
+
+    // Inserisci i team nel database
+    await insertTeam(team1);
+    await insertTeam(team2);
+
+    // team alpha
+    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team1.nome, ruolo: false));
+    await insertPartecipazione(Partecipazione(utente: utente2.matricola, team: team1.nome, ruolo: true));
+    // team beta
+    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team2.nome, ruolo: true));
+    await insertPartecipazione(Partecipazione(utente: utente3.matricola, team: team2.nome, ruolo: false));
+
+
+  }
 }

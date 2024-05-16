@@ -1,3 +1,4 @@
+import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import './screens/new_project.dart';
 import './widgets/appbar.dart';
@@ -5,7 +6,7 @@ import './widgets/drawer.dart';
 import './screens/new_team.dart';
 
 
-void main() {
+void main() async {
   runApp(const OTDashboard());  
 }
 

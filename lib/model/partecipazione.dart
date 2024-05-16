@@ -1,7 +1,7 @@
 //questa classe rappresenta l'associazione tra utente e team
 class Partecipazione {
   //ciascuna partecipazione ha la coppua (utente, team) univoca
-  final int utente;
+  final String utente;
   final String team;
   final bool ruolo; // se true allora è manager altrimenti è dipendente
   

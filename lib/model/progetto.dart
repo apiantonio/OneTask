@@ -5,7 +5,7 @@ class Progetto {
   String scadenza; // la data di scadenza è rappresentata come String perché in SQLite le date sono campi di testo
   String stato;
   String descrizione;
-  bool completato; // completato è un booleano che dovrà essere convertito a int per compatibilià con sqlite
+  bool? completato; // completato è un booleano che dovrà essere convertito a int per compatibilià con sqlite
   String? motivazioneFallimento; // motivazioneFallimento può essere NULL
 
   Progetto({
@@ -14,7 +14,7 @@ class Progetto {
     required this.scadenza, // data scadenza obbligatoria
     this.stato = 'attivo', // lo stato di un progetto è di default attivo
     required this.descrizione, // la descrizione del progetto è obbligatoria
-    this.completato = false, // inizialmente il progetto non è ovviamente non completato
+    this.completato, // inizialmente il progetto non ha info di completamento, completato sarà non null solo quando il progetto è archiviato, in quel caso se compleatto è true allora il progetto è stato completato altrimenti se completato è false allora il progettp è fallito e dovrà essere presente una motivazione
     this.motivazioneFallimento, // inizialmente la motivazioneFallimento è impostata a NULL
   });
 
@@ -26,7 +26,9 @@ class Progetto {
       'scadenza': scadenza,
       'stato': stato,
       'descrizione': descrizione,
-      'completato': completato ? 1 : 0, // Converti da booleano a integer perché in SQLite non esiste il tipo booleano che viene invece rappresentato come integer
+      'completato': completato == null 
+        ? null 
+        : completato == true ? 1 : 0, // Converti da booleano a integer perché in SQLite non esiste il tipo booleano che viene invece rappresentato come integer
       'motivazioneFallimento': motivazioneFallimento
     };
   }
