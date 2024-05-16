@@ -20,8 +20,4 @@ class Utente {
   String toString() {
     return 'Utente{matricola: $matricola, nome: $nome, cognome: $cognome}}';
   }
-
-  String infoUtente() {
-    return '$matricola, $nome, $cognome';
-  }
 }
