@@ -30,6 +30,8 @@ class NewTeamForm extends StatefulWidget {
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
   final listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
+  final List<Utente> userTeamList = []; 
+  Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
 
   TextEditingController _nomeController = TextEditingController();
 
@@ -76,6 +78,41 @@ class NewTeamFormState extends State<NewTeamForm> {
               ),
 
               const Text(
+                'Scegli un responsabile',
+                softWrap: true,   //se non c'è abbastanza spazio manda a capo
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 5,
+              ),
+
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.2,
+                //un widget che si aggiorna con i valori nella lista
+                child: ListView.builder(
+                  itemCount: userTeamList.length,
+                  //per visualizzare singolarmente i valori
+                  itemBuilder: (context, index) {
+                    //si salva l'utente al dato indice in una variabile
+                    final utente = userTeamList[index];
+                    //RadioListTile mi restituisce un RadioButton 
+                    return RadioListTile(
+                      value: utente,
+                      groupValue: selected,
+                      onChanged: (value) => setState(() {
+                        selected = value;
+                      }),
+                      title: Text(utente.infoUtente()),
+                    );
+                  },
+                ),
+              ),
+
+              const Text(
                 'Scegli i partecipanti',   
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
                 style: TextStyle(
@@ -104,7 +141,9 @@ class NewTeamFormState extends State<NewTeamForm> {
                                   margin: EdgeInsets.only(bottom: 8.0),
                                   child: UserItem(
                                     utente: Utente,
-                                  )
+                                    onSelect: _addUtente,
+                                    onDeselect: _removeUtente
+                                  ),
                                 ),
                               ).toList(),
                           );
@@ -116,5 +155,17 @@ class NewTeamFormState extends State<NewTeamForm> {
       ),
     ),
     );
+  }
+
+  void _addUtente(Utente utente) {
+    setState(() {
+      userTeamList.add(utente);
+    });
+  }
+
+  void _removeUtente(Utente utente) {
+    setState(() {
+      userTeamList.remove(utente);
+    });
   }
 }
