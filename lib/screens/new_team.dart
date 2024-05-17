@@ -31,6 +31,7 @@ class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
   final listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
   final List<Utente> userTeamList = []; 
+
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
 
   TextEditingController _nomeController = TextEditingController();
@@ -42,7 +43,6 @@ class NewTeamFormState extends State<NewTeamForm> {
       child: SingleChildScrollView(
         //per settare una distanza fissa dai bordi dello schermo
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        //mettere Column in Padding perchè quest'ultimo non accetta children ma un solo child
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
           children: [
@@ -50,10 +50,24 @@ class NewTeamFormState extends State<NewTeamForm> {
               onPressed: () {
               // .validate() ritorna true se il form è valido, altrimenti false
                 if (_formKey.currentState!.validate()) {
-                  // Se è valido, mostriamo una SnackBar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sto processando i dati...')),
-                  );
+                  //controlla che il team sia composto da almeno 2 utenti
+                  if(userTeamList.length < 2){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Servono almeno 2 persone nel team')),
+                    );
+                  }else{
+                    //se rispetta il vincolo min utenti, check se è stato selezionato un responsabile
+                    if(selected == null){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Perfavore, seleziona un responsabile per il tuo team')),
+                      );
+                    }else{
+                      // Se questi vincoli sono rispettati, allora aggiunge team nel db
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Sto processando i dati...')),
+                      );
+                    }
+                  }
                 }
               },
               child: const Text('Aggiungi Team'),
@@ -86,10 +100,6 @@ class NewTeamFormState extends State<NewTeamForm> {
                 ),
               ),
 
-              const SizedBox(
-                height: 5,
-              ),
-
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
                 //un widget che si aggiorna con i valori nella lista
@@ -110,6 +120,10 @@ class NewTeamFormState extends State<NewTeamForm> {
                     );
                   },
                 ),
+              ),
+
+              const SizedBox(
+                height: 5,
               ),
 
               const Text(
@@ -136,13 +150,14 @@ class NewTeamFormState extends State<NewTeamForm> {
                           //se non da problemi crea/restituisci la lista di utenti
                           List<Utente> Utenti = snapshot.data ?? [];
                           return ListView(
+                              physics: NeverScrollableScrollPhysics(),
                               children: Utenti.map((Utente) =>
                                 Container(
                                   margin: EdgeInsets.only(bottom: 8.0),
                                   child: UserItem(
                                     utente: Utente,
                                     onSelect: _addUtente,
-                                    onDeselect: _removeUtente
+                                    onDeselect: _removeUtente,
                                   ),
                                 ),
                               ).toList(),
@@ -157,12 +172,23 @@ class NewTeamFormState extends State<NewTeamForm> {
     );
   }
 
-  void _addUtente(Utente utente) {
-    setState(() {
-      userTeamList.add(utente);
-    });
+  //metodo di utilità che restituisce un booleano per validare il numero max di utenti nel team
+  bool _addUtente(Utente utente) {
+    //nel team è possibile inserire al massimo 6 persone
+    if(userTeamList.length < 6){
+      setState(() {
+        userTeamList.add(utente);
+      });
+      return true;
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Team al completo!')),
+      );
+      return false;
+    }
   }
 
+  //metodo di utilità per eliminare gi utenti al click
   void _removeUtente(Utente utente) {
     setState(() {
       userTeamList.remove(utente);

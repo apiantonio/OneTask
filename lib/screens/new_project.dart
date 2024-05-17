@@ -2,7 +2,6 @@ import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import '../widgets/appbar.dart';
 import '../widgets/task_section.dart';
 

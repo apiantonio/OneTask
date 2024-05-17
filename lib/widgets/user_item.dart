@@ -17,6 +17,7 @@ class _UserItemState extends State<UserItem> {
   final Utente utente;
   final onSelect;
   final onDeselect;
+  bool aggiunta = false;    //una variabile in cui salvo se l'aggiunta è andata a buon fine
   _UserItemState({required this.utente, required this.onSelect, required this.onDeselect});
 
   @override
@@ -25,11 +26,15 @@ class _UserItemState extends State<UserItem> {
       onTap: () { 
         setState(() {
           isSelected = !isSelected; // Cambia lo stato di selezione quando viene premuto
-          isSelected ? onSelect(utente) : onDeselect(utente);
+          if(isSelected){
+            aggiunta = onSelect(utente);
+          }else{
+            onDeselect(utente);
+          }
         });
       },   //azione quando premi sulla riga
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      tileColor: isSelected ? Colors.pink : Colors.blue.shade50,  //sfondo della riga
+      tileColor: (isSelected & aggiunta) ? Colors.pink : Colors.blue.shade50,  //la riga si colora solo se puoi ancora aggiungere
       title: Text(
         utente.matricola.toString() + " " + utente.cognome + " " + utente.nome,
       ),
