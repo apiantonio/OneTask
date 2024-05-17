@@ -31,8 +31,8 @@ class NewTeamForm extends StatefulWidget {
 /*work in progress*/ 
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
-  //final listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
-  final listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
+  var listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
+  //var listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
   final List<Utente> userTeamList = []; 
 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
@@ -87,11 +87,9 @@ class NewTeamFormState extends State<NewTeamForm> {
                   labelText: 'Inserisci il nome del team',
                 ),
               ),
-
               const SizedBox(
                 height: 5,
               ),
-
               const Text(
                 'Scegli un responsabile',
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
@@ -100,7 +98,6 @@ class NewTeamFormState extends State<NewTeamForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
                 //un widget che si aggiorna con i valori nella lista
@@ -122,11 +119,9 @@ class NewTeamFormState extends State<NewTeamForm> {
                   },
                 ),
               ),
-
               const SizedBox(
                 height: 5,
               ),
-
               const Text(
                 'Scegli i partecipanti',   
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
@@ -135,7 +130,6 @@ class NewTeamFormState extends State<NewTeamForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               Container(
                 //margin: EdgeInsets.only(bottom: 20),
                 height: MediaQuery.of(context).size.height,
@@ -197,15 +191,31 @@ class NewTeamFormState extends State<NewTeamForm> {
   }
   
   void _addNewTeam() {
-    final db =  DatabaseHelper.instance; 
+    final db = DatabaseHelper.instance; 
     final nomeTeam = _nomeController.text;
     // inserisco il Team nella tabella Team
     db.insertTeam(Team(nome: nomeTeam));
     // ora inserisco i componenti del team nella tabella partecipazione
-    userTeamList.forEach((utente) => db.insertPartecipazione(Partecipazione(utente: utente.matricola, team: nomeTeam)));
+    userTeamList.forEach((utente) => db.insertPartecipazione(
+      Partecipazione(
+        utente: utente.matricola,
+        team: nomeTeam,
+        ruolo: utente == selected // se selected == true allora l'utente è il manager del team
+      )
+    ));
     // Una volta inseriti mostriamo una SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Team creato!')),
+      const SnackBar(content: Text('Team creato!')),  
     );
-}
+    // ripulisco il campo del nome del team
+    _nomeController.clear();
+    // deseleziono gli utenti
+    setState(() {
+      userTeamList.clear();
+      selected = null;
+    });
+    // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
+    // dato che ora potrebbero partecipare a due team
+    listUtentiFuture = db.getUtentiNot2Team();
+  }
 }
