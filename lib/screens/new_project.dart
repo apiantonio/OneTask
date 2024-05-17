@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
@@ -45,6 +47,7 @@ class NewProjectFormState extends State<NewProjectForm> {
   TextEditingController _teamController = TextEditingController();
   
   List<String> _nomiTeams = []; // Lista per memorizzare i nomi dei team
+  String _labelDropdownMenu = 'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
 
   @override
   void initState() {
@@ -70,12 +73,8 @@ class NewProjectFormState extends State<NewProjectForm> {
                 onPressed: () {
                   // .validate() ritorna true se il form è valido, altrimenti false
                   if (_formKey.currentState!.validate()) {
-                    // Se è valido, mostriamo una SnackBar
-                    _addProgettoToDatabase();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sto processando i dati...')),
-                    );
-                    
+                    // Se è valido, aggiungo il progetto al db
+                    _addProgettoToDatabase();                    
                   }
                 },
                 child: const Text('Aggiungi progetto'),
@@ -117,41 +116,39 @@ class NewProjectFormState extends State<NewProjectForm> {
                 ),
               ),
               //DropDownMenu per selezionare i team scelti da db o file json
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: DropdownMenu(
-                  leadingIcon: Icon(Icons.people),
-                  initialSelection: 'Seleziona un Team!',
-                  hintText: 'Seleziona un team',
-                  menuHeight: 100,
-                  menuStyle: MenuStyle(
-                    minimumSize: MaterialStatePropertyAll<Size>(Size(50, 50)),
-                     
+              DropdownMenu(
+                enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
+                enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
+                leadingIcon: Icon(Icons.people), // icoa a sinistra del testo
+                label: Text(_labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
+                // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
+                width: MediaQuery.of(context).size.width * 0.69, // dimensione del menu
+                controller: _teamController, // controller
+                requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
+                dropdownMenuEntries: _nomiTeams.map((nomeTeam) =>  // elementi del menu a tendina (i nomi dei team)
+                  DropdownMenuEntry<String>(
+                    value: nomeTeam,
+                    label: nomeTeam,
+                    style: MenuItemButton.styleFrom(
+                        foregroundColor: Colors.blue[700],
+                    ),
+                  )).toList(),
+                  inputDecorationTheme: const InputDecorationTheme(
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange),
+                    ),
+                    labelStyle: TextStyle(
+                      color: Colors.blue,
+                    ),
                   ),
-                  controller: _teamController,
-                  dropdownMenuEntries: _nomiTeams.map
-                    ((nomeTeam) => 
-                      DropdownMenuEntry<String>(
-                        value: nomeTeam,
-                        label: nomeTeam,
-                        style: MenuItemButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            backgroundColor: Colors.orange,
-                          ),
-                    )).toList(),
-                  inputDecorationTheme: InputDecorationTheme(
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
               ),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
               Container(
                 //larghezza la metà dello schermo per garantire responsività
-                width: MediaQuery.of(context).size.width * 0.45,
+                width: MediaQuery.of(context).size.width * 0.69,
                 child: TextFormField(
                   controller: _dateController, // Associa il controller al campo di testo della data
                   validator: (value) {  
@@ -176,11 +173,9 @@ class NewProjectFormState extends State<NewProjectForm> {
                   },
                 ),
               ),
-
               const SizedBox(
                 height: 15,
               ),
-
               const Text(
                 'Cosa vuoi fare?',
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
@@ -202,6 +197,9 @@ class NewProjectFormState extends State<NewProjectForm> {
     
     setState(() {
       _nomiTeams = teams.map((team) => team.nome).toList();
+      if(_nomiTeams.isEmpty) {
+        _labelDropdownMenu = 'Non ci sono team disponibili!';
+      }
     });
   }
 
@@ -238,7 +236,7 @@ class NewProjectFormState extends State<NewProjectForm> {
     //   print('### TEST STAMPA DEI PROGETTI ###');
     //   print(progetto); // Stampo direttamente il progetto usando il metodo toString()
     // });
-    //###########################
+    //#########################################
 
     // controllo che non esista già un Progetto con lo stesso nome nel db
     Progetto? progettoPresente = await DatabaseHelper.instance.selectProgettoByNome(newProgetto.nome);
