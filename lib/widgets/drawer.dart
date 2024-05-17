@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:OneTask/screens/add_user.dart';
+import '../screens/projects_and_teams.dart';
 import '../main.dart';
 
 class OTDrawer extends StatefulWidget {
@@ -40,6 +41,10 @@ class _OTDrawerState extends State<OTDrawer> {
             title: const Text('Progetti e Team'),
             onTap: () {
               //passa a quella pagina e poi
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => ProjectTeam())
+              );
             },
           ),
 
