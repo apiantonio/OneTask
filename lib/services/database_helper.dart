@@ -24,7 +24,7 @@ class DatabaseHelper {
 
     print(await getDatabasesPath());
     /*## DA USARE QUANDO SI CAMBIA VERSIONE DEL DB ##*/
-    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     
     return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
