@@ -160,14 +160,16 @@ class DatabaseHelper {
     // uso una query per estrarre gli utenti che non partecipano a 2 team
     final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
       SELECT *
-      FROM utente JOIN (
-        SELECT utente, COUNT(*)
-        FROM utente u JOIN partecipazione p
-          ON (u.matricola = p.utente)
+      FROM utente
+      WHERE matricola IN (
+        SELECT matricola
+        FROM utente
+                EXCEPT
+        SELECT utente
+        FROM partecipazione
         GROUP BY utente
-        HAVING COUNT(*) < 2
-      ) AS utentiNot2Partecipazioni
-        ON utentiNot2Partecipazioni.utente = utente.matricola
+        HAVING COUNT(*) >= 2
+      )
     '''
     );
     // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
