@@ -1,7 +1,9 @@
 import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 import '../widgets/appbar.dart';
 import '../widgets/task_section.dart';
@@ -115,20 +117,30 @@ class NewProjectFormState extends State<NewProjectForm> {
                 ),
               ),
               //DropDownMenu per selezionare i team scelti da db o file json
-              Container(
-                width: 100,
+              SizedBox(
+                width: 200,
                 height: 50,
                 child: DropdownMenu(
+                  leadingIcon: Icon(Icons.people),
+                  initialSelection: 'Seleziona un Team!',
                   hintText: 'Seleziona un team',
-                  menuHeight: 50,
+                  menuHeight: 100,
+                  menuStyle: MenuStyle(
+                    minimumSize: MaterialStatePropertyAll<Size>(Size(50, 50)),
+                     
+                  ),
                   controller: _teamController,
                   dropdownMenuEntries: _nomiTeams.map
                     ((nomeTeam) => 
                       DropdownMenuEntry<String>(
                         value: nomeTeam,
-                        label: nomeTeam
+                        label: nomeTeam,
+                        style: MenuItemButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            backgroundColor: Colors.orange,
+                          ),
                     )).toList(),
-                   inputDecorationTheme: InputDecorationTheme(
+                  inputDecorationTheme: InputDecorationTheme(
                     isDense: true,
                     border: OutlineInputBorder(),
                   ),
@@ -142,7 +154,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 child: TextFormField(
                   controller: _dateController, // Associa il controller al campo di testo della data
-                  validator: (value) {
+                  validator: (value) {  
                     if(value == null || value.isEmpty) {
                       return "Per favore, inserisci una scadenza al progetto.";
                     }
@@ -238,7 +250,7 @@ class NewProjectFormState extends State<NewProjectForm> {
       );
     } else {
       // inserisce il progetto nel db
-      await DatabaseHelper.instance.insertProgetto(newProgetto);
+      DatabaseHelper.instance.insertProgetto(newProgetto);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Progetto memorizzato!')),
       );

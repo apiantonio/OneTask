@@ -16,14 +16,15 @@ class DatabaseHelper {
   Future<Database> get database async => _database ??= await _initDatabase();
 
   // variabile globale per impostare la versione del DB
-  static final _dbVersion = 7;
+  static final _dbVersion = 9;
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
 
+    print(await getDatabasesPath());
     /*## DA USARE QUANDO SI CAMBIA VERSIONE DEL DB ##*/
-    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     
     return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
@@ -151,6 +152,30 @@ class DatabaseHelper {
           } in utenteMaps)
         Utente(matricola: matricola, nome: nome, cognome: cognome),
     ];
+  }
+
+  // restituisce tutti gli utenti che partecipano a meno di 2 team
+  Future<List<Utente>?> getUtentiNot2Team() async {
+    final db = await database;
+    // uso una query per estrarre gli utenti che non partecipano a 2 team
+    final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
+      SELECT *
+      FROM utente JOIN (
+        SELECT utente, COUNT(*)
+        FROM utente u JOIN partecipazione p
+          ON (u.matricola = p.utente)
+        GROUP BY utente
+        HAVING COUNT(*) < 2
+      ) AS utentiNot2Partecipazioni
+        ON utentiNot2Partecipazioni.utente = utente.matricola
+    '''
+    );
+    // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
+    return utentiDelTeam.map((m) => Utente(
+      matricola: m['matricola'] as String,
+      nome: m['nome'] as String,
+      cognome: m['cognome'] as String,
+    )).toList();
   }
 
   /*

@@ -1,3 +1,5 @@
+import 'package:OneTask/model/partecipazione.dart';
+import 'package:OneTask/model/team.dart';
 import 'package:OneTask/model/utente.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
@@ -29,6 +31,7 @@ class NewTeamForm extends StatefulWidget {
 /*work in progress*/ 
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
+  //final listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
   final listUtentiFuture = DatabaseHelper.instance.getAllUtenti();
   final List<Utente> userTeamList = []; 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
@@ -50,10 +53,8 @@ class NewTeamFormState extends State<NewTeamForm> {
               onPressed: () {
               // .validate() ritorna true se il form è valido, altrimenti false
                 if (_formKey.currentState!.validate()) {
-                  // Se è valido, mostriamo una SnackBar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sto processando i dati...')),
-                  );
+                  // aggiungo il tam al DB
+                  _addNewTeam();
                 }
               },
               child: const Text('Aggiungi Team'),
@@ -124,7 +125,7 @@ class NewTeamFormState extends State<NewTeamForm> {
               Container(
                 //margin: EdgeInsets.only(bottom: 20),
                 height: MediaQuery.of(context).size.height,
-                  child: FutureBuilder<List<Utente>>(
+                  child: FutureBuilder<List<Utente>?>(
                       future: listUtentiFuture,
                       builder: (context, snapshot) {
                         if(snapshot.connectionState == ConnectionState.waiting) {
@@ -168,4 +169,17 @@ class NewTeamFormState extends State<NewTeamForm> {
       userTeamList.remove(utente);
     });
   }
+  
+  void _addNewTeam() {
+    final db =  DatabaseHelper.instance; 
+    final nomeTeam = _nomeController.text;
+    // inserisco il Team nella tabella Team
+    db.insertTeam(Team(nome: nomeTeam));
+    // ora inserisco i componenti del team nella tabella partecipazione
+    userTeamList.forEach((utente) => db.insertPartecipazione(Partecipazione(utente: utente.matricola, team: nomeTeam)));
+    // Una volta inseriti mostriamo una SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Team creato!')),
+    );
+}
 }
