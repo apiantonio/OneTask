@@ -10,7 +10,7 @@ class ViewTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: OTAppBar(title: 'Visualizza progetto'),
+      appBar: OTAppBar(title: 'Visualizza team'),
       body: Text('Vedi team'),
     );
   }

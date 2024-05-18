@@ -8,7 +8,7 @@ class ModifyTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: OTAppBar(title: 'Modifica progetto'),
+      appBar: OTAppBar(title: 'Modifica team'),
       body: Text('Modifica team'),
     );
   }
