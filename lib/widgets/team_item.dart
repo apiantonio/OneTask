@@ -13,8 +13,20 @@ class TeamItem extends StatelessWidget {
         onTap: () {viewSingleTeam(team);},   //azione quando premi sul team
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         tileColor: Colors.blue.shade50,  //sfondo della riga
-        title: Text(
-          team.nome,
+        title: Column(
+          children: [
+            Text(
+              team.nome,
+              softWrap: true,   //se non c'è abbastanza spazio manda a capo
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'Responsabile: ',
+            ),
+          ]
         ),
         
         trailing: IconButton(   //icona a destra

@@ -1,9 +1,13 @@
+import 'package:OneTask/model/progetto.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import '../widgets/drawer.dart';
 import './view_team.dart';
 import './modify_team.dart';
+import './view_project.dart';
+import './modify_project.dart';
 import '../widgets/team_item.dart';
+import '../widgets/project_item.dart';
 import '../services/database_helper.dart';
 import '../model/team.dart';
 
@@ -40,7 +44,7 @@ class ProjectTeamState extends State<ProjectTeam> with TickerProviderStateMixin{
           children: [
             Center(
               //inserire progetti dal db
-              child: Text("Contenuti i miei progetti"),
+              child: const ProjectView(),
             ),
             Center(
               //inserire team dal db
@@ -111,6 +115,69 @@ class TeamViewState extends State<TeamView> {
     Navigator.push(
       context, 
       MaterialPageRoute(builder: (context) => ModifyTeam())
+    );
+  }
+}
+
+class ProjectView extends StatefulWidget {
+  const ProjectView({super.key});
+
+  @override
+  ProjectViewState createState() {
+    return ProjectViewState();
+  }
+}
+
+class ProjectViewState extends State<ProjectView> {
+  var listProjectFuture = DatabaseHelper.instance.getAllProgetti();
+
+  @override 
+  Widget build(BuildContext context){
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      child: FutureBuilder<List<Progetto>?>(
+        future: listProjectFuture,
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          else 
+            if(snapshot.hasError){
+              return Text('Errore caricamento progetti dal db');
+            }else{
+              //se non da problemi crea/restituisci la lista di teams
+              List<Progetto> Projects = snapshot.data ?? [];
+              return ListView(
+                physics: NeverScrollableScrollPhysics(),
+                children: Projects.map((Project) =>
+                  Container(
+                    margin: EdgeInsets.only(bottom: 8.0),
+                    child: ProjectItem(
+                      project: Project,
+                      viewSingleProject: _onTapProject,
+                      updateProject: _onEditProject,
+                    ),
+                  ),
+                ).toList(),
+              );
+            }
+        }
+      ),
+    );
+  }
+
+  void _onTapProject(project){
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => ViewProject())
+    );
+  }
+
+  void _onEditProject(project){
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => ModifyProject())
     );
   }
 }
