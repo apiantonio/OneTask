@@ -66,7 +66,7 @@ class TeamViewState extends State<TeamView> {
   Widget build(BuildContext context){
     return Container(
       height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: FutureBuilder<List<Team>?>(
         future: listTeamFuture,
         builder: (context, snapshot) {
@@ -113,6 +113,41 @@ class TeamViewState extends State<TeamView> {
   }
 }
 
+//enumerazione per selezionare lo stato dei progetti, mi serve per filtrarli nella vista di tutti i progetti
+enum Stato{ attivo, sospeso, archiviato}
+
+//si tratta del widget che mi serve a filtrare i progetti
+class MultipleChoice extends StatefulWidget {
+  const MultipleChoice({super.key});
+
+  @override
+  State<MultipleChoice> createState() => _MultipleChoiceState();
+}
+
+class _MultipleChoiceState extends State<MultipleChoice> {
+  //in questo modo per prima cosa indichiamo quali progetti di default possiamo vedere
+  //di default solo quelli attivi
+  Set<Stato> selection = <Stato>{Stato.attivo};
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<Stato>(
+      segments: const <ButtonSegment<Stato>>[
+        ButtonSegment<Stato>(value: Stato.attivo, label: Text('Attivo'), icon: Icon(Icons.visibility)),
+        ButtonSegment<Stato>(value: Stato.sospeso, label: Text('Sospeso'), icon: Icon(Icons.visibility_off)),
+        ButtonSegment<Stato>(value: Stato.archiviato, label: Text('Archiviato'), icon: Icon(Icons.archive)),
+      ],
+      selected: selection,
+      onSelectionChanged: (Set<Stato> newSelection) {
+        setState(() {
+          selection = newSelection;
+        });
+      },
+      multiSelectionEnabled: true,
+    );
+  }
+}
+
 class ProjectView extends StatefulWidget {
   const ProjectView({super.key});
 
@@ -128,35 +163,46 @@ class ProjectViewState extends State<ProjectView> {
   @override 
   Widget build(BuildContext context){
     return Container(
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      child: FutureBuilder<List<Progetto>?>(
-        future: listProjectFuture,
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-          else 
-            if(snapshot.hasError){
-              return const Text('Errore caricamento progetti dal db');
-            }else{
-              //se non da problemi crea/restituisci la lista di teams
-              List<Progetto> projects = snapshot.data ?? [];
-              return ListView(
-                physics: const NeverScrollableScrollPhysics(),
-                children: projects.map((project) =>
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                    child: ProjectItem(
-                      project: project,
-                      viewSingleProject: _onTapProject,
-                      updateProject: _onEditProject,
-                    ),
-                  ),
-                ).toList(),
-              );
-            }
-        }
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          const MultipleChoice(),
+
+          const SizedBox(
+            height: 20,
+          ),
+
+          Expanded(
+            child: FutureBuilder<List<Progetto>?>(
+            future: listProjectFuture,
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              else 
+                if(snapshot.hasError){
+                  return const Text('Errore caricamento progetti dal db');
+                }else{
+                  //se non da problemi crea/restituisci la lista di teams
+                  List<Progetto> projects = snapshot.data ?? [];
+                  return ListView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: projects.map((project) =>
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        child: ProjectItem(
+                          project: project,
+                          viewSingleProject: _onTapProject,
+                          updateProject: _onEditProject,
+                        ),
+                      ),
+                    ).toList(),
+                  );
+                }
+              }
+            ),
+          ),
+        ]
       ),
     );
   }

@@ -15,7 +15,7 @@ class AddUser extends StatelessWidget {
         drawer: OTDrawer(),
         body: SingleChildScrollView( // Permette allo schermo di scorrere se il form è troppo grande per lo schermo
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -62,7 +62,7 @@ class NewProjectFormState extends State<NewProjectForm> {
       child: SingleChildScrollView(
         child: Padding(
           //per settare una distanza fissa dai bordi dello schermo
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           //mettere Column in Padding perchè quest'ultimo non accetta children ma un solo child
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
