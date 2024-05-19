@@ -26,11 +26,11 @@ class _TaskAppState extends State<TaskApp> {
               Expanded(
                 child: Container(
                   height: 70,
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     right: 10,
                     bottom: 10,
                   ),
-                  padding: EdgeInsets.fromLTRB(30, 10, 30, 5),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: const [BoxShadow(
@@ -41,7 +41,6 @@ class _TaskAppState extends State<TaskApp> {
                     )],
                     borderRadius: BorderRadius.circular(10),
                   ),
-
                   child: TextField(
                     controller: _taskController,
                     maxLength: 30,   //massimo 30 caratteri
@@ -58,7 +57,6 @@ class _TaskAppState extends State<TaskApp> {
                 onPressed: () {     //se premuto
                     _addTask(_taskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
                 },
-
                 style: ButtonStyle(
                   //per impostare un padding personalizzato devo obbligatoriamente passare un materialStateProperty
                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
@@ -71,7 +69,6 @@ class _TaskAppState extends State<TaskApp> {
                     ),
                   ),
                 ),
-
                 child: const Icon( 
                   Icons.add,
                   size: 25,
@@ -84,6 +81,8 @@ class _TaskAppState extends State<TaskApp> {
             //margin: EdgeInsets.only(bottom: 20),
             height: MediaQuery.of(context).size.height,
             child: ListView (
+              // rendo la lista non scrollabile per non fare conflitto
+              physics: const NeverScrollableScrollPhysics(),
               //uso la funzione map per scorrere tutti i Task della lista visto che ListView non supporta il for
               //trasforma ciascun Task in un TaskItem
               children: tasks.map((task) => 

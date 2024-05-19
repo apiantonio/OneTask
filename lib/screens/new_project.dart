@@ -296,15 +296,15 @@ class NewProjectFormState extends State<NewProjectForm> {
     });
 
     /*############## TEST ##################*/
-      // Stampo tutti i progetti memorizzati nel db per test
-      print('#################### TEST STAMPA DEI PROGETTI ###################');
-      await DatabaseHelper.instance.getAllProgetti()
-        .then((p) => print('$p\n'));
+      // // Stampo tutti i progetti memorizzati nel db per test
+      // print('#################### TEST STAMPA DEI PROGETTI ###################');
+      // await DatabaseHelper.instance.getAllProgetti()
+      //   .then((p) => print('$p\n'));
       
-      // Stampo tutte le tasks
-      print('#################### TEST STAMPA DELLE TASKS ###################');
-      await DatabaseHelper.instance.getAllTasks()
-        .then((t) => print('$t\n'));
+      // // Stampo tutte le tasks
+      // print('#################### TEST STAMPA DELLE TASKS ###################');
+      // await DatabaseHelper.instance.getAllTasks()
+      //   .then((t) => print('$t\n'));
     //#########################################
 
   }
