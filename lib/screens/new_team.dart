@@ -190,32 +190,43 @@ class NewTeamFormState extends State<NewTeamForm> {
     });
   }
   
-  void _addNewTeam() {
+  void _addNewTeam() async {
     final db = DatabaseHelper.instance; 
     final nomeTeam = _nomeController.text;
-    // inserisco il Team nella tabella Team
-    db.insertTeam(Team(nome: nomeTeam));
-    // ora inserisco i componenti del team nella tabella partecipazione
-    userTeamList.forEach((utente) => db.insertPartecipazione(
-      Partecipazione(
-        utente: utente.matricola,
-        team: nomeTeam,
-        ruolo: utente == selected // se selected == true allora l'utente è il manager del team
-      )
-    ));
-    // Una volta inseriti mostriamo una SnackBar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Team creato!')),  
-    );
-    // ripulisco il campo del nome del team
-    _nomeController.clear();
-    // deseleziono gli utenti
-    setState(() {
-      userTeamList.clear();
-      selected = null;
+
+    await db.selectTeamByNome(nomeTeam)
+    .then((teamPresente) {
+      if(teamPresente != null) {
+        // team con lo stesso nome già presente
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
+        );
+      } else {
+          // inserisco il Team nella tabella Team
+        db.insertTeam(Team(nome: nomeTeam));
+        // ora inserisco i componenti del team nella tabella partecipazione
+        userTeamList.forEach((utente) => db.insertPartecipazione(
+          Partecipazione(
+            utente: utente.matricola,
+            team: nomeTeam,
+            ruolo: utente == selected // se selected == true allora l'utente è il manager del team
+          )
+        ));
+        // Una volta inseriti mostriamo una SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Team creato!')),  
+        );
+        // ripulisco il campo del nome del team
+        _nomeController.clear();
+        // deseleziono gli utenti
+        setState(() {
+          userTeamList.clear();
+          selected = null;
+        });
+        // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
+        // dato che ora potrebbero partecipare a due team
+        listUtentiFuture = db.getUtentiNot2Team();
+      }
     });
-    // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
-    // dato che ora potrebbero partecipare a due team
-    listUtentiFuture = db.getUtentiNot2Team();
   }
 }

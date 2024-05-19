@@ -3,18 +3,18 @@ import 'package:OneTask/widgets/task_item.dart';
 import 'package:flutter/material.dart';
 
 class TaskApp extends StatefulWidget{
-  const TaskApp({super.key});
+  final Function(List<Task>) onTasksChanged; // funzione di callback per passare lo stato al wodget genitore (form NewProject)
+  const TaskApp({super.key, required this.onTasksChanged});
 
   @override
   State<TaskApp> createState() => _TaskAppState();
 }
-
 class _TaskAppState extends State<TaskApp> {
-  //mi restituisce una lista di Task
-  final List<Task> tasks = Task.taskList(); 
   //questo controller mi serve per la gestione del campo di inserimento di un task
-  final TextEditingController _TaskController = TextEditingController();
-  var count = 0;
+  final TextEditingController _taskController = TextEditingController();
+  // una lista di Task 
+  final List<Task> tasks = []; 
+  var count = 0; // contatore usato per l'id delle tasks
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +25,12 @@ class _TaskAppState extends State<TaskApp> {
             children: [
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.only(
+                  height: 70,
+                  margin: EdgeInsets.only(
                     right: 10,
                     bottom: 10,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                  padding: EdgeInsets.fromLTRB(30, 10, 30, 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: const [BoxShadow(
@@ -42,20 +43,20 @@ class _TaskAppState extends State<TaskApp> {
                   ),
 
                   child: TextField(
-                    controller: _TaskController,
+                    controller: _taskController,
                     maxLength: 30,   //massimo 30 caratteri
                     decoration: const InputDecoration(
+                      counterText: '', // Rimuove il contatore di caratteri
                       border: InputBorder.none,   //nessun bordo perchè è nel container (che mi serve per mettere ombreggiatura)
                       hintText: 'Aggiungi un task...',
                     ),
                   ),
                 ),
               ),
-
               //widget per il bottone di aggiunta dei task al progetto
               ElevatedButton(
                 onPressed: () {     //se premuto
-                    _addTask(_TaskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
+                    _addTask(_taskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
                 },
 
                 style: ButtonStyle(
@@ -78,8 +79,6 @@ class _TaskAppState extends State<TaskApp> {
               ),
             ]
           ),
-
-
           //è il container sempre nel widget colonna che contiene la lista di task
           SizedBox(
             //margin: EdgeInsets.only(bottom: 20),
@@ -107,7 +106,8 @@ class _TaskAppState extends State<TaskApp> {
   //meTask invocato quando clicchiamo sul task
   void _changeStateTask(Task task) {
     setState(() {
-      task.completed = !task.completed; 
+      task.completato = !task.completato; 
+      widget.onTasksChanged(tasks);
     });
   }
 
@@ -115,16 +115,18 @@ class _TaskAppState extends State<TaskApp> {
   void _deleteTask(Task task) {
     setState(() {
       tasks.remove(task); // Rimuoviamo il Task dalla lista di Tasks
+      widget.onTasksChanged(tasks);
     });
   }
 
   //meTask invocato quando si preme il +. Di default i task appena creati non hanno il check
-  void _addTask(String descr) {
+  void _addTask(String att) {
     setState(() {
-      if(descr.isNotEmpty){
-        tasks.add(Task(id: count++,description: descr)); // Aggiungiamo un nuovo Task alla lista di Tasks
+      if(att.isNotEmpty){
+        tasks.add(Task(id: count++, progetto: '', attivita: att)); // Aggiungiamo un nuovo Task alla lista di Tasks
+        widget.onTasksChanged(tasks);
+        _taskController.clear();
       }
     });
-    _TaskController.clear();
   }
 }
