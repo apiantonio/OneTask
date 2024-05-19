@@ -39,6 +39,9 @@ class OTDashboard extends StatelessWidget {
                 child: const Icon(Icons.create_new_folder),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             Builder(
               builder: (context) => FloatingActionButton(
                 heroTag: 'unique_tag_2',

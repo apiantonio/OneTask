@@ -1,4 +1,6 @@
 import 'package:OneTask/model/progetto.dart';
+import 'package:OneTask/screens/new_project.dart';
+import 'package:OneTask/screens/new_team.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import '../widgets/drawer.dart';
@@ -44,6 +46,44 @@ class ProjectTeamState extends State<ProjectTeam> with TickerProviderStateMixin{
           children: const [
             ProjectView(),
             TeamView(),
+          ],
+        ),
+        // Floating Buttons in basso a destra
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Builder(
+              builder: (context) => FloatingActionButton.small(
+                
+                heroTag: 'unique_tag_2',
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const NewTeam())
+                  );
+                },
+                tooltip: 'Nuovo team',
+                child: const Icon(Icons.group, size: 20),
+              )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Builder(
+              builder: (context) => FloatingActionButton(
+                /*questo herotag serve perchè abbiamo due floating nello stesso subtree e senza genera eccezione*/
+                heroTag: 'unique_tag_1',
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const NewProject())
+                  );
+                },
+                tooltip: 'Nuovo progetto',
+                child: const Icon(Icons.create_new_folder),
+              ),
+            ),
+            
           ],
         ),
     );
