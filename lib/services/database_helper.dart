@@ -54,7 +54,7 @@ class DatabaseHelper {
             CREATE TABLE partecipazione (
               utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
               team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
-              ruolo BOOLEAN NOT NULL,
+              ruolo INTEGER NOT NULL,
               PRIMARY KEY(utente, team)
             )''');
           await db.execute('''
@@ -319,6 +319,21 @@ class DatabaseHelper {
         nome: team[0]['nome'] as String,
       );
     }
+  }
+
+  // query per sapere chi è il responsabile del team
+  Future<Utente?> getTeamManager(Team team) async {
+    final db = await database;
+    // prima prendo la matricola del responsabile
+    final List<Map<String, Object?>> matricola = await db.rawQuery('''
+        SELECT utente
+        FROM partecipazione
+        WHERE team = ? AND ruolo = 1
+      '''
+      , [team.nome]
+    );
+    // seleziono l'utente con la matricola ottenuta
+    return DatabaseHelper.instance.selectUtenteByMatricola(matricola[0]['matricola'] as String);
   }
 
   // Restituisce una lista contenente tutti i team della tabella 'team' 
