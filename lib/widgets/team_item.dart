@@ -74,7 +74,7 @@ class MemberCounter extends StatelessWidget{
         border: Border.all(
           color: Colors.grey, // Colore del bordo
           width: 1.0, // settare la larghezza del bordo
-      ),
+        ),
         borderRadius: BorderRadius.circular(30.0), //per arrotondare i bordi
       ),
       child: Row(
