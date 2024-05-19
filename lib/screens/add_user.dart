@@ -20,7 +20,7 @@ class AddUser extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Aggiungo il widget addUserForm che rappresenta il form per aggiungere un nuovo utente
-                addUserForm(), 
+                AddUserForm(), 
               ],
             ),
           ),

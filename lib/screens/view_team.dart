@@ -11,7 +11,7 @@ class ViewTeam extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: OTAppBar(title: 'Visualizza team'),
-      body: Text('Vedi team'),
+      body: const Text('Vedi team'),
     );
   }
 }

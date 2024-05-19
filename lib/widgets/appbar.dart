@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 //deve obbligatoriamente implementare PreferredSizedWidget altrimenti non potrei passarla allo Scaffold come appbar
 class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
   //di default se non passato tabbar non viene visualizzata
-  OTAppBar({Key? key, String? this.title, this.tabbar = false, TabController? this.controller}) : super(key: key);
+  OTAppBar({super.key, String? this.title, this.tabbar = false, TabController? this.controller});
 
   final String? title; // Parametro titolo che è opzionale
   //il parametro passato risulta opzionale, serve per capire se serva o meno il tabbar per quella schermata

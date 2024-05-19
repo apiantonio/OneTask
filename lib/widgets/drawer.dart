@@ -26,7 +26,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
           
           ListTile(
-            leading: Icon(Icons.home),
+            leading: const Icon(Icons.home),
             title: const Text('Home'),
             onTap: () {
               Navigator.push(
@@ -37,19 +37,19 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.group_work),
+            leading: const Icon(Icons.group_work),
             title: const Text('Progetti e Team'),
             onTap: () {
               //passa a quella pagina e poi
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => ProjectTeam())
+                MaterialPageRoute(builder: (context) => const ProjectTeam())
               );
             },
           ),
 
           ListTile(
-            leading: Icon(Icons.bar_chart),
+            leading: const Icon(Icons.bar_chart),
             title: const Text('Statistiche'),
             onTap: () {  
               //passa a quella pagina e poi
@@ -57,7 +57,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.person_add),
+            leading: const Icon(Icons.person_add),
             title: const Text('Nuovo Utente'),
             onTap: () { 
               Navigator.push(
@@ -68,7 +68,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.calendar_today),
+            leading: const Icon(Icons.calendar_today),
             title: const Text('Calendario'),
             onTap: () { 
               //passa a quella pagina e poi

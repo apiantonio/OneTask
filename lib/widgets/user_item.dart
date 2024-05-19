@@ -6,7 +6,7 @@ class UserItem extends StatefulWidget {
   final Utente utente;  
   final onSelect;
   final onDeselect;
-  const UserItem({Key? key, required this.utente, required this.onSelect, required this.onDeselect});
+  const UserItem({super.key, required this.utente, required this.onSelect, required this.onDeselect});
 
   @override
   _UserItemState createState() => _UserItemState(utente: utente, onSelect: onSelect, onDeselect: onDeselect);
@@ -41,7 +41,7 @@ class _UserItemState extends State<UserItem> {
       tileColor: (isSelected & aggiunta) ? Colors.pink : Colors.blue.shade50,  //la riga si colora solo se puoi ancora aggiungere
       //il testo di ogni singolo componente all'interno della lista di utenti - formato mat/cognome/nome
       title: Text(
-        utente.matricola.toString() + " " + utente.cognome + " " + utente.nome,
+        "${utente.matricola} ${utente.cognome} ${utente.nome}",
       ),
     );
   }

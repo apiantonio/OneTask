@@ -499,6 +499,19 @@ class DatabaseHelper {
     )).toList();
   }
 
+  Future<int ?> countUtentiTeam(String nomeTeam) async {
+    final db = await database;
+    final List<Map<String, Object?>> conteggio = await db.rawQuery('''
+        SELECT count(*)
+        FROM utente JOIN partecipazione 
+          ON utente.matricola = partecipazione.utente
+        WHERE partecipazione.team = ?
+    '''
+    , [nomeTeam]);
+    int? numUtentiTeam = Sqflite.firstIntValue(conteggio);
+    return numUtentiTeam;
+  }
+
   // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Partecipazione>> getAllPartecipazioni() async {
     final db = await database;

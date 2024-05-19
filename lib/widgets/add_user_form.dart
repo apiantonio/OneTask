@@ -3,12 +3,12 @@ import '../services/database_helper.dart';
 import 'package:OneTask/model/utente.dart';
 
 // Questo widget rappresenterà il form per l'inserimento di un utente
-class addUserForm extends StatefulWidget{
+class AddUserForm extends StatefulWidget{
   @override
-  _addUserFormState createState() => _addUserFormState();
+  AddUserFormState createState() => AddUserFormState();
 }
 
-class _addUserFormState extends State<addUserForm> {
+class AddUserFormState extends State<AddUserForm> {
   // chiave identificativa del form utile per la validazione
   final _formKey = GlobalKey<FormState>();
   
@@ -23,7 +23,7 @@ class _addUserFormState extends State<addUserForm> {
       key: _formKey,
       child: Padding(
         // padding a tutti gli elementi del form
-        padding: EdgeInsets.all(16), 
+        padding: const EdgeInsets.all(16), 
         // i vari elementi saranno in colonna
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
