@@ -16,7 +16,7 @@ class DatabaseHelper {
   Future<Database> get database async => _database ??= await _initDatabase();
 
   // variabile globale per impostare la versione del DB
-  static final _dbVersion = 9;
+  static final _dbVersion = 1;
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
