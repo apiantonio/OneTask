@@ -45,7 +45,7 @@ class NewTeamFormState extends State<NewTeamForm> {
       key: _formKey,
       child: SingleChildScrollView(
         //per settare una distanza fissa dai bordi dello schermo
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
           children: [
