@@ -11,45 +11,45 @@ class TeamItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    var manager = DatabaseHelper.instance.getTeamManager(team);
-
     return ListTile(    //una sola riga della lista
         onTap: () {viewSingleTeam(team);},   //azione quando premi sul team
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         tileColor: Colors.blue.shade50,  //sfondo della riga
         //container in alto a sx che mostra quante persone ci sono nel team
         leading: MemberCounter(nomeTeam: team.nome,),
-        title: Column(
-          children: [
-            Text(
-              team.nome,
-              softWrap: true,   //se non c'è abbastanza spazio manda a capo
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+        title: Expanded(
+          child: Column(
+            children: [
+              Text(
+                team.nome,
+                softWrap: true,   //se non c'è abbastanza spazio manda a capo
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            FutureBuilder<Utente?>(
-              future: manager,
-              builder: (context, snapshot){
-                if(snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                else 
-                  if(snapshot.hasError){
-                    return const Text('Errore caricamento team dal db');
-                  }else{
-                    //se non da problemi crea/restituisci l'utente
-                    Utente? manager = snapshot.data;
-                    return Text(
-                      'Responsabile: ${manager !=null ? manager.nome + manager.cognome : 'Nessuno'}',
-                    );
+              FutureBuilder<Utente?>(
+                future: DatabaseHelper.instance.getTeamManager(team),
+                builder: (context, snapshot){
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
                   }
-              }
-            ),
-          ]
+                  else 
+                    if(snapshot.hasError){
+                      return const Text('Errore caricamento infoTeam dal db');
+                    }else{
+                      //se non da problemi crea/restituisci l'utente
+                      Utente? manager = snapshot.data;
+                      return Text(
+                        'Manager: ${manager !=null ? manager.matricola : 'Nessuno'}',
+                      );
+                    }
+                }
+              ),
+            ]
+          ),
         ),
-        
+
         trailing: IconButton(   //icona a destra
           iconSize: 16,
           icon: const Icon(Icons.edit),
@@ -75,11 +75,12 @@ class MemberCounter extends StatelessWidget{
           color: Colors.grey, // Colore del bordo
           width: 1.0, // settare la larghezza del bordo
       ),
-        borderRadius: BorderRadius.circular(10.0), //per arrotondare i bordi
+        borderRadius: BorderRadius.circular(30.0), //per arrotondare i bordi
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.person),
+          const Icon(Icons.person, size: 20,),
           FutureBuilder<int?>(
               future: DatabaseHelper.instance.countUtentiTeam(nomeTeam),
               builder: (context, snapshot){
