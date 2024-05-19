@@ -53,8 +53,7 @@ class ProjectTeamState extends State<ProjectTeam> with TickerProviderStateMixin{
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Builder(
-              builder: (context) => FloatingActionButton.small(
-                
+              builder: (context) => FloatingActionButton.small(      
                 heroTag: 'unique_tag_2',
                 onPressed: () {
                   Navigator.push(

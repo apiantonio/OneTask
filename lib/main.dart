@@ -23,8 +23,26 @@ class OTDashboard extends StatelessWidget {
       home: Scaffold(
         appBar: OTAppBar(),
         drawer: OTDrawer(),
-        body: Column(
+        // body: TODO
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            Builder(
+              builder: (context) => FloatingActionButton(
+                heroTag: 'unique_tag_2',
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const NewTeam())
+                  );
+                },
+                tooltip: 'Nuovo team',
+                child: const Icon(Icons.group),
+              )
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             Builder(
               builder: (context) => FloatingActionButton(
                 /*questo herotag serve perchè abbiamo due floating nello stesso subtree e senza genera eccezione*/
@@ -38,22 +56,6 @@ class OTDashboard extends StatelessWidget {
                 tooltip: 'Nuovo progetto',
                 child: const Icon(Icons.create_new_folder),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Builder(
-              builder: (context) => FloatingActionButton(
-                heroTag: 'unique_tag_2',
-                onPressed: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const NewTeam())
-                  );
-                },
-                tooltip: 'Nuovo team',
-                child: const Icon(Icons.group),
-              )
             ),
           ],
         ),
