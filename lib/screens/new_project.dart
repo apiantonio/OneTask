@@ -36,22 +36,21 @@ class NewProjectFormState extends State<NewProjectForm> {
   // classe che rappresenta lo State di un Form generico
   final _formKey = GlobalKey<FormState>();
   //il controller che mi serve per la data
-  TextEditingController _dateController = TextEditingController(); // controller per la data
-  TextEditingController _nomeController = TextEditingController(); // controller per il nome del progetto
-  TextEditingController _descrizioneController = TextEditingController(); // controller per la descrizione del progetto
-  TextEditingController _attivitaController = TextEditingController(); // controller per le attivita del progetto
-  TextEditingController _teamController = TextEditingController(); // controller per il menu a tendina per selezionare il team
-  TextEditingController _teamValidationController = TextEditingController(); // controller nascosto per la validazione del menu a tendina, è necessario poiché il widget non ha un validator di default
-  
+  final TextEditingController _dateController = TextEditingController(); // controller per la data
+  final TextEditingController _nomeController = TextEditingController(); // controller per il nome del progetto
+  final TextEditingController _descrizioneController = TextEditingController(); // controller per la descrizione del progetto
+  final TextEditingController _attivitaController = TextEditingController(); // controller per le attivita del progetto
+  final TextEditingController _teamController = TextEditingController(); // controller per il menu a tendina per selezionare il team
+ 
   List<String> _nomiTeams = []; // Lista per memorizzare i nomi dei team
   String _labelDropdownMenu = 'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
-  List<Task> _tasks = [];
+  List<Task> _tasks = []; // lista di tasks del progetto
+  String? _validaTeamText; // stringa per evidenziare l'obbligatorietà di selezionare un team (se disponibile) per il progetto 
 
   @override
   void initState() {
     super.initState();
     _getNomiTeams(); // Leggi i nomi dei team dal db quando il form viene aperto
-    _teamValidationController.text = '';
   }
 
   @override
@@ -144,24 +143,18 @@ class NewProjectFormState extends State<NewProjectForm> {
                 onSelected: (String? value) {
                   setState(() {
                     _teamController.text = value!;
-                    _teamValidationController.text = value; // aggiorna il controller nascosto per la validazione
+                    _validaTeamText = null; // se il team è selezionato allora tutt ok
                   });
                 },
               ),
-              // Campo di testo nascosto per la validazione del team, è necessario in quanto DropdownMenu non ha
-              // la property 'validator' dunque uso un testo nascosto per validare l'input
-              Visibility( // visibility permette di controllare la visibilità dei suoi figli
-                visible: false, // rende invisibili i figli
-                child: TextFormField(
-                  controller: _teamValidationController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty || value == '') {
-                      return "Per favore seleziona un team!";
-                    }
-                    return null;
-                  },
+              if(_validaTeamText != null) // se non è selezionato un team mostra testo di errore
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _validaTeamText!, 
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
                 ),
-              ),
               const SizedBox(
                 height: 20,
               ),
@@ -246,12 +239,20 @@ class NewProjectFormState extends State<NewProjectForm> {
   
   // metodo chiamato quando si preme il pulsante di invio dati del form
   void _addProgettoToDatabase() async {
+    // se non è stato selezionato un team mostra un errore
+    if (_teamController.text.isEmpty) {
+      setState(() {
+        _validaTeamText = 'Per favore, seleziona un team.';
+      });
+      return;
+    }
+
     // controllo che non esista già un Progetto con lo stesso nome nel db
     await DatabaseHelper.instance.selectProgettoByNome(_nomeController.text)
     .then((progettoPresente) async {
       // se esiste già un progetto con lo stesso nome
       if(progettoPresente != null) {
-        // il progetto NON può essere inserito nella tabella mostro un messaggio di errore
+        // il progetto NON può essere inserito nella tabella, mostro un messaggio di errore
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
         );
@@ -267,6 +268,7 @@ class NewProjectFormState extends State<NewProjectForm> {
         );
 
         final db = DatabaseHelper.instance;      
+        
         // inserisco il progetto nel db
         await db.insertProgetto(newProgetto)
           .whenComplete(() =>
