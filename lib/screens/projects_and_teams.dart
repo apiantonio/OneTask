@@ -42,14 +42,8 @@ class ProjectTeamState extends State<ProjectTeam> with TickerProviderStateMixin{
         body: TabBarView(
           controller: _tabController,
           children: const [
-            Center(
-              //inserire progetti dal db
-              child: ProjectView(),
-            ),
-            Center(
-              //inserire team dal db
-              child: TeamView(),
-            ),
+            ProjectView(),
+            TeamView(),
           ],
         ),
     );
