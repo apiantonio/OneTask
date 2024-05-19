@@ -1,7 +1,7 @@
 import 'package:OneTask/model/task.dart';
 import 'package:flutter/material.dart';
 
-//un nuovo widget per ciascun todo
+//un nuovo widget per ciascuna task
 class TaskItem extends StatelessWidget {
   const TaskItem({Key? key, required this.task, required this.onChangeTask, required this.onDeleteTask}) : super(key: key);
   final Task task;    //un oggetto di tipo task
@@ -15,9 +15,9 @@ class TaskItem extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         tileColor: Colors.blue.shade50,  //sfondo della riga
         title: Text(
-          task.description,
+          task.attivita,
         ),
-        leading: task.completed ? Icon(Icons.check_box) : Icon(Icons.check_box_outline_blank),     //icona a sinistra, se completato abbiamo il check, altrimenti la casella vuota
+        leading: task.completato ? Icon(Icons.check_box) : Icon(Icons.check_box_outline_blank),     //icona a sinistra, se completato abbiamo il check, altrimenti la casella vuota
         trailing: IconButton(   //icona a destra
           iconSize: 16,
           icon: Icon(Icons.remove),

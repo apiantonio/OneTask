@@ -21,11 +21,11 @@ class DatabaseHelper {
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
-
-    print(await getDatabasesPath());
-    /*## DA USARE QUANDO SI CAMBIA VERSIONE DEL DB ##*/
-    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     
+    /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
+    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    /*##############################################################################*/
+
     return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
       // il db si chiamerà OneTask_database
@@ -398,8 +398,9 @@ class DatabaseHelper {
     } else {
       return Task(
         id: task[0]['id'] as int,
-        description: task[0]['description'] as String,
-        completed: (task[0]['completed'] as int) == 1,
+        progetto: task[0]['progetto'] as String,
+        attivita: task[0]['attivita'] as String,
+        completato: (task[0]['completato'] as int) == 1,
       );
     }
   }
@@ -413,10 +414,11 @@ class DatabaseHelper {
     return [
       for (final {
             'id': id as int,
-            'description': description as String,
-            'completed': completed as int,
+            'progetto': progetto as String,
+            'attivita': attivita as String,
+            'completato': completato as int,
           } in taskMaps)
-        Task(id: id, description: description, completed: completed == 1),
+        Task(id: id, progetto: progetto, attivita: attivita, completato: completato == 1),
     ];
   }
 

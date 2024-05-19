@@ -1,4 +1,5 @@
 import 'package:OneTask/model/progetto.dart';
+import 'package:OneTask/model/task.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
@@ -35,19 +36,22 @@ class NewProjectFormState extends State<NewProjectForm> {
   // classe che rappresenta lo State di un Form generico
   final _formKey = GlobalKey<FormState>();
   //il controller che mi serve per la data
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _descrizioneController = TextEditingController();
-  TextEditingController _attivitaController = TextEditingController();
-  TextEditingController _teamController = TextEditingController();
+  TextEditingController _dateController = TextEditingController(); // controller per la data
+  TextEditingController _nomeController = TextEditingController(); // controller per il nome del progetto
+  TextEditingController _descrizioneController = TextEditingController(); // controller per la descrizione del progetto
+  TextEditingController _attivitaController = TextEditingController(); // controller per le attivita del progetto
+  TextEditingController _teamController = TextEditingController(); // controller per il menu a tendina per selezionare il team
+  TextEditingController _teamValidationController = TextEditingController(); // controller nascosto per la validazione del menu a tendina, è necessario poiché il widget non ha un validator di default
   
   List<String> _nomiTeams = []; // Lista per memorizzare i nomi dei team
   String _labelDropdownMenu = 'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
+  List<Task> _tasks = [];
 
   @override
   void initState() {
     super.initState();
-    _getNomiTeams(); // Leggi i nomi dei team dal db quando il form viene creato
+    _getNomiTeams(); // Leggi i nomi dei team dal db quando il form viene aperto
+    _teamValidationController.text = '';
   }
 
   @override
@@ -128,15 +132,35 @@ class NewProjectFormState extends State<NewProjectForm> {
                         foregroundColor: Colors.blue[700],
                     ),
                   )).toList(),
-                  inputDecorationTheme: const InputDecorationTheme(
-                    filled: true,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange),
-                    ),
-                    labelStyle: TextStyle(
-                      color: Colors.blue,
-                    ),
+                inputDecorationTheme: const InputDecorationTheme(
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange),
                   ),
+                  labelStyle: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+                onSelected: (String? value) {
+                  setState(() {
+                    _teamController.text = value!;
+                    _teamValidationController.text = value; // aggiorna il controller nascosto per la validazione
+                  });
+                },
+              ),
+              // Campo di testo nascosto per la validazione del team, è necessario in quanto DropdownMenu non ha
+              // la property 'validator' dunque uso un testo nascosto per validare l'input
+              Visibility( // visibility permette di controllare la visibilità dei suoi figli
+                visible: false, // rende invisibili i figli
+                child: TextFormField(
+                  controller: _teamValidationController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value == '') {
+                      return "Per favore seleziona un team!";
+                    }
+                    return null;
+                  },
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -179,7 +203,13 @@ class NewProjectFormState extends State<NewProjectForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TaskApp(),
+              TaskApp(onTasksChanged: (newTasks) {
+                  // callback per ottenere le task inserite
+                  setState(() {
+                    _tasks = newTasks;
+                  });
+                },
+              ),
             ],
           ),
         ),
@@ -188,9 +218,11 @@ class NewProjectFormState extends State<NewProjectForm> {
   }
 
    Future<void> _getNomiTeams() async {
+    // prendo tutti i team del db
     List<Team> teams = await DatabaseHelper.instance.getAllTeams();
-    
+
     setState(() {
+      // salvo i nomi di tutti i team
       _nomiTeams = teams.map((team) => team.nome).toList();
       if(_nomiTeams.isEmpty) {
         _labelDropdownMenu = 'Non ci sono team disponibili!';
@@ -214,47 +246,65 @@ class NewProjectFormState extends State<NewProjectForm> {
   
   // metodo chiamato quando si preme il pulsante di invio dati del form
   void _addProgettoToDatabase() async {
-    // creo un nuovo progetto con i dati inseriti
-    // nota che i campi 'stato', 'completato' e 'motivazioneFallimento' assumeranno i valori di default
-    // rispettivamente 'attivo', false e NULL
-    Progetto newProgetto = Progetto (
-      nome: _nomeController.text,
-      team: _teamController.text,
-      scadenza: _dateController.text,
-      descrizione: _descrizioneController.text,
-    );
+    // controllo che non esista già un Progetto con lo stesso nome nel db
+    await DatabaseHelper.instance.selectProgettoByNome(_nomeController.text)
+    .then((progettoPresente) async {
+      // se esiste già un progetto con lo stesso nome
+      if(progettoPresente != null) {
+        // il progetto NON può essere inserito nella tabella mostro un messaggio di errore
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
+        );
+      } else { // se il nome del progetto è nuovo
+        // creo un nuovo progetto con i dati inseriti
+        // nota che i campi 'stato', 'completato' e 'motivazioneFallimento' assumeranno i valori di default
+        // rispettivamente 'attivo', false e NULL
+        Progetto newProgetto = Progetto (
+          nome: _nomeController.text,
+          team: _teamController.text,
+          scadenza: _dateController.text,
+          descrizione: _descrizioneController.text,
+        );
+
+        final db = DatabaseHelper.instance;      
+        // inserisco il progetto nel db
+        await db.insertProgetto(newProgetto)
+          .whenComplete(() =>
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Progetto memorizzato!')),
+          ));
+        
+        // inserisco le tasks nel db
+        Future.wait(_tasks.map((task) => (db.insertTask(task))))
+          .whenComplete(() =>
+            setState(() {
+              _tasks.clear();
+            }
+          ));
+          
+        // svuoto i campi del form e aggiorno lo stato
+        setState(() {
+          _nomeController.clear();
+          _descrizioneController.clear();
+          _dateController.clear();
+          _teamController.clear();
+          _attivitaController.clear();
+        });
+      }
+    });
 
     /*############## TEST ##################*/
-    // Stampo tutti i progetti memorizzati nel db per test
-    // List<Progetto> allProgetti = await DatabaseHelper.instance.getAllProgetti();
-    // allProgetti.forEach((progetto) {
-    //   print('### TEST STAMPA DEI PROGETTI ###');
-    //   print(progetto); // Stampo direttamente il progetto usando il metodo toString()
-    // });
+      // Stampo tutti i progetti memorizzati nel db per test
+      print('#################### TEST STAMPA DEI PROGETTI ###################');
+      await DatabaseHelper.instance.getAllProgetti()
+        .then((p) => print('$p\n'));
+      
+      // Stampo tutte le tasks
+      print('#################### TEST STAMPA DELLE TASKS ###################');
+      await DatabaseHelper.instance.getAllTasks()
+        .then((t) => print('$t\n'));
     //#########################################
 
-    // controllo che non esista già un Progetto con lo stesso nome nel db
-    Progetto? progettoPresente = await DatabaseHelper.instance.selectProgettoByNome(newProgetto.nome);
-
-    if(progettoPresente != null) {
-      // il progetto NON può essere inserito nella tabella mostro un messaggio di errore
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
-      );
-    } else {
-      // inserisce il progetto nel db
-      DatabaseHelper.instance.insertProgetto(newProgetto);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Progetto memorizzato!')),
-      );
-      
-      // svuoto i campi del form
-      _nomeController.clear();
-      _nomeController.clear();
-      _dateController.clear();
-      _teamController.clear();
-      _attivitaController.clear();
-    }
   }
 }
 
