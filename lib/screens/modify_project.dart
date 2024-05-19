@@ -5,11 +5,13 @@ import '../model/progetto.dart';
 
 /*da completare MARCO MANCINO, solo prova per vedere utilizzo della navigazione*/
 class ModifyProject extends StatelessWidget {
+  const ModifyProject({super.key});
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: OTAppBar(title: 'Modifica progetto'),
-      body: Text('Modifica progetto'),
+      body: const Text('Modifica progetto'),
     );
   }
 }

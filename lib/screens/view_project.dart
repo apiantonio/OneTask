@@ -11,7 +11,7 @@ class ViewProject extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: OTAppBar(title: 'Visualizza progetto'),
-      body: Text('Vedi progetto'),
+      body: const Text('Vedi progetto'),
     );
   }
 }

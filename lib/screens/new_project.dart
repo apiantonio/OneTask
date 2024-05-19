@@ -35,11 +35,11 @@ class NewProjectFormState extends State<NewProjectForm> {
   // classe che rappresenta lo State di un Form generico
   final _formKey = GlobalKey<FormState>();
   //il controller che mi serve per la data
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _descrizioneController = TextEditingController();
-  TextEditingController _attivitaController = TextEditingController();
-  TextEditingController _teamController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _descrizioneController = TextEditingController();
+  final TextEditingController _attivitaController = TextEditingController();
+  final TextEditingController _teamController = TextEditingController();
   
   List<String> _nomiTeams = []; // Lista per memorizzare i nomi dei team
   String _labelDropdownMenu = 'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
@@ -59,7 +59,7 @@ class NewProjectFormState extends State<NewProjectForm> {
       child: SingleChildScrollView(
         child: Padding(
           //per settare una distanza fissa dai bordi dello schermo
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           //mettere Column in Padding perchè quest'ultimo non accetta children ma un solo child
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
@@ -114,7 +114,7 @@ class NewProjectFormState extends State<NewProjectForm> {
               DropdownMenu(
                 enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
                 enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
-                leadingIcon: Icon(Icons.people), // icoa a sinistra del testo
+                leadingIcon: const Icon(Icons.people), // icoa a sinistra del testo
                 label: Text(_labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
                 // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
                 width: MediaQuery.of(context).size.width * 0.69, // dimensione del menu
@@ -141,7 +141,7 @@ class NewProjectFormState extends State<NewProjectForm> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
+              SizedBox(
                 //larghezza la metà dello schermo per garantire responsività
                 width: MediaQuery.of(context).size.width * 0.69,
                 child: TextFormField(
@@ -179,7 +179,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TaskApp(),
+              const TaskApp(),
             ],
           ),
         ),
@@ -199,15 +199,15 @@ class NewProjectFormState extends State<NewProjectForm> {
   }
 
   Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime(2100));
 
-    if (_picked != null) {
+    if (picked != null) {
       setState(() {
-        _dateController.text = _picked.toString().split(" ")[0];
+        _dateController.text = picked.toString().split(" ")[0];
       });
     }
   }

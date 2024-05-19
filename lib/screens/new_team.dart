@@ -37,7 +37,7 @@ class NewTeamFormState extends State<NewTeamForm> {
 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
 
-  TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class NewTeamFormState extends State<NewTeamForm> {
       key: _formKey,
       child: SingleChildScrollView(
         //per settare una distanza fissa dai bordi dello schermo
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
           children: [
@@ -130,27 +130,27 @@ class NewTeamFormState extends State<NewTeamForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Container(
+              SizedBox(
                 //margin: EdgeInsets.only(bottom: 20),
                 height: MediaQuery.of(context).size.height,
                   child: FutureBuilder<List<Utente>?>(
                       future: listUtentiFuture,
                       builder: (context, snapshot) {
                         if(snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         }
                         else if(snapshot.hasError){
-                          return Text('Errore caricamento utenti dal db');
+                          return const Text('Errore caricamento utenti dal db');
                         }else{
                           //se non da problemi crea/restituisci la lista di utenti
-                          List<Utente> Utenti = snapshot.data ?? [];
+                          List<Utente> utenti = snapshot.data ?? [];
                           return ListView(
-                              physics: NeverScrollableScrollPhysics(),
-                              children: Utenti.map((Utente) =>
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: utenti.map((utente) =>
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 8.0),
+                                  margin: const EdgeInsets.only(bottom: 8.0),
                                   child: UserItem(
-                                    utente: Utente,
+                                    utente: utente,
                                     onSelect: _addUtente,
                                     onDeselect: _removeUtente,
                                   ),

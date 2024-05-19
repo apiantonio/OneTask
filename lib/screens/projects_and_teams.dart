@@ -41,14 +41,14 @@ class ProjectTeamState extends State<ProjectTeam> with TickerProviderStateMixin{
         drawer: OTDrawer(),
         body: TabBarView(
           controller: _tabController,
-          children: [
+          children: const [
             Center(
               //inserire progetti dal db
-              child: const ProjectView(),
+              child: ProjectView(),
             ),
             Center(
               //inserire team dal db
-              child: const TeamView(),
+              child: TeamView(),
             ),
           ],
         ),
@@ -72,26 +72,26 @@ class TeamViewState extends State<TeamView> {
   Widget build(BuildContext context){
     return Container(
       height: MediaQuery.of(context).size.height,
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: FutureBuilder<List<Team>?>(
         future: listTeamFuture,
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           else 
             if(snapshot.hasError){
-              return Text('Errore caricamento team dal db');
+              return const Text('Errore caricamento team dal db');
             }else{
               //se non da problemi crea/restituisci la lista di teams
-              List<Team> Teams = snapshot.data ?? [];
+              List<Team> teams = snapshot.data ?? [];
               return ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: Teams.map((Team) =>
+                physics: const NeverScrollableScrollPhysics(),
+                children: teams.map((team) =>
                   Container(
-                    margin: EdgeInsets.only(bottom: 8.0),
+                    margin: const EdgeInsets.only(bottom: 8.0),
                     child: TeamItem(
-                      team: Team,
+                      team: team,
                       viewSingleTeam: _onTapTeam,
                       updateTeam: _onEditTeam,
                     ),
@@ -107,14 +107,14 @@ class TeamViewState extends State<TeamView> {
   void _onTapTeam(team){
     Navigator.push(
       context, 
-      MaterialPageRoute(builder: (context) => ViewTeam())
+      MaterialPageRoute(builder: (context) => const ViewTeam())
     );
   }
 
   void _onEditTeam(team){
     Navigator.push(
       context, 
-      MaterialPageRoute(builder: (context) => ModifyTeam())
+      MaterialPageRoute(builder: (context) => const ModifyTeam())
     );
   }
 }
@@ -135,26 +135,26 @@ class ProjectViewState extends State<ProjectView> {
   Widget build(BuildContext context){
     return Container(
       height: MediaQuery.of(context).size.height,
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: FutureBuilder<List<Progetto>?>(
         future: listProjectFuture,
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           else 
             if(snapshot.hasError){
-              return Text('Errore caricamento progetti dal db');
+              return const Text('Errore caricamento progetti dal db');
             }else{
               //se non da problemi crea/restituisci la lista di teams
-              List<Progetto> Projects = snapshot.data ?? [];
+              List<Progetto> projects = snapshot.data ?? [];
               return ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: Projects.map((Project) =>
+                physics: const NeverScrollableScrollPhysics(),
+                children: projects.map((project) =>
                   Container(
-                    margin: EdgeInsets.only(bottom: 8.0),
+                    margin: const EdgeInsets.only(bottom: 8.0),
                     child: ProjectItem(
-                      project: Project,
+                      project: project,
                       viewSingleProject: _onTapProject,
                       updateProject: _onEditProject,
                     ),
@@ -170,14 +170,14 @@ class ProjectViewState extends State<ProjectView> {
   void _onTapProject(project){
     Navigator.push(
       context, 
-      MaterialPageRoute(builder: (context) => ViewProject())
+      MaterialPageRoute(builder: (context) => const ViewProject())
     );
   }
 
   void _onEditProject(project){
     Navigator.push(
       context, 
-      MaterialPageRoute(builder: (context) => ModifyProject())
+      MaterialPageRoute(builder: (context) => const ModifyProject())
     );
   }
 }
