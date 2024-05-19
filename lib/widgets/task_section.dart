@@ -11,7 +11,7 @@ class TaskApp extends StatefulWidget{
 
 class _TaskAppState extends State<TaskApp> {
   //mi restituisce una lista di Task
-  final List<Task> Tasks = Task.taskList(); 
+  final List<Task> tasks = Task.taskList(); 
   //questo controller mi serve per la gestione del campo di inserimento di un task
   final TextEditingController _TaskController = TextEditingController();
   var count = 0;
@@ -25,11 +25,11 @@ class _TaskAppState extends State<TaskApp> {
             children: [
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     right: 10,
                     bottom: 10,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: const [BoxShadow(
@@ -44,7 +44,7 @@ class _TaskAppState extends State<TaskApp> {
                   child: TextField(
                     controller: _TaskController,
                     maxLength: 30,   //massimo 30 caratteri
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,   //nessun bordo perchè è nel container (che mi serve per mettere ombreggiatura)
                       hintText: 'Aggiungi un task...',
                     ),
@@ -54,11 +54,6 @@ class _TaskAppState extends State<TaskApp> {
 
               //widget per il bottone di aggiunta dei task al progetto
               ElevatedButton(
-                child: Icon( 
-                  Icons.add,
-                  size: 25,
-                ),
-
                 onPressed: () {     //se premuto
                     _addTask(_TaskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
                 },
@@ -66,7 +61,7 @@ class _TaskAppState extends State<TaskApp> {
                 style: ButtonStyle(
                   //per impostare un padding personalizzato devo obbligatoriamente passare un materialStateProperty
                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   ),
                   //vale lo stesso discorso fatto per il padding
                   shape: MaterialStateProperty.all<OutlinedBorder>(
@@ -75,24 +70,29 @@ class _TaskAppState extends State<TaskApp> {
                     ),
                   ),
                 ),
+
+                child: const Icon( 
+                  Icons.add,
+                  size: 25,
+                ),
               ),
             ]
           ),
 
 
           //è il container sempre nel widget colonna che contiene la lista di task
-          Container(
+          SizedBox(
             //margin: EdgeInsets.only(bottom: 20),
             height: MediaQuery.of(context).size.height,
             child: ListView (
               //uso la funzione map per scorrere tutti i Task della lista visto che ListView non supporta il for
               //trasforma ciascun Task in un TaskItem
-              children: Tasks.map((Task) => 
+              children: tasks.map((task) => 
               //uso un container in cui inglobare i singoli TaskItem perchè voglio spaziatura tra loro
                 Container(
-                  margin: EdgeInsets.only(bottom: 8.0),   //spazio verticale tra i container
+                  margin: const EdgeInsets.only(bottom: 8.0),   //spazio verticale tra i container
                   child: TaskItem(
-                    task: Task,
+                    task: task,
                     onChangeTask: _changeStateTask,
                     onDeleteTask: _deleteTask,
                   ),
@@ -105,16 +105,16 @@ class _TaskAppState extends State<TaskApp> {
   }
 
   //meTask invocato quando clicchiamo sul task
-  void _changeStateTask(Task Task) {
+  void _changeStateTask(Task task) {
     setState(() {
-      Task.completed = !Task.completed; 
+      task.completed = !task.completed; 
     });
   }
 
   //meTask invocato quando premiamo il - accanto a ciascun task
-  void _deleteTask(Task Task) {
+  void _deleteTask(Task task) {
     setState(() {
-      Tasks.remove(Task); // Rimuoviamo il Task dalla lista di Tasks
+      tasks.remove(task); // Rimuoviamo il Task dalla lista di Tasks
     });
   }
 
@@ -122,7 +122,7 @@ class _TaskAppState extends State<TaskApp> {
   void _addTask(String descr) {
     setState(() {
       if(descr.isNotEmpty){
-        Tasks.add(Task(id: count++,description: descr)); // Aggiungiamo un nuovo Task alla lista di Tasks
+        tasks.add(Task(id: count++,description: descr)); // Aggiungiamo un nuovo Task alla lista di Tasks
       }
     });
     _TaskController.clear();

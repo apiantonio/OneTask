@@ -5,7 +5,7 @@ class ProjectItem extends StatelessWidget {
   final Progetto project;  
   final viewSingleProject;
   final updateProject;
-  const ProjectItem({Key? key, required this.project, required this.viewSingleProject, required this.updateProject});
+  const ProjectItem({super.key, required this.project, required this.viewSingleProject, required this.updateProject});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class ProjectItem extends StatelessWidget {
             ),
 
             Text(
-              'Team:' + project.team,
+              'Team:${project.team}',
             ),
 
             Row(
@@ -34,7 +34,7 @@ class ProjectItem extends StatelessWidget {
                 Container(
                   child: Row(
                     children: [
-                      Icon(   //icona dell'orologio
+                      const Icon(   //icona dell'orologio
                         Icons.access_time,    
                       ),
                       Text(
@@ -46,7 +46,7 @@ class ProjectItem extends StatelessWidget {
                 //in basso a dx anche il bottone per modificare il progetto
                 IconButton(   //icona a destra
                   iconSize: 16,
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   color: Colors.black,
                   onPressed: () {updateProject(project);},   //cosa fare quando premi sul bottone a destra
                 )

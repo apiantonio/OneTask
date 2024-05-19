@@ -6,7 +6,7 @@ class UserItem extends StatefulWidget {
   final Utente utente;  
   final onSelect;
   final onDeselect;
-  const UserItem({Key? key, required this.utente, required this.onSelect, required this.onDeselect});
+  const UserItem({super.key, required this.utente, required this.onSelect, required this.onDeselect});
 
   @override
   _UserItemState createState() => _UserItemState(utente: utente, onSelect: onSelect, onDeselect: onDeselect);
