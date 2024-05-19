@@ -325,15 +325,22 @@ class DatabaseHelper {
   Future<Utente?> getTeamManager(Team team) async {
     final db = await database;
     // prima prendo la matricola del responsabile
-    final List<Map<String, Object?>> matricola = await db.rawQuery('''
-        SELECT utente
-        FROM partecipazione
-        WHERE team = ? AND ruolo = 1
+    final List<Map<String, Object?>> utente = await db.rawQuery('''
+        SELECT *
+        FROM utente
+        WHERE matricola IN (
+          SELECT utente 
+          FROM partecipazione
+          WHERE team = ? AND ruolo = 1
+        )
       '''
       , [team.nome]
     );
-    // seleziono l'utente con la matricola ottenuta
-    return DatabaseHelper.instance.selectUtenteByMatricola(matricola[0]['matricola'] as String);
+    return Utente(
+      matricola: utente[0]['matricola'] as String, 
+      nome: utente[0]['nome'] as String, 
+      cognome: utente[0]['cognome'] as String
+    );
   }
 
   // Restituisce una lista contenente tutti i team della tabella 'team' 
