@@ -23,7 +23,7 @@ class DatabaseHelper {
     print("initDataBase executed");
     
     /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
-    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     /*##############################################################################*/
 
     return await openDatabase(

@@ -8,7 +8,7 @@ import './screens/new_team.dart';
 
 void main() async {
   runApp(const OTDashboard()); 
-  DatabaseHelper.instance.populateDatabase(); 
+  //DatabaseHelper.instance.populateDatabase(); 
 }
 
 class OTDashboard extends StatelessWidget {
