@@ -8,7 +8,7 @@ class ModifyTeam extends StatelessWidget {
   const ModifyTeam({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: OTAppBar(title: 'Modifica team'),
       body: const Text('Modifica team'),
