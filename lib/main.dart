@@ -1,10 +1,8 @@
 import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/floating_buttons_dashboard.dart';
 import 'package:flutter/material.dart';
-import './screens/new_project.dart';
 import './widgets/appbar.dart';
 import './widgets/drawer.dart';
-import './screens/new_team.dart';
 
 void main() async {
   runApp(const OTDashboard());
@@ -25,7 +23,7 @@ class OTDashboard extends StatelessWidget {
         appBar: OTAppBar(),
         drawer: OTDrawer(),
         // body: TODO
-        floatingActionButton: FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
+        floatingActionButton: const FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
       ),
     );
   }

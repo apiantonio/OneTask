@@ -195,7 +195,7 @@ class NewTeamFormState extends State<NewTeamForm> {
       if(teamPresente != null) {
         // team con lo stesso nome già presente
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
+          const SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
         );
       } else {
           // inserisco il Team nella tabella Team

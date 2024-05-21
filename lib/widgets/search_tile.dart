@@ -5,7 +5,7 @@ class SearchTile extends StatelessWidget {
   final VoidCallback onPressedModify; // funziona associata al tap sulla matita per modificare
   final Map<String, dynamic> result; // mappa passata dalla searchbar che contiene nome e tipo di un progetto o team
 
-  SearchTile({
+  const SearchTile({
     super.key,
     required this.onTapElem,
     required this.onPressedModify,
@@ -26,7 +26,7 @@ class SearchTile extends StatelessWidget {
         alignment: Alignment.center,
         width: 40,
         height: 40,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.blue,
           shape: BoxShape.circle,
         ),
