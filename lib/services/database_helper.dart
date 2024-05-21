@@ -231,6 +231,34 @@ class DatabaseHelper {
     }
   }
 
+  Future<List<Progetto>?> selectProgettiByTeam(String nomeTeam) async {
+    final db = await database;
+    final List<Map<String, Object?>> progetti = await db.query(
+      'progetto',
+      where: 'team = ?',
+      whereArgs: [nomeTeam],
+    );
+
+    if (progetti.isEmpty) {
+      return null;
+    } else {
+      return progetti
+          .map((progetto) => Progetto(
+              nome: progetto['nome'] as String,
+              team: progetto['team'] as String,
+              scadenza: progetto['scadenza'] as String,
+              stato: progetto['stato'] as String,
+              descrizione: progetto['descrizione'] as String,
+              completato: progetto['completato'] == null
+                  ? null // se completato è null allora il valore è null
+                  : (progetto['completato'] as int) ==
+                      1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
+              motivazioneFallimento:
+                  progetto['motivazioneFallimento'] as String?))
+          .toList();
+    }
+  }
+
   // Restituisce una lista contenti tutti i progetti memorizzati nel db
   Future<List<Progetto>> getAllProgetti() async {
     final db = await database;
@@ -366,7 +394,6 @@ class DatabaseHelper {
           WHERE team = ? AND ruolo = 1
         )
       ''', [team.nome]);
-
     return Utente(
         matricola: utente[0]['matricola'] as String,
         nome: utente[0]['nome'] as String,

@@ -138,7 +138,11 @@ class TeamViewState extends State<TeamView> {
 
   void _onTapTeam(team) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ViewTeam()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ViewTeam(
+                  teamName: team.nome,
+                )));
   }
 
   void _onEditTeam(team) {
