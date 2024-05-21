@@ -130,40 +130,36 @@ class NewTeamFormState extends State<NewTeamForm> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(
-                //margin: EdgeInsets.only(bottom: 20),
-                height: MediaQuery.of(context).size.height,
-                  child: FutureBuilder<List<Utente>?>(
-                      future: listUtentiFuture,
-                      builder: (context, snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
-                        else if(snapshot.hasError){
-                          return const Text('Errore caricamento utenti dal db');
-                        }else{
-                          //se non da problemi crea/restituisci la lista di utenti
-                          List<Utente> utenti = snapshot.data ?? [];
-                          return ListView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: utenti.map((utente) =>
-                                Container(
-                                  margin: const EdgeInsets.only(bottom: 8.0),
-                                  child: UserItem(
-                                    utente: utente,
-                                    onSelect: _addUtente,
-                                    onDeselect: _removeUtente,
-                                  ),
-                                ),
-                              ).toList(),
-                          );
-                        }
-                      }
-                    ),
-                  ),
-        ],
+
+              FutureBuilder<List<Utente>?>(
+                future: listUtentiFuture,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  else if(snapshot.hasError){
+                    return const Text('Errore caricamento utenti dal db');
+                  }else{
+                    //se non da problemi crea/restituisci la lista di utenti
+                    List<Utente> utenti = snapshot.data ?? [];
+                    return Column(
+                      children: utenti.map((utente) =>
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                          child: UserItem(
+                            utente: utente,
+                            onSelect: _addUtente,
+                            onDeselect: _removeUtente,
+                          ),
+                        ),
+                      ).toList(),
+                    );
+                  }
+                }
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 

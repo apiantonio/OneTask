@@ -77,26 +77,22 @@ class _TaskAppState extends State<TaskApp> {
             ]
           ),
           //è il container sempre nel widget colonna che contiene la lista di task
-          SizedBox(
-            //margin: EdgeInsets.only(bottom: 20),
-            height: MediaQuery.of(context).size.height,
-            child: ListView (
-              // rendo la lista non scrollabile per non fare conflitto
-              physics: const NeverScrollableScrollPhysics(),
-              //uso la funzione map per scorrere tutti i Task della lista visto che ListView non supporta il for
-              //trasforma ciascun Task in un TaskItem
-              children: tasks.map((task) => 
-              //uso un container in cui inglobare i singoli TaskItem perchè voglio spaziatura tra loro
-                Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),   //spazio verticale tra i container
-                  child: TaskItem(
-                    task: task,
-                    onChangeTask: _changeStateTask,
-                    onDeleteTask: _deleteTask,
-                  ),
+          Column(
+            // rendo la lista non scrollabile per non fare conflitto
+            //physics: const NeverScrollableScrollPhysics(),
+            //uso la funzione map per scorrere tutti i Task della lista visto che ListView non supporta il for
+            //trasforma ciascun Task in un TaskItem
+            children: tasks.map((task) => 
+            //uso un container in cui inglobare i singoli TaskItem perchè voglio spaziatura tra loro
+              Container(
+                margin: const EdgeInsets.only(bottom: 8.0),   //spazio verticale tra i container
+                child: TaskItem(
+                  task: task,
+                  onChangeTask: _changeStateTask,
+                  onDeleteTask: _deleteTask,
                 ),
-              ).toList(),
-            ),
+              ),
+            ).toList(),
           ),
         ],
       );
