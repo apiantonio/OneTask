@@ -93,7 +93,7 @@ class SearchBarDelegate extends SearchDelegate {
             if(result['type'] == 'Team') {               
               onTapElem = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ViewTeam())
+                MaterialPageRoute(builder: (context) => ViewTeam(teamName: nomeElem))
               );
               onPressedModify = () => Navigator.push(
                 context, 
@@ -152,7 +152,7 @@ class SearchBarDelegate extends SearchDelegate {
             if(result['type'] == 'Team') {               
               onTapElem = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ViewTeam())
+                MaterialPageRoute(builder: (context) => ViewTeam(teamName: nomeElem))
               );
               onPressedModify = () => Navigator.push(
                 context, 
