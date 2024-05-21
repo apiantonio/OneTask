@@ -256,7 +256,9 @@ class ProjectViewState extends State<ProjectView> {
   }
 
   void _onEditProject(project) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ModifyProject()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ModifyProject(projectName: project.nome)));
   }
 }

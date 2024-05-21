@@ -1,3 +1,4 @@
+import 'package:OneTask/widgets/searchbar.dart';
 import 'package:flutter/material.dart';
 
 //deve obbligatoriamente implementare PreferredSizedWidget altrimenti non potrei passarla allo Scaffold come appbar
@@ -27,7 +28,12 @@ class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
       actions: [      //gli passo un array di widget, in particolare di IconButton
         IconButton(
           onPressed: (() {
-            //TODO
+            // metodo che mostra la barra di ricerca
+            showSearch(
+              context: context, 
+              // delega la costruzione ad un widget figlio
+              delegate: SearchBarDelegate()
+            );
           }), 
           icon: Icon(Icons.search),
           tooltip: 'Cerca',

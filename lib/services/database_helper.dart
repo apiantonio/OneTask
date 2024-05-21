@@ -59,7 +59,7 @@ class DatabaseHelper {
               nome TEXT PRIMARY KEY,
               team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
               scadenza TEXT NOT NULL,
-              stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'scaduto', 'archiviato')),
+              stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'sospeso', 'archiviato')),
               descrizione TEXT NOT NULL,
               completato INTEGER CHECK (completato IS NULL OR
                 (completato IS NOT NULL AND stato = 'archiviato')),
@@ -83,17 +83,11 @@ class DatabaseHelper {
   // Inserisci un utente nella tabella utente
   Future<void> insertUtente(Utente utente) async {
     final db = await database;
-    await db
-        .insert(
+    await db.insert(
       'utente',
       utente.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
-    )
-        .then((value) {
-      print("Inserito: $utente.");
-    }).catchError((error) {
-      print("Errore inserimento: $utente. Errore: $error");
-    });
+    );
   }
 
   // Esegue un UPDATE sulla tabella utente
@@ -118,13 +112,13 @@ class DatabaseHelper {
   // Cerca un Utente data una matricola
   Future<Utente?> selectUtenteByMatricola(String matricola) async {
     final db = await database;
-    final List<Map<String, Object?>>? utente = await db.query(
+    final List<Map<String, Object?>> utente = await db.query(
       'utente',
       where: 'matricola = ?',
       whereArgs: [matricola],
     );
 
-    if (utente == null || utente.isEmpty) {
+    if (utente.isEmpty) {
       return null;
     } else {
       return Utente(
@@ -293,6 +287,48 @@ class DatabaseHelper {
           motivazioneFallimento: motivazioneFallimento,
         ),
     ];
+  }
+
+  // restituisce tutti i progetti che hanno lo stato specificato
+  // Ricorda: '''stato IN ('attivo', 'sospeso', 'archiviato')'''
+  Future<List<Progetto>?> getProgettiByState(String stato) async {
+    // se lo stato richiesto è non valido ritorna un errore
+    if (!['attivo', 'sospeso', 'archiviato'].contains(stato)) {
+      return Error.throwWithStackTrace(
+          '''Richiesto uno stato non valido dei progetti. Lo stato di un progetto 
+        può essere uno dei seguenti valori: 'attivo', 'sospeso', 'archiviato',
+        è stato richiesto lo stato: $stato ''', StackTrace.current);
+    }
+
+    final db = await database;
+
+    // query per ottenere i progetti con lo stato richiesto
+    final List<Map<String, Object?>> progetti =
+        await db.query('progetto', where: 'stato = ?', whereArgs: [stato]);
+
+    if (progetti.isEmpty) {
+      return null;
+    } else {
+      return [
+        for (final {
+              'nome': nome as String,
+              'team': team as String,
+              'scadenza': scadenza as String,
+              // 'stato': stato as String, è passato come parametro
+              'descrizione': descrizione as String,
+              'completato': completato as int,
+              'motivazioneFallimento': motiv as String,
+            } in progetti)
+          Progetto(
+              nome: nome,
+              team: team,
+              scadenza: scadenza,
+              stato: stato, // lo stato è quello passato come argomento
+              descrizione: descrizione,
+              completato: completato == 1,
+              motivazioneFallimento: motiv),
+      ];
+    }
   }
 
   /*
@@ -573,6 +609,26 @@ class DatabaseHelper {
     Team team1 = Team(nome: 'Team Alpha');
     Team team2 = Team(nome: 'Team Beta');
 
+    Progetto progetto1 = Progetto(
+        nome: 'progetto1',
+        team: 'Team Alpha',
+        stato: 'attivo',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1');
+    Progetto progetto2 = Progetto(
+        nome: 'progetto2',
+        team: 'Team Beta',
+        stato: 'sospeso',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1');
+    Progetto progetto3 = Progetto(
+        nome: 'progetto3',
+        team: 'Team Alpha',
+        stato: 'archiviato',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1',
+        completato: true);
+
     // Inserisci gli utenti nel database
     await insertUtente(utente1);
     await insertUtente(utente2);
@@ -592,5 +648,34 @@ class DatabaseHelper {
         utente: utente1.matricola, team: team2.nome, ruolo: true));
     await insertPartecipazione(Partecipazione(
         utente: utente3.matricola, team: team2.nome, ruolo: false));
+
+    await insertProgetto(progetto1);
+    await insertProgetto(progetto2);
+    await insertProgetto(progetto3);
+  }
+
+  //prova visualizza progetto
+  Future<List<Task>> getTasksByProject(String projectName) async {
+    final db = await database;
+    final List<Map<String, Object?>> taskMaps = await db.query(
+      'task',
+      where: 'progetto = ?',
+      whereArgs: [projectName],
+    );
+
+    return [
+      for (final {
+            'id': id as int,
+            'progetto': progetto as String,
+            'attivita': attivita as String,
+            'completato': completato as int,
+          } in taskMaps)
+        Task(
+          id: id,
+          progetto: progetto,
+          attivita: attivita,
+          completato: completato == 1,
+        ),
+    ];
   }
 }
