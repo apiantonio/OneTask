@@ -42,20 +42,20 @@ class SearchBarDelegate extends SearchDelegate {
   // contenenti coppe di tipo String, dinamic perché il value può essere stringa o Team/Progetto
   Future<List<Map<String, dynamic>>> _searchResults(String query) async {
     // prendo tutti i team e tutti i progetti dal DB
-    final List<Team> teams = await DatabaseHelper.instance.getAllTeams();
-    final List<Progetto> progetti = await DatabaseHelper.instance.getAllProgetti();
+    final List<Team?> teams = await DatabaseHelper.instance.getAllTeams();
+    final List<Progetto?> progetti = await DatabaseHelper.instance.getAllProgetti();
 
     // salvo i team il cui nome contiene la query scritta dall'utente
     final teamResults = teams
-        .where((team) => team.nome.toLowerCase().contains(query.toLowerCase()))
-        .map((team) => {'name': team.nome, 'type': 'Team', 'elem': team})
+        .where((team) => team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
+        .map((team) => {'nome': team?.nome, 'type': 'Team', 'elem': team})
         .toList();
 
     // salvo i progetti il cui nome contiene la query scritta dall'utente
     final progettoResults = progetti
         .where((progetto) =>
-            progetto.nome.toLowerCase().contains(query.toLowerCase()))
-        .map((progetto) => {'name': progetto.nome, 'type': 'Progetto', 'elem': progetto})
+            progetto?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
+        .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto', 'elem': progetto})
         .toList();
 
     return teamResults + progettoResults;
@@ -79,10 +79,12 @@ class SearchBarDelegate extends SearchDelegate {
         return ListView.builder(
           itemCount: results.length,
           itemBuilder: (context, index) {
-            final result = results[index];
+            var result = results[index];
 
+            // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
             VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
             VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if(result['type'] == 'Team') {               
               onTapElem = () => Navigator.push(
@@ -96,11 +98,11 @@ class SearchBarDelegate extends SearchDelegate {
             } else if(result['type'] == 'Progetto') { // altrimenti per progetto
               onTapElem = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ViewProject())
+                MaterialPageRoute(builder: (context) =>  ViewProject(projectName: nomeElem))
               );
               onPressedModify = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ModifyProject())
+                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
               );
             }
             
@@ -138,6 +140,7 @@ class SearchBarDelegate extends SearchDelegate {
 
             VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
             VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if(result['type'] == 'Team') {               
               onTapElem = () => Navigator.push(
@@ -151,11 +154,11 @@ class SearchBarDelegate extends SearchDelegate {
             } else if(result['type'] == 'Progetto') { // altrimenti per progetto
               onTapElem = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ProjectView())
+                MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
               );
               onPressedModify = () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ModifyProject())
+                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
               );
             }
             

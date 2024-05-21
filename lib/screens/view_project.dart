@@ -8,7 +8,7 @@ import '../widgets/task_section.dart';
 class ViewProject extends StatelessWidget {
   final String projectName;
 
-  const ViewProject({super.key, required this.projectName});
+  ViewProject({super.key, required this.projectName});
 
   @override
   Widget build(BuildContext context) {

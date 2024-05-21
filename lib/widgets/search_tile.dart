@@ -20,7 +20,7 @@ class SearchTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              result['name'],
+              result['nome'],
               softWrap: true,   //se non c'è abbastanza spazio manda a capo
               style: const TextStyle(
                 fontSize: 20,
