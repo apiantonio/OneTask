@@ -654,7 +654,7 @@ class DatabaseHelper {
     await insertProgetto(progetto3);
   }
 
-  //prova visualizza progetto
+  //prova Marco per prendere tutti i task in viewproject e modify
   Future<List<Task>> getTasksByProject(String projectName) async {
     final db = await database;
     final List<Map<String, Object?>> taskMaps = await db.query(
@@ -663,19 +663,13 @@ class DatabaseHelper {
       whereArgs: [projectName],
     );
 
-    return [
-      for (final {
-            'id': id as int,
-            'progetto': progetto as String,
-            'attivita': attivita as String,
-            'completato': completato as int,
-          } in taskMaps)
-        Task(
-          id: id,
-          progetto: progetto,
-          attivita: attivita,
-          completato: completato == 1,
-        ),
-    ];
+    return taskMaps.map((taskMap) {
+      return Task(
+        id: taskMap['id'] as int,
+        progetto: taskMap['progetto'] as String,
+        attivita: taskMap['attivita'] as String,
+        completato: (taskMap['completato'] as int) == 1,
+      );
+    }).toList();
   }
 }
