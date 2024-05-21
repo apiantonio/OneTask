@@ -5,10 +5,9 @@ import './widgets/appbar.dart';
 import './widgets/drawer.dart';
 import './screens/new_team.dart';
 
-
 void main() async {
-  runApp(const OTDashboard()); 
-  //DatabaseHelper.instance.populateDatabase(); 
+  runApp(const OTDashboard());
+  //DatabaseHelper.instance.populateDatabase();
 }
 
 class OTDashboard extends StatelessWidget {
@@ -20,7 +19,8 @@ class OTDashboard extends StatelessWidget {
 
     return MaterialApp(
       title: appTitle,
-      debugShowCheckedModeBanner: false, //così non si vede la striscia in alto a dx di debug
+      debugShowCheckedModeBanner:
+          false, //così non si vede la striscia in alto a dx di debug
       home: Scaffold(
         appBar: OTAppBar(),
         drawer: OTDrawer(),
@@ -29,18 +29,17 @@ class OTDashboard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Builder(
-              builder: (context) => FloatingActionButton(
-                heroTag: 'unique_tag_2',
-                onPressed: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const NewTeam())
-                  );
-                },
-                tooltip: 'Nuovo team',
-                child: const Icon(Icons.group),
-              )
-            ),
+                builder: (context) => FloatingActionButton(
+                      heroTag: 'unique_tag_2',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NewTeam()));
+                      },
+                      tooltip: 'Nuovo team',
+                      child: const Icon(Icons.group),
+                    )),
             const SizedBox(
               height: 10,
             ),
@@ -50,9 +49,9 @@ class OTDashboard extends StatelessWidget {
                 heroTag: 'unique_tag_1',
                 onPressed: () {
                   Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const NewProject())
-                  );
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NewProject()));
                 },
                 tooltip: 'Nuovo progetto',
                 child: const Icon(Icons.create_new_folder),

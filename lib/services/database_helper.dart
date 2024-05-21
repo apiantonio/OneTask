@@ -5,7 +5,7 @@ import 'package:OneTask/model/team.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:OneTask/model/utente.dart';
-import 'package:sqflite/sqlite_api.dart';  
+import 'package:sqflite/sqlite_api.dart';
 
 // singleton che gestisce il database
 class DatabaseHelper {
@@ -21,7 +21,7 @@ class DatabaseHelper {
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
-    
+
     /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
     //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     /*##############################################################################*/
@@ -30,11 +30,11 @@ class DatabaseHelper {
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
       // il db si chiamerà OneTask_database
       join(await getDatabasesPath(), 'OneTask_database.db'),
-        version: _dbVersion,
-        onCreate: (db, version) async {
-          // creo le tabelle del database
-          // Tabella utente, NOTA: GLOB è un operatore
-          await db.execute('''
+      version: _dbVersion,
+      onCreate: (db, version) async {
+        // creo le tabelle del database
+        // Tabella utente, NOTA: GLOB è un operatore
+        await db.execute('''
             CREATE TABLE utente (
               matricola CHAR(5) PRIMARY KEY CHECK (
                   LENGTH(matricola) = 5 AND
@@ -45,19 +45,16 @@ class DatabaseHelper {
                   SUBSTR(matricola, 5, 1) IN ('0','1','2','3','4','5','6','7','8','9')
                 ),
             nome TEXT, 
-            cognome TEXT)'''
-          );
-          await db.execute(
-            'CREATE TABLE team (nome TEXT PRIMARY KEY)'
-          );
-          await db.execute('''
+            cognome TEXT)''');
+        await db.execute('CREATE TABLE team (nome TEXT PRIMARY KEY)');
+        await db.execute('''
             CREATE TABLE partecipazione (
               utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
               team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
               ruolo INTEGER NOT NULL,
               PRIMARY KEY(utente, team)
             )''');
-          await db.execute('''
+        await db.execute('''
             CREATE TABLE progetto (
               nome TEXT PRIMARY KEY,
               team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -69,7 +66,7 @@ class DatabaseHelper {
               motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
                 (motivazioneFallimento IS NOT NULL AND completato = 0))
             )''');
-            await db.execute('''
+        await db.execute('''
             CREATE TABLE task (
               id INTEGER PRIMARY KEY,
               progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -96,12 +93,10 @@ class DatabaseHelper {
   // Esegue un UPDATE sulla tabella utente
   Future<int> updateUtente(Utente utente) async {
     final db = await database;
-    return await db.update(
-      'utente', 
-      utente.toMap(),
-      where: 'matricola = ?',
-      whereArgs: [utente.matricola],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.update('utente', utente.toMap(),
+        where: 'matricola = ?',
+        whereArgs: [utente.matricola],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Elimina un utente dalla tabella utente
@@ -134,7 +129,7 @@ class DatabaseHelper {
     }
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  // Restituisce una lista contenente tutti gli utenti della tabella 'utente'
   Future<List<Utente>> getAllUtenti() async {
     final db = await database;
 
@@ -166,14 +161,15 @@ class DatabaseHelper {
         GROUP BY utente
         HAVING COUNT(*) >= 2
       )
-    '''
-    );
+    ''');
     // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
-    return utentiDelTeam.map((m) => Utente(
-      matricola: m['matricola'] as String,
-      nome: m['nome'] as String,
-      cognome: m['cognome'] as String,
-    )).toList();
+    return utentiDelTeam
+        .map((m) => Utente(
+              matricola: m['matricola'] as String,
+              nome: m['nome'] as String,
+              cognome: m['cognome'] as String,
+            ))
+        .toList();
   }
 
   /*
@@ -188,19 +184,17 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  
+
   // Esegue un UPDATE sulla tabella progetto
   Future<int> updateProgetto(Progetto progetto) async {
     final db = await database;
-    return await db.update(
-      'progetto', 
-      progetto.toMap(),
-      where: 'nome = ?',
-      whereArgs: [progetto.nome],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.update('progetto', progetto.toMap(),
+        where: 'nome = ?',
+        whereArgs: [progetto.nome],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  // Elimina un progetto 
+  // Elimina un progetto
   Future<int> deleteProgetto(Progetto progetto) async {
     final db = await database;
     return await db.delete(
@@ -228,9 +222,10 @@ class DatabaseHelper {
         scadenza: progetto[0]['scadenza'] as String,
         stato: progetto[0]['stato'] as String,
         descrizione: progetto[0]['descrizione'] as String,
-        completato: progetto[0]['completato'] == null 
-          ? null // se completato è null allora il valore è null
-          : (progetto[0]['completato'] as int) == 1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
+        completato: progetto[0]['completato'] == null
+            ? null // se completato è null allora il valore è null
+            : (progetto[0]['completato'] as int) ==
+                1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
         motivazioneFallimento: progetto[0]['motivazioneFallimento'] as String?,
       );
     }
@@ -238,29 +233,30 @@ class DatabaseHelper {
 
   // Restituisce una lista contenti tutti i progetti memorizzati nel db
   Future<List<Progetto>> getAllProgetti() async {
-  final db = await database;
+    final db = await database;
 
-  final List<Map<String, Object?>> progettoMaps = await db.query('progetto');
+    final List<Map<String, Object?>> progettoMaps = await db.query('progetto');
     return [
       for (final {
-        'nome': nome as String,
-        'team': team as String,
-        'scadenza': scadenza as String,
-        'stato': stato as String,
-        'descrizione': descrizione as String,
-        'completato': completato as int?,
-        'motivazioneFallimento': motivazioneFallimento as String?,
-      } in progettoMaps)
+            'nome': nome as String,
+            'team': team as String,
+            'scadenza': scadenza as String,
+            'stato': stato as String,
+            'descrizione': descrizione as String,
+            'completato': completato as int?,
+            'motivazioneFallimento': motivazioneFallimento as String?,
+          } in progettoMaps)
         Progetto(
           nome: nome,
           team: team,
           scadenza: scadenza,
           stato: stato,
           descrizione: descrizione,
-          completato: completato == null 
-            ? null // se completato è null allora il valore è null
-            : completato == 1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
-           motivazioneFallimento: motivazioneFallimento,
+          completato: completato == null
+              ? null // se completato è null allora il valore è null
+              : completato ==
+                  1, // 'completato' se non è null allora deve essere un booleano ma nella tabella è un integer
+          motivazioneFallimento: motivazioneFallimento,
         ),
     ];
   }
@@ -269,42 +265,43 @@ class DatabaseHelper {
   // Ricorda: '''stato IN ('attivo', 'sospeso', 'archiviato')'''
   Future<List<Progetto>?> getProgettiByState(String stato) async {
     // se lo stato richiesto è non valido ritorna un errore
-    if(!['attivo', 'sospeso', 'archiviato'].contains(stato)) {
+    if (!['attivo', 'sospeso', 'archiviato'].contains(stato)) {
       return Error.throwWithStackTrace(
-        '''Richiesto uno stato non valido dei progetti. Lo stato di un progetto 
+          '''Richiesto uno stato non valido dei progetti. Lo stato di un progetto 
         può essere uno dei seguenti valori: 'attivo', 'sospeso', 'archiviato',
-        è stato richiesto lo stato: $stato ''', 
-        StackTrace.current
-      );
+        è stato richiesto lo stato: $stato ''', StackTrace.current);
     }
 
     final db = await database;
 
     // query per ottenere i progetti con lo stato richiesto
-    final List<Map<String, Object?>> progetti = await db.query(
-      'progetto',
-      where: 'stato = ?',
-      whereArgs: [stato]
-    );
+    final List<Map<String, Object?>> progetti =
+        await db.query('progetto', where: 'stato = ?', whereArgs: [stato]);
 
-    if(progetti.isEmpty) {
+    if (progetti.isEmpty) {
       return null;
     } else {
       return [
-        for ( final {
-          'nome': nome as String,
-          'team': team as String,
-          'scadenza': scadenza as String,
-          // 'stato': stato as String, è passato come parametro
-          'descrizione': descrizione as String,
-          'completato': completato as int,
-          'motivazioneFallimento': motiv as String,
-        } in progetti) 
-          Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, // lo stato è quello passato come argomento
-            descrizione: descrizione, completato: completato == 1, motivazioneFallimento: motiv),
+        for (final {
+              'nome': nome as String,
+              'team': team as String,
+              'scadenza': scadenza as String,
+              // 'stato': stato as String, è passato come parametro
+              'descrizione': descrizione as String,
+              'completato': completato as int,
+              'motivazioneFallimento': motiv as String,
+            } in progetti)
+          Progetto(
+              nome: nome,
+              team: team,
+              scadenza: scadenza,
+              stato: stato, // lo stato è quello passato come argomento
+              descrizione: descrizione,
+              completato: completato == 1,
+              motivazioneFallimento: motiv),
       ];
     }
-  } 
+  }
 
   /*
     ### INTERAZIONE CON I TEAM ###
@@ -322,12 +319,10 @@ class DatabaseHelper {
   // Esegue un UPDATE sulla tabella team
   Future<int> updateTeam(Team team) async {
     final db = await database;
-    return await db.update(
-      'team', 
-      team.toMap(),
-      where: 'nome = ?',
-      whereArgs: [team.nome],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.update('team', team.toMap(),
+        where: 'nome = ?',
+        whereArgs: [team.nome],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Elimina un team dalla tabella team
@@ -370,18 +365,15 @@ class DatabaseHelper {
           FROM partecipazione
           WHERE team = ? AND ruolo = 1
         )
-      '''
-      , [team.nome]
-    );
+      ''', [team.nome]);
 
     return Utente(
-      matricola: utente[0]['matricola'] as String, 
-      nome: utente[0]['nome'] as String, 
-      cognome: utente[0]['cognome'] as String
-    );
+        matricola: utente[0]['matricola'] as String,
+        nome: utente[0]['nome'] as String,
+        cognome: utente[0]['cognome'] as String);
   }
 
-  // Restituisce una lista contenente tutti i team della tabella 'team' 
+  // Restituisce una lista contenente tutti i team della tabella 'team'
   Future<List<Team>> getAllTeams() async {
     final db = await database;
 
@@ -394,7 +386,7 @@ class DatabaseHelper {
         Team(nome: nome),
     ];
   }
-  
+
   /*
     ### INTERAZIONE CON LE TASK ###
   */
@@ -411,12 +403,10 @@ class DatabaseHelper {
   // Esegue un UPDATE sulla tabella utente
   Future<int> updateTask(Task task) async {
     final db = await database;
-    return await db.update(
-      'task', 
-      task.toMap(),
-      where: 'id = ?',
-      whereArgs: [task.id],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.update('task', task.toMap(),
+        where: 'id = ?',
+        whereArgs: [task.id],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Elimina un task dalla tabella utente
@@ -450,7 +440,7 @@ class DatabaseHelper {
     }
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  // Restituisce una lista contenente tutti gli utenti della tabella 'utente'
   Future<List<Task>> getAllTasks() async {
     final db = await database;
 
@@ -463,7 +453,11 @@ class DatabaseHelper {
             'attivita': attivita as String,
             'completato': completato as int,
           } in taskMaps)
-        Task(id: id, progetto: progetto, attivita: attivita, completato: completato == 1),
+        Task(
+            id: id,
+            progetto: progetto,
+            attivita: attivita,
+            completato: completato == 1),
     ];
   }
 
@@ -484,12 +478,10 @@ class DatabaseHelper {
   // Esegue un UPDATE sulla tabella partecipazione
   Future<int> updatePartecipazione(Partecipazione part) async {
     final db = await database;
-    return await db.update(
-      'partecipazione', 
-      part.toMap(),
-      where: 'utente = ? AND team = ?',
-      whereArgs: [part.utente, part.team],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.update('partecipazione', part.toMap(),
+        where: 'utente = ? AND team = ?',
+        whereArgs: [part.utente, part.team],
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Elimina un utente dalla tabella partecipazione
@@ -502,8 +494,9 @@ class DatabaseHelper {
     );
   }
 
-  // cerca una partecipazione data utente e team 
-  Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(String matricolaUtente, String nomeTeam) async {
+  // cerca una partecipazione data utente e team
+  Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(
+      String matricolaUtente, String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
       'partecipazione',
@@ -515,10 +508,9 @@ class DatabaseHelper {
       return null;
     } else {
       return Partecipazione(
-        utente: parts[0]['utente'] as String, 
-        team: parts[0]['team'] as String,
-        ruolo: (parts[0]['ruolo'] as int) == 1
-      );
+          utente: parts[0]['utente'] as String,
+          team: parts[0]['team'] as String,
+          ruolo: (parts[0]['ruolo'] as int) == 1);
     }
   }
 
@@ -534,34 +526,35 @@ class DatabaseHelper {
         FROM utente JOIN partecipazione 
           ON utente.matricola = partecipazione.utente
         WHERE partecipazione.team = ?
-    '''
-    , [nomeTeam]);
+    ''', [nomeTeam]);
     // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
-    return utentiDelTeam.map((m) => Utente(
-      matricola: m['matricola'] as String,
-      nome: m['nome'] as String,
-      cognome: m['cognome'] as String,
-    )).toList();
+    return utentiDelTeam
+        .map((m) => Utente(
+              matricola: m['matricola'] as String,
+              nome: m['nome'] as String,
+              cognome: m['cognome'] as String,
+            ))
+        .toList();
   }
 
-  Future<int ?> countUtentiTeam(String nomeTeam) async {
+  Future<int?> countUtentiTeam(String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> conteggio = await db.rawQuery('''
         SELECT count(*)
         FROM utente JOIN partecipazione 
           ON utente.matricola = partecipazione.utente
         WHERE partecipazione.team = ?
-    '''
-    , [nomeTeam]);
+    ''', [nomeTeam]);
     int? numUtentiTeam = Sqflite.firstIntValue(conteggio);
     return numUtentiTeam;
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  // Restituisce una lista contenente tutti gli utenti della tabella 'utente'
   Future<List<Partecipazione>> getAllPartecipazioni() async {
     final db = await database;
 
-    final List<Map<String, Object?>> utenteMaps = await db.query('partecipazione');
+    final List<Map<String, Object?>> utenteMaps =
+        await db.query('partecipazione');
 
     return [
       for (final {
@@ -577,19 +570,37 @@ class DatabaseHelper {
    * ## METODO DI TESTING
    */
   Future<void> populateDatabase() async {
-    
     // Crea alcune istanze di Utente
-    Utente utente1 = Utente(matricola: '00001', nome: 'Mario', cognome: 'Rossi');
-    Utente utente2 = Utente(matricola: '00002', nome: 'Luigi', cognome: 'Verdi');
-    Utente utente3 = Utente(matricola: '00003', nome: 'Anna', cognome: 'Bianchi');
+    Utente utente1 =
+        Utente(matricola: '00001', nome: 'Mario', cognome: 'Rossi');
+    Utente utente2 =
+        Utente(matricola: '00002', nome: 'Luigi', cognome: 'Verdi');
+    Utente utente3 =
+        Utente(matricola: '00003', nome: 'Anna', cognome: 'Bianchi');
 
     // Crea alcune istanze di Team
     Team team1 = Team(nome: 'Team Alpha');
     Team team2 = Team(nome: 'Team Beta');
 
-    Progetto progetto1 = Progetto(nome: 'progetto1', team: 'Team Alpha', stato: 'attivo', scadenza: '2020-05-20', descrizione: 'progetto test1');
-    Progetto progetto2 = Progetto(nome: 'progetto2', team: 'Team Beta', stato: 'sospeso', scadenza: '2020-05-20', descrizione: 'progetto test1');
-    Progetto progetto3 = Progetto(nome: 'progetto3', team: 'Team Alpha', stato: 'archiviato', scadenza: '2020-05-20', descrizione: 'progetto test1', completato: true);
+    Progetto progetto1 = Progetto(
+        nome: 'progetto1',
+        team: 'Team Alpha',
+        stato: 'attivo',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1');
+    Progetto progetto2 = Progetto(
+        nome: 'progetto2',
+        team: 'Team Beta',
+        stato: 'sospeso',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1');
+    Progetto progetto3 = Progetto(
+        nome: 'progetto3',
+        team: 'Team Alpha',
+        stato: 'archiviato',
+        scadenza: '2020-05-20',
+        descrizione: 'progetto test1',
+        completato: true);
 
     // Inserisci gli utenti nel database
     await insertUtente(utente1);
@@ -601,14 +612,43 @@ class DatabaseHelper {
     await insertTeam(team2);
 
     // team alpha
-    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team1.nome, ruolo: false));
-    await insertPartecipazione(Partecipazione(utente: utente2.matricola, team: team1.nome, ruolo: true));
+    await insertPartecipazione(Partecipazione(
+        utente: utente1.matricola, team: team1.nome, ruolo: false));
+    await insertPartecipazione(Partecipazione(
+        utente: utente2.matricola, team: team1.nome, ruolo: true));
     // team beta
-    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team2.nome, ruolo: true));
-    await insertPartecipazione(Partecipazione(utente: utente3.matricola, team: team2.nome, ruolo: false));
+    await insertPartecipazione(Partecipazione(
+        utente: utente1.matricola, team: team2.nome, ruolo: true));
+    await insertPartecipazione(Partecipazione(
+        utente: utente3.matricola, team: team2.nome, ruolo: false));
 
     await insertProgetto(progetto1);
     await insertProgetto(progetto2);
     await insertProgetto(progetto3);
+  }
+
+  //prova visualizza progetto
+  Future<List<Task>> getTasksByProject(String projectName) async {
+    final db = await database;
+    final List<Map<String, Object?>> taskMaps = await db.query(
+      'task',
+      where: 'progetto = ?',
+      whereArgs: [projectName],
+    );
+
+    return [
+      for (final {
+            'id': id as int,
+            'progetto': progetto as String,
+            'attivita': attivita as String,
+            'completato': completato as int,
+          } in taskMaps)
+        Task(
+          id: id,
+          progetto: progetto,
+          attivita: attivita,
+          completato: completato == 1,
+        ),
+    ];
   }
 }
