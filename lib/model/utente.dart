@@ -5,9 +5,9 @@ class Utente {
   String cognome;
 
   Utente({
-      required this.matricola,
-      required this.cognome,
-      required this.nome,
+    required this.matricola,
+    required this.cognome,
+    required this.nome,
   });
 
   // Converte un Utente in una Map; le chiavi sono le colonne

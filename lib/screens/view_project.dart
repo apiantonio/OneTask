@@ -5,10 +5,11 @@ import '../model/progetto.dart';
 
 /*da completare MARCO MANCINO, solo prova per vedere utilizzo della navigazione*/
 class ViewProject extends StatelessWidget {
-  const ViewProject({super.key});
+  final String projectName;
+  const ViewProject({super.key, required this.projectName});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: OTAppBar(title: 'Visualizza progetto'),
       body: const Text('Vedi progetto'),
