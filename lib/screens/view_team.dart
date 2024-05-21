@@ -38,37 +38,42 @@ class TeamDetails extends StatelessWidget {
           return Center(child: Text('Team non trovato'));
         } else {
           final data = snapshot.data!;
+          List<Widget> children = [
+            Text('${data.team.nome}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            SizedBox(height: 16),
+            Text('Responsabile:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('${data.manager.nome} ${data.manager.cognome}',
+                style: TextStyle(fontSize: 18)),
+            SizedBox(height: 16),
+            Text('Membri del Team:',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          ];
+
+          children.addAll(data.members
+              .map((utente) => ListTile(
+                    title: Text('${utente.nome} ${utente.cognome}'),
+                    subtitle: Text('Matricola: ${utente.matricola}'),
+                  ))
+              .toList());
+
+          children.add(SizedBox(height: 16));
+          children.add(Text('Progetti associati al team:',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
+
+          children.addAll(data.progetti
+              .map((progetto) => ListTile(
+                    title: Text(progetto.nome),
+                  ))
+              .toList());
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${data.team.nome}',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 16),
-                  Text('Responsabile:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('${data.manager.nome} ${data.manager.cognome}',
-                      style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 16),
-                  Text('Membri del Team:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  ...data.members.map((utente) => ListTile(
-                        title: Text('${utente.nome} ${utente.cognome}'),
-                        subtitle: Text('Matricola: ${utente.matricola}'),
-                      )),
-                  SizedBox(height: 16),
-                  Text('Progetti associati al team:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  ...data.progetti.map((progetto) => ListTile(
-                        title: Text(progetto.nome),
-                      )),
-                ],
+                children: children,
               ),
             ),
           );
