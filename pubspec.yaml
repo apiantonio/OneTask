@@ -1,5 +1,5 @@
 name: OneTask
-description: "A new Flutter project."
+description: "App di gestione progetti e team"
 publish_to: 'none'
 version: 0.1.0
 
@@ -12,11 +12,18 @@ dependencies:
   path: ^1.9.0
   sqflite: ^2.3.3+1
   sqflite_common_ffi: any
+  table_calendar: ^3.1.1      
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_native_splash: ^1.2.1
 
 flutter:
   uses-material-design: true
+
+flutter_native_splash:
+  color: "#C1BDB2"
+  image: assets/splash.png
+

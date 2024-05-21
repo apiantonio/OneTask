@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:OneTask/screens/add_user.dart';
 import '../screens/projects_and_teams.dart';
+import '../screens/calendar.dart';
 import '../main.dart';
 
 class OTDrawer extends StatefulWidget {
@@ -71,7 +72,10 @@ class _OTDrawerState extends State<OTDrawer> {
             leading: const Icon(Icons.calendar_today),
             title: const Text('Calendario'),
             onTap: () { 
-              //passa a quella pagina e poi
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const OTCalendar())
+              );
             },
           ),       
         ],
