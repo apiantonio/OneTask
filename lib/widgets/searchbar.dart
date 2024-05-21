@@ -1,6 +1,5 @@
 import 'package:OneTask/screens/modify_project.dart';
 import 'package:OneTask/screens/modify_team.dart';
-import 'package:OneTask/screens/projects_and_teams.dart';
 import 'package:OneTask/screens/view_project.dart';
 import 'package:OneTask/widgets/search_tile.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,11 @@ import 'package:OneTask/services/database_helper.dart';
 
 class SearchBarDelegate extends SearchDelegate {
   
+  // hint text nella barra di ricerca
+  @override
+  String get searchFieldLabel => 'Cerca team o progetto'; 
+
+
   // pulsante per cancellare il testo
   @override
   List<Widget>? buildActions(BuildContext context) {
@@ -48,14 +52,14 @@ class SearchBarDelegate extends SearchDelegate {
     // salvo i team il cui nome contiene la query scritta dall'utente
     final teamResults = teams
         .where((team) => team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
-        .map((team) => {'nome': team?.nome, 'type': 'Team', 'elem': team})
+        .map((team) => {'nome': team?.nome, 'type': 'Team'})
         .toList();
 
     // salvo i progetti il cui nome contiene la query scritta dall'utente
     final progettoResults = progetti
         .where((progetto) =>
             progetto?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
-        .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto', 'elem': progetto})
+        .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto'})
         .toList();
 
     return teamResults + progettoResults;
@@ -71,7 +75,7 @@ class SearchBarDelegate extends SearchDelegate {
           return Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-          return Center(child: Text('Nessun risultato trovato.'));
+          return Center(child: Text('Non ci sono team o progetti al momento.'));
         }
 
         final results = snapshot.data as List<Map<String, dynamic>>;
@@ -106,10 +110,13 @@ class SearchBarDelegate extends SearchDelegate {
               );
             }
             
-            return SearchTile(
-              onTapElem: onTapElem, 
-              onPressedModify: onPressedModify, 
-              result: result
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SearchTile(
+                onTapElem: onTapElem, 
+                onPressedModify: onPressedModify, 
+                result: result
+              ),
             );
           },
         );
@@ -162,10 +169,13 @@ class SearchBarDelegate extends SearchDelegate {
               );
             }
             
-            return SearchTile(
-              onTapElem: onTapElem, 
-              onPressedModify: onPressedModify, 
-              result: result
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SearchTile(
+                onTapElem: onTapElem, 
+                onPressedModify: onPressedModify, 
+                result: result
+              ),
             );
           },
         );
