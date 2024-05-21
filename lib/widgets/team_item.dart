@@ -26,8 +26,7 @@ class TeamItem extends StatelessWidget {
         leading: MemberCounter(
           nomeTeam: team.nome,
         ),
-        title: Expanded(
-          child: Column(children: [
+        title: Column(children: [
             Text(
               team.nome,
               softWrap: true, //se non c'è abbastanza spazio manda a capo
@@ -51,7 +50,7 @@ class TeamItem extends StatelessWidget {
                     );
                   }
                 }),
-          ]),
+          ]
         ),
         trailing: IconButton(
           //icona a destra
