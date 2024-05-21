@@ -18,23 +18,23 @@ class ViewProject extends StatelessWidget {
       ),
       body: ProjectDetails(projectName: projectName),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.delete),
+        child: const Icon(Icons.delete),
         onPressed: () async {
           bool? confirmDelete = await showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Conferma Eliminazione'),
-                content: Text('Sei sicuro di voler eliminare questo progetto?'),
+                title: const Text('Conferma Eliminazione'),
+                content: const Text('Sei sicuro di voler eliminare questo progetto?'),
                 actions: [
                   TextButton(
-                    child: Text('Annulla'),
+                    child: const Text('Annulla'),
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
                   ),
                   TextButton(
-                    child: Text('Elimina'),
+                    child: const Text('Elimina'),
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
@@ -57,117 +57,123 @@ class ViewProject extends StatelessWidget {
   }
 }
 
-class ProjectDetails extends StatefulWidget {
-  final String projectName;
-
-  const ProjectDetails({super.key, required this.projectName});
-
-  @override
-  ProjectDetailsState createState() {
-    return ProjectDetailsState();
-  }
-}
-
-class ProjectDetailsState extends State<ProjectDetails> {
-  Progetto? _progetto;
-  List<Task>? _tasks;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProjectData();
-  }
-
-  Future<void> _loadProjectData() async {
-    Progetto? progetto =
-        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
-    List<Task>? tasks =
-        await DatabaseHelper.instance.getTasksByProject(widget.projectName);
-    setState(() {
-      _progetto = progetto;
-      _tasks = tasks;
-    });
-  }
-
-//perchè non funfa?
-  Future<void> _updateTaskCompletion(Task task, bool? value) async {
-    if (value != null) {
-      task.completato = value;
-      await DatabaseHelper.instance.updateTask(task);
-      setState(() {
-        // Aggiorna la UI
-      });
-    }
-  }
-
-//da valure se va bene
-  Color _getProjectStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'sospeso':
-        return Colors.orange;
-      case 'archiviato':
-        return Colors.red;
-      default:
-        return Colors.green;
-    }
-  }
+class ProjectDetails extends StatelessWidget {
+  ProjectDetails({super.key, required this.projectName});
+  final String projectName; 
 
   @override
   Widget build(BuildContext context) {
-    if (_progetto == null || _tasks == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                _progetto!.nome,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 10),
-              Icon(
-                Icons.circle,
-                color: _getProjectStatusColor(_progetto!.stato),
-                size: 12,
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Descrizione: ${_progetto!.descrizione}',
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Team: ${_progetto!.team}',
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Scadenza: ${_progetto!.scadenza}',
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Tasks:',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          ..._tasks!.map((task) {
-            return CheckboxListTile(
-              title: Text(task.attivita),
-              value: task.completato,
-              onChanged: (bool? value) {
-                _updateTaskCompletion(task, value);
-              },
-            );
-          }).toList(),
-        ],
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: FutureBuilder<Progetto?>(
+          future: DatabaseHelper.instance.selectProgettoByNome(projectName),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return const Text('Errore caricamento infoProgetto dal db');
+            } else {
+              //se non da problemi crea/restituisci la lista di teams
+              Progetto? progetto = snapshot.data;
+              if (progetto != null) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      progetto.nome,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Stato:${progetto.stato}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                      )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Scadenza:${progetto.scadenza}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                      )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Descrizione:${progetto.descrizione}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                      )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Team:${progetto.team}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                      )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      'I tuoi tasks',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )
+                    ),
+                    FutureBuilder<List<Task>>(
+                      future: DatabaseHelper.instance.getTasksByProject(projectName),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return const Text('Errore caricamento tasks del progetto dal db');
+                        } else {
+                          List<Task?> tasks = snapshot.data ?? [];
+                          return Column(
+                                children: tasks.map((task) =>
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 8.0),
+                                    child: Row(
+                                        children: [
+                                          _iconCheck(task),
+                                          Text(task!.attivita),
+                                        ]
+                                    )
+                                    //Container(color: Colors.blue, width: 30, height: 30)
+                                  ),
+                                ).toList(),
+                          );
+                        }
+                      }
+                    ),
+                  ],
+                );
+              } else {
+                return const Text('Progetto non trovato');
+              }
+              
+            }
+          }
+        ),
     );
   }
+
+  Icon _iconCheck(task){
+    return Icon(task.completato ? Icons.check_box : Icons.check_box_outline_blank);
+  }
 }
+
+
+
