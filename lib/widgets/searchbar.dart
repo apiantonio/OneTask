@@ -9,11 +9,9 @@ import 'package:OneTask/screens/view_team.dart';
 import 'package:OneTask/services/database_helper.dart';
 
 class SearchBarDelegate extends SearchDelegate {
-  
   // hint text nella barra di ricerca
   @override
-  String get searchFieldLabel => 'Cerca team o progetto'; 
-
+  String get searchFieldLabel => 'Cerca team o progetto';
 
   // pulsante per cancellare il testo
   @override
@@ -47,11 +45,13 @@ class SearchBarDelegate extends SearchDelegate {
   Future<List<Map<String, dynamic>>> _searchResults(String query) async {
     // prendo tutti i team e tutti i progetti dal DB
     final List<Team?> teams = await DatabaseHelper.instance.getAllTeams();
-    final List<Progetto?> progetti = await DatabaseHelper.instance.getAllProgetti();
+    final List<Progetto?> progetti =
+        await DatabaseHelper.instance.getAllProgetti();
 
     // salvo i team il cui nome contiene la query scritta dall'utente
     final teamResults = teams
-        .where((team) => team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
+        .where((team) =>
+            team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
         .map((team) => {'nome': team?.nome, 'type': 'Team'})
         .toList();
 
@@ -86,44 +86,47 @@ class SearchBarDelegate extends SearchDelegate {
             var result = results[index];
 
             // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
-            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            VoidCallback onTapElem =
+                () => {}; // funzione associata al tap sull'elemento della lista
+            VoidCallback onPressedModify = () =>
+                {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
-            if(result['type'] == 'Team') {               
+            if (result['type'] == 'Team') {
               onTapElem = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ViewTeam())
-              );
-              onPressedModify = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ModifyTeam())
-              );
-            } else if(result['type'] == 'Progetto') { // altrimenti per progetto
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ViewTeam(
+                            teamName: nomeElem,
+                          )));
+              onPressedModify = () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ModifyTeam()));
+            } else if (result['type'] == 'Progetto') {
+              // altrimenti per progetto
               onTapElem = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) =>  ViewProject(projectName: nomeElem))
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ViewProject(projectName: nomeElem)));
               onPressedModify = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ModifyProject(projectName: nomeElem)));
             }
-            
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchTile(
-                onTapElem: onTapElem, 
-                onPressedModify: onPressedModify, 
-                result: result
-              ),
+                  onTapElem: onTapElem,
+                  onPressedModify: onPressedModify,
+                  result: result),
             );
           },
         );
       },
     );
   }
-
 
   // Visualizza i risultati della ricerca
   @override
@@ -140,48 +143,50 @@ class SearchBarDelegate extends SearchDelegate {
 
         final results = snapshot.data as List<Map<String, dynamic>>;
 
-         return ListView.builder(
+        return ListView.builder(
           itemCount: results.length,
           itemBuilder: (context, index) {
             final result = results[index];
 
-            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            VoidCallback onTapElem =
+                () => {}; // funzione associata al tap sull'elemento della lista
+            VoidCallback onPressedModify = () =>
+                {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
-            if(result['type'] == 'Team') {               
+            if (result['type'] == 'Team') {
               onTapElem = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ViewTeam())
-              );
-              onPressedModify = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ModifyTeam())
-              );
-            } else if(result['type'] == 'Progetto') { // altrimenti per progetto
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ViewTeam(
+                            teamName: nomeElem,
+                          )));
+              onPressedModify = () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ModifyTeam()));
+            } else if (result['type'] == 'Progetto') {
+              // altrimenti per progetto
               onTapElem = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ViewProject(projectName: nomeElem)));
               onPressedModify = () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ModifyProject(projectName: nomeElem)));
             }
-            
+
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchTile(
-                onTapElem: onTapElem, 
-                onPressedModify: onPressedModify, 
-                result: result
-              ),
+                  onTapElem: onTapElem,
+                  onPressedModify: onPressedModify,
+                  result: result),
             );
           },
         );
       },
     );
   }
-
 }
-
