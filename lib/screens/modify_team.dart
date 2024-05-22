@@ -51,11 +51,23 @@ class EditTeamFormState extends State<EditTeamForm> {
       });
     }
   }*/
+  @override
+  void initState() {
+    super.initState();
+    _loadTeamData();
+  }
 
-  Future<List<Utente>> _getUtenti() async {
-    List<Utente>? users =
-        await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
-    return users ?? [];
+  Future<void> _loadTeamData() async {
+    Team? team =
+        await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
+    if (team != null) {
+      List<Utente>? users =
+          await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
+      setState(() {
+        _nomeController.text = team.nome;
+        userTeamList.addAll(users ?? []);
+      });
+    }
   }
 
   @override
@@ -124,7 +136,7 @@ class EditTeamFormState extends State<EditTeamForm> {
                     return RadioListTile(
                       value: utente,
                       groupValue: selected,
-                      onChanged: (value) => setState(() {
+                      onChanged: (Utente? value) => setState(() {
                         selected = value;
                       }),
                       title: Text(utente.infoUtente()),
