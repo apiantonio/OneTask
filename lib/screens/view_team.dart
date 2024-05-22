@@ -15,6 +15,43 @@ class ViewTeam extends StatelessWidget {
     return Scaffold(
       appBar: OTAppBar(title: 'Visualizza Team'),
       body: TeamDetails(teamName: teamName),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.delete),
+        onPressed: () async {
+          bool? confirmDelete = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Conferma Eliminazione'),
+                content:
+                    const Text('Sei sicuro di voler eliminare questo Team?'),
+                actions: [
+                  TextButton(
+                    child: const Text('Annulla'),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Elimina'),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+          if (confirmDelete == true) {
+            Team? team =
+                await DatabaseHelper.instance.selectTeamByNome(teamName);
+            if (team != null) {
+              await DatabaseHelper.instance.deleteTeam(team);
+              Navigator.of(context).pop(); // Torna alla schermata precedente
+            }
+          }
+        },
+      ),
     );
   }
 }
@@ -44,62 +81,41 @@ class TeamDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    data.team.nome,
-                    style: const TextStyle(
-                      fontSize: 24, 
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                  const SizedBox(
-                    height: 16
-                  ),
-                  const Text(
-                    'Responsabile:',
-                    style: TextStyle(
-                      fontSize: 20, 
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                  Text(
-                    '${data.manager.nome} ${data.manager.cognome}',
-                    style: const TextStyle(fontSize: 18)
-                  ),
-                  const SizedBox(
-                    height: 16
-                  ),
-                  const Text(
-                    'Membri del Team:',
-                    style: TextStyle(
-                      fontSize: 20, 
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
+                  Text(data.team.nome,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  const Text('Responsabile:',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('${data.manager.nome} ${data.manager.cognome}',
+                      style: const TextStyle(fontSize: 18)),
+                  const SizedBox(height: 16),
+                  const Text('Membri del Team:',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: data.members.map((utente) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text('${utente.nome} ${utente.cognome}'),
-                        subtitle: Text('Matricola: ${utente.matricola}'),
-                      ))
-                    .toList()
-                  ),
-                  const SizedBox(
-                    height: 16
-                  ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: data.members
+                          .map((utente) => ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text('${utente.nome} ${utente.cognome}'),
+                                subtitle:
+                                    Text('Matricola: ${utente.matricola}'),
+                              ))
+                          .toList()),
+                  const SizedBox(height: 16),
                   const Text('Progetti associati al team:',
-                    style: TextStyle(
-                      fontSize: 20, 
-                      fontWeight: FontWeight.bold
-                      )
-                  ),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: data.progetti.map((progetto) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(progetto.nome),
-                      )).toList()
-                  ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: data.progetti
+                          .map((progetto) => ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(progetto.nome),
+                              ))
+                          .toList()),
                 ],
               ),
             ),
@@ -124,8 +140,7 @@ class TeamDetails extends StatelessWidget {
     }
 
     return TeamDetailsData(
-        team: team, manager: manager, members: members, progetti: progetti
-    );
+        team: team, manager: manager, members: members, progetti: progetti);
   }
 }
 

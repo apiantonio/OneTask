@@ -33,9 +33,9 @@ class EditProjectForm extends StatefulWidget {
 
 class EditProjectFormState extends State<EditProjectForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _descrizioneController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _descrizioneController = TextEditingController();
   TextEditingController _motivazioneController = TextEditingController();
   String? _selectedTeam;
   String _selectedStato = 'attivo';
@@ -286,7 +286,7 @@ class EditProjectFormState extends State<EditProjectForm> {
                                     ),
                                   ))
                               .toList()
-                          : [Text('Nessun task disponibile')],
+                          : [const Text('Nessun task disponibile')],
                     ),
                   ],
                 ),
