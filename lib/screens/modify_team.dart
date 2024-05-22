@@ -153,18 +153,15 @@ class EditTeamFormState extends State<EditTeamForm> {
                   } else {
                     List<Utente> utenti = snapshot.data ?? [];
                     return Column(
-                      children: utenti
-                          .map(
-                            (utente) => Container(
-                              margin: const EdgeInsets.only(bottom: 8.0),
-                              child: UserItem(
-                                utente: utente,
-                                onSelect: _addUtente,
-                                onDeselect: _removeUtente,
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      children: utenti.map(
+                        (utente) => Container(
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                          child: UserItem(
+                          utente: utente,
+                          onSelect: _addUtente,
+                          onDeselect: _removeUtente,
+                        ),
+                      )).toList(),
                     );
                   }
                 },
@@ -202,24 +199,26 @@ class EditTeamFormState extends State<EditTeamForm> {
     final db = DatabaseHelper.instance;
     final nomeTeam = _nomeController.text;
 
-    await db.selectTeamByNome(nomeTeam).then((teamPresente) {
+    await db.selectTeamByNome(nomeTeam)
+    .then((teamPresente) async {
       if (teamPresente != null) {
         // team con lo stesso nome già presente
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Inserisci un nome non già assegnato ad un altro team!')),
+          const SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
         );
       } else {
         // inserisco il Team nella tabella Team
-        db.updateTeam(Team(nome: nomeTeam));
+        db.updateTeam(widget.teamName, Team(nome: nomeTeam));
         // ora inserisco i componenti del team nella tabella partecipazione
-        userTeamList.forEach((utente) => db.updatePartecipazione(Partecipazione(
+        for(var utente in userTeamList) {
+          Partecipazione? oldPart = await db.selectPartecipazioneByUtenteAndTeam(utente.matricola, nomeTeam);
+          Partecipazione newPart = Partecipazione(
             utente: utente.matricola,
             team: nomeTeam,
-            ruolo: utente ==
-                selected // se selected == true allora l'utente è il manager del team
-            )));
+            ruolo: utente == selected // se selected == true allora l'utente è il manager del team
+          );
+          db.updatePartecipazione(oldPart, newPart);
+        }
         // Una volta inseriti mostriamo una SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Team Modificato!')),

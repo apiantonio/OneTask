@@ -46,11 +46,9 @@ class EditProjectFormState extends State<EditProjectForm> {
   }
 
   Future<void> _loadProjectData() async {
-    Progetto? progetto =
-        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
+    Progetto? progetto = await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
     if (progetto != null) {
-      List<Task> tasks =
-          await DatabaseHelper.instance.getTasksByProject(widget.projectName);
+      List<Task> tasks = await DatabaseHelper.instance.getTasksByProject(widget.projectName);
       setState(() {
         _nomeController.text = progetto.nome;
         _descrizioneController.text = progetto.descrizione ?? '';
@@ -252,7 +250,7 @@ class EditProjectFormState extends State<EditProjectForm> {
         const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
       );
     } else {
-      await DatabaseHelper.instance.updateProgetto(updatedProgetto);
+      await DatabaseHelper.instance.updateProgetto(widget.projectName, updatedProgetto);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Progetto aggiornato con successo!')),
