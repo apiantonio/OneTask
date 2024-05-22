@@ -136,7 +136,8 @@ class _ProjectDetailsState extends State<ProjectDetails> {
                               onChanged: (bool? value) {
                                 setState(() {
                                   task.completato = value ?? false;
-                                  DatabaseHelper.instance.updateTask(task);
+                                  DatabaseHelper.instance
+                                      .updateTaskVecchio(task);
                                 });
                               },
                             );

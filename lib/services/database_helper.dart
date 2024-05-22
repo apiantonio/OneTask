@@ -442,6 +442,15 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  // codice vecchio
+  Future<int> updateTaskVecchio(Task task) async {
+    final db = await database;
+    return await db.update('task', task.toMap(),
+        where: 'id = ?',
+        whereArgs: [task.id],
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
 //metodo marco per aggiornare le task
   Future<void> updateTaskProjectName(int taskId, String newProjectName) async {
     final db = await database;
