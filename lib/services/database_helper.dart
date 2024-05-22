@@ -686,16 +686,12 @@ class DatabaseHelper {
     await insertTeam(team2);
 
     // team alpha
-    await insertPartecipazione(Partecipazione(
-        utente: utente1.matricola, team: team1.nome, ruolo: false));
-    await insertPartecipazione(Partecipazione(
-        utente: utente2.matricola, team: team1.nome, ruolo: true));
+    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team1.nome, ruolo: false));
+    await insertPartecipazione(Partecipazione(utente: utente2.matricola, team: team1.nome, ruolo: true));
 
     // team beta
-    await insertPartecipazione(Partecipazione(
-        utente: utente1.matricola, team: team2.nome, ruolo: true));
-    await insertPartecipazione(Partecipazione(
-        utente: utente3.matricola, team: team2.nome, ruolo: false));
+    await insertPartecipazione(Partecipazione(utente: utente1.matricola, team: team2.nome, ruolo: true));
+    await insertPartecipazione(Partecipazione(utente: utente3.matricola, team: team2.nome, ruolo: false));
 
     await insertProgetto(progetto1);
     await insertProgetto(progetto2);
