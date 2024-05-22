@@ -147,7 +147,11 @@ class TeamViewState extends State<TeamView> {
 
   void _onEditTeam(team) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ModifyTeam()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ModifyTeam(
+                  teamName: team.nome,
+                )));
   }
 }
 
