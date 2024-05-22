@@ -266,6 +266,11 @@ class NewProjectFormState extends State<NewProjectForm> {
           scadenza: _dateController.text,
           descrizione: _descrizioneController.text,
         );
+        
+        // associa il progetto alle tasks
+        for (var task in _tasks) {
+          task.progetto = newProgetto.nome;
+        }
 
         final db = DatabaseHelper.instance;      
         
