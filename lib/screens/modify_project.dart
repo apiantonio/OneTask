@@ -33,9 +33,9 @@ class EditProjectForm extends StatefulWidget {
 
 class EditProjectFormState extends State<EditProjectForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nomeController = TextEditingController();
-  TextEditingController _descrizioneController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _descrizioneController = TextEditingController();
   String? _selectedTeam;
   List<Task> _tasks = [];
 
@@ -90,8 +90,7 @@ class EditProjectFormState extends State<EditProjectForm> {
                         if (_formKey.currentState!.validate()) {
                           _updateProgettoInDatabase();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Sto processando i dati...')),
+                            const SnackBar(content: Text('Sto processando i dati...')),
                           );
                         }
                       },
@@ -191,25 +190,24 @@ class EditProjectFormState extends State<EditProjectForm> {
                     // Visualizza le task iniziali caricate
                     Column(
                       children: _tasks.isNotEmpty
-                          ? _tasks
-                              .map((task) => Container(
-                                    margin: const EdgeInsets.only(bottom: 8.0),
-                                    child: TaskItem(
-                                      task: task,
-                                      onChangeTask: (updatedTask) {
-                                        setState(() {
-                                          task.completato = !task.completato;
-                                        });
-                                      },
-                                      onDeleteTask: (taskToDelete) {
-                                        setState(() {
-                                          _tasks.remove(taskToDelete);
-                                        });
-                                      },
-                                    ),
-                                  ))
-                              .toList()
-                          : [Text('Nessun task disponibile')],
+                        ? _tasks.map((task) => 
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8.0),
+                              child: TaskItem(
+                                task: task,
+                                onChangeTask: (updatedTask) {
+                                  setState(() {
+                                    task.completato = !task.completato;
+                                  });
+                                },
+                                onDeleteTask: (taskToDelete) {
+                                  setState(() {
+                                    _tasks.remove(taskToDelete);
+                                  });
+                                },
+                              ),
+                            )).toList()
+                        : [const Text('Nessun task disponibile')],
                     ),
                   ],
                 ),
@@ -248,13 +246,10 @@ class EditProjectFormState extends State<EditProjectForm> {
     );
 
     //controlla se il nome del progetto esiste gia e non è lo stesso che stiamo usando ora
-    Progetto? progettoPresente = await DatabaseHelper.instance
-        .selectProgettoByNome(updatedProgetto.nome);
-    if (progettoPresente != null &&
-        progettoPresente.nome != widget.projectName) {
+    Progetto? progettoPresente = await DatabaseHelper.instance.selectProgettoByNome(updatedProgetto.nome);
+    if (progettoPresente != null && progettoPresente.nome != widget.projectName) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Inserisci un nome del progetto non già usato!')),
+        const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
       );
     } else {
       await DatabaseHelper.instance.updateProgetto(updatedProgetto);
