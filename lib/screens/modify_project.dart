@@ -1,7 +1,9 @@
 import 'package:OneTask/model/progetto.dart';
+import 'package:OneTask/model/task.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
+import '../widgets/task_item.dart';
 import '../widgets/task_section.dart';
 
 class ModifyProject extends StatelessWidget {
@@ -35,6 +37,7 @@ class EditProjectFormState extends State<EditProjectForm> {
   TextEditingController _nomeController = TextEditingController();
   TextEditingController _descrizioneController = TextEditingController();
   String? _selectedTeam;
+  List<Task> _tasks = [];
 
   @override
   void initState() {
@@ -46,11 +49,14 @@ class EditProjectFormState extends State<EditProjectForm> {
     Progetto? progetto =
         await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
     if (progetto != null) {
+      List<Task> tasks =
+          await DatabaseHelper.instance.getTasksByProject(widget.projectName);
       setState(() {
         _nomeController.text = progetto.nome;
         _descrizioneController.text = progetto.descrizione ?? '';
         _dateController.text = progetto.scadenza;
         _selectedTeam = progetto.team;
+        _tasks = tasks;
       });
     }
   }
@@ -177,11 +183,33 @@ class EditProjectFormState extends State<EditProjectForm> {
                     ),
                     TaskApp(
                       onTasksChanged: (updatedTasks) {
-                        // aggiorna le attività nel database
-                        updatedTasks.forEach((task) async {
-                          await DatabaseHelper.instance.updateTask(task);
+                        setState(() {
+                          _tasks = updatedTasks;
                         });
                       },
+                    ),
+                    // Visualizza le task iniziali caricate
+                    Column(
+                      children: _tasks.isNotEmpty
+                          ? _tasks
+                              .map((task) => Container(
+                                    margin: const EdgeInsets.only(bottom: 8.0),
+                                    child: TaskItem(
+                                      task: task,
+                                      onChangeTask: (updatedTask) {
+                                        setState(() {
+                                          task.completato = !task.completato;
+                                        });
+                                      },
+                                      onDeleteTask: (taskToDelete) {
+                                        setState(() {
+                                          _tasks.remove(taskToDelete);
+                                        });
+                                      },
+                                    ),
+                                  ))
+                              .toList()
+                          : [Text('Nessun task disponibile')],
                     ),
                   ],
                 ),

@@ -629,6 +629,10 @@ class DatabaseHelper {
         descrizione: 'progetto test1',
         completato: true);
 
+//crea istanze per tasks MARCO
+    Task task1 = Task(
+        id: 1, progetto: 'progetto1', attivita: 'attivita', completato: false);
+
     // Inserisci gli utenti nel database
     await insertUtente(utente1);
     await insertUtente(utente2);
@@ -652,6 +656,8 @@ class DatabaseHelper {
     await insertProgetto(progetto1);
     await insertProgetto(progetto2);
     await insertProgetto(progetto3);
+//crea instanza task MARCO
+    await insertTask(task1);
   }
 
   //prova Marco per prendere tutti i task in viewproject e modify
@@ -662,6 +668,13 @@ class DatabaseHelper {
       where: 'progetto = ?',
       whereArgs: [projectName],
     );
+
+    // Log per debug
+    print('Tasks retrieved for project $projectName: ${taskMaps.length}');
+    for (var taskMap in taskMaps) {
+      print(
+          'Task: ${taskMap['attivita']} - Completed: ${taskMap['completato']}');
+    }
 
     return taskMaps.map((taskMap) {
       return Task(

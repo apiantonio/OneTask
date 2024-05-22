@@ -6,7 +6,7 @@ import './widgets/drawer.dart';
 
 void main() async {
   runApp(const OTDashboard());
-  //DatabaseHelper.instance.populateDatabase();
+  // DatabaseHelper.instance.populateDatabase();
 }
 
 class OTDashboard extends StatelessWidget {
@@ -18,12 +18,14 @@ class OTDashboard extends StatelessWidget {
 
     return MaterialApp(
       title: appTitle,
-      debugShowCheckedModeBanner: false, //così non si vede la striscia in alto a dx di debug
+      debugShowCheckedModeBanner:
+          false, //così non si vede la striscia in alto a dx di debug
       home: Scaffold(
         appBar: OTAppBar(),
         drawer: OTDrawer(),
         // body: TODO
-        floatingActionButton: const FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
+        floatingActionButton:
+            const FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
       ),
     );
   }
