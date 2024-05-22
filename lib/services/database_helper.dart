@@ -47,7 +47,11 @@ class DatabaseHelper {
           nome TEXT, 
           cognome TEXT)'''
         );
-        await db.execute('CREATE TABLE team (nome TEXT PRIMARY KEY)');
+        await db.execute('''
+          CREATE TABLE team (
+            nome TEXT PRIMARY KEY
+          )'''
+        );
         await db.execute('''
           CREATE TABLE partecipazione (
             utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
@@ -386,7 +390,7 @@ class DatabaseHelper {
   }
 
   /// query per sapere chi è il responsabile del team
-  Future<Utente?> getTeamManager(Team team) async {
+  Future<Utente> getTeamManager(Team team) async {
     final db = await database;
     // prima prendo la matricola del responsabile
     final List<Map<String, Object?>> utente = await db.rawQuery('''

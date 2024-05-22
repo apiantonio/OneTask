@@ -35,22 +35,22 @@ class EditTeamFormState extends State<EditTeamForm> {
   final _formKey = GlobalKey<FormState>();
   var listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
   final List<Utente> userTeamList = [];
-
+  final List<Utente> utentiTeamPreModifica = [];
+  late Utente responsabile;
   Utente? selected;
 
   final TextEditingController _nomeController = TextEditingController();
 
-  /* Future<void> _loadProjectData() async {
-    Team? team =
-        await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
-    if (Team != null) {
-      List<Utente>? users =
-          await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
-      setState(() {
-        _nomeController.text = team!.nome;
-      });
-    }
-  }*/
+  // Future<void> _loadProjectData() async {
+  //   Team? team = await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
+  //   if (team != null) {
+  //     List<Utente>? users = await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
+  //     setState(() {
+  //       _nomeController.text = team!.nome;
+  //     });
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -58,14 +58,21 @@ class EditTeamFormState extends State<EditTeamForm> {
   }
 
   Future<void> _loadTeamData() async {
-    Team? team =
-        await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
+    // oggetto Team del team da modificare
+    Team? team = await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
     if (team != null) {
-      List<Utente>? users =
-          await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
+      // lista di utenti del team
+      List<Utente>? users = await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
+      // Utente respo
+      responsabile = await DatabaseHelper.instance.getTeamManager(team);
+      // List<Partecipazione?>? parts = []; 
+      // users?.map((u) async => 
+      //   parts.add(await DatabaseHelper.instance.selectPartecipazioneByUtenteAndTeam(u.matricola, widget.teamName)
+      // ));
       setState(() {
         _nomeController.text = team.nome;
         userTeamList.addAll(users ?? []);
+        utentiTeamPreModifica.addAll(users ?? []);
       });
     }
   }
@@ -85,15 +92,12 @@ class EditTeamFormState extends State<EditTeamForm> {
                   if (_formKey.currentState!.validate()) {
                     if (userTeamList.length < 2) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Servono almeno 2 persone nel team')),
+                        const SnackBar(content: Text('Servono almeno 2 persone nel team')),
                       );
                     } else {
                       if (selected == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Per favore, seleziona un responsabile per il tuo team')),
+                          const SnackBar(content: Text('Per favore, seleziona un responsabile per il tuo team')),
                         );
                       } else {
                         _addModifiedTeam();
@@ -135,6 +139,7 @@ class EditTeamFormState extends State<EditTeamForm> {
                     final utente = userTeamList[index];
                     return RadioListTile(
                       value: utente,
+                      selected: utente.matricola == responsabile.matricola,
                       groupValue: selected,
                       onChanged: (Utente? value) => setState(() {
                         selected = value;
@@ -165,10 +170,9 @@ class EditTeamFormState extends State<EditTeamForm> {
                   } else {
                     List<Utente> utenti = snapshot.data ?? [];
                     return Column(
-                      children: utenti.map(
-                        (utente) => Container(
-                          margin: const EdgeInsets.only(bottom: 8.0),
-                          child: UserItem(
+                      children: utenti.map((utente) => Container(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        child: UserItem(
                           utente: utente,
                           onSelect: _addUtente,
                           onDeselect: _removeUtente,
@@ -209,43 +213,48 @@ class EditTeamFormState extends State<EditTeamForm> {
 
   void _addModifiedTeam() async {
     final db = DatabaseHelper.instance;
-    final nomeTeam = _nomeController.text;
+    final newNomeTeam = _nomeController.text;
 
-    await db.selectTeamByNome(nomeTeam)
-    .then((teamPresente) async {
-      if (teamPresente != null) {
-        // team con lo stesso nome già presente
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
-        );
-      } else {
-        // inserisco il Team nella tabella Team
-        db.updateTeam(widget.teamName, Team(nome: nomeTeam));
-        // ora inserisco i componenti del team nella tabella partecipazione
-        for(var utente in userTeamList) {
-          Partecipazione? oldPart = await db.selectPartecipazioneByUtenteAndTeam(utente.matricola, nomeTeam);
-          Partecipazione newPart = Partecipazione(
-            utente: utente.matricola,
-            team: nomeTeam,
-            ruolo: utente == selected // se selected == true allora l'utente è il manager del team
+    // se il nome inserito è diverso da quello già presente
+    if (newNomeTeam != widget.teamName) {
+     await db.selectTeamByNome(newNomeTeam)
+      .then((teamPresente) async {
+        if (teamPresente != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
           );
-          db.updatePartecipazione(oldPart, newPart);
+        } else {
+          // aggiorno il Team nella tabella Team
+          db.updateTeam(widget.teamName, Team(nome: newNomeTeam));
         }
-        // Una volta inseriti mostriamo una SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Team Modificato!')),
-        );
-        // ripulisco il campo del nome del team
-        _nomeController.clear();
-        // deseleziono gli utenti
-        setState(() {
-          userTeamList.clear();
-          selected = null;
-        });
-        // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
-        // dato che ora potrebbero partecipare a due team
-        listUtentiFuture = db.getUtentiNot2Team();
+      });
+    }
+    
+    // aggiorno i componenti del team nella tabella partecipazione
+    for(var utente in userTeamList) {
+      // se un utente è stato rimosso dagli utenti del Team allora cancello la partecipazione
+      if (!utentiTeamPreModifica.contains(utente)) {
+        await db.deletePartecipazione(Partecipazione(utente: utente.matricola, team: widget.teamName));
       }
+      // qui gestisco il caso in cui l'utente non è stato rimosso dal team ma il team è stato modificato
+      Partecipazione? oldPart = await db.selectPartecipazioneByUtenteAndTeam(utente.matricola, widget.teamName);
+      Partecipazione newPart = Partecipazione(
+        utente: utente.matricola,
+        team: newNomeTeam,
+        ruolo: utente == selected // se selected == true allora l'utente è il manager del team
+      );
+      db.updatePartecipazione(oldPart, newPart);
+    }
+    // Una volta inseriti mostriamo una SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Team Modificato!')),
+    );
+    // deseleziono gli utenti
+    setState(() {
+      selected = null;
+      // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
+      // dato che ora potrebbero partecipare a due team
+      listUtentiFuture = db.getUtentiNot2Team();
     });
   }
 }
