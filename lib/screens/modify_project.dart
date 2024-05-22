@@ -36,7 +36,10 @@ class EditProjectFormState extends State<EditProjectForm> {
   TextEditingController _dateController = TextEditingController();
   TextEditingController _nomeController = TextEditingController();
   TextEditingController _descrizioneController = TextEditingController();
+  TextEditingController _motivazioneController = TextEditingController();
   String? _selectedTeam;
+  String _selectedStato = 'attivo';
+  String? _archivedStatus;
   List<Task> _tasks = [];
 
   @override
@@ -56,7 +59,13 @@ class EditProjectFormState extends State<EditProjectForm> {
         _descrizioneController.text = progetto.descrizione ?? '';
         _dateController.text = progetto.scadenza;
         _selectedTeam = progetto.team;
+        _selectedStato = progetto.stato;
+        _motivazioneController.text = progetto.motivazioneFallimento ?? '';
         _tasks = tasks;
+        if (_selectedStato == 'archiviato') {
+          _archivedStatus =
+              progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
+        }
       });
     }
   }
@@ -173,6 +182,74 @@ class EditProjectFormState extends State<EditProjectForm> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      value: _selectedStato,
+                      items: ['attivo', 'archiviato', 'sospeso']
+                          .map((String stato) {
+                        return DropdownMenuItem<String>(
+                          value: stato,
+                          child: Text(stato),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedStato = newValue!;
+                          if (_selectedStato != 'archiviato') {
+                            _archivedStatus = null;
+                          }
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        labelText: 'Seleziona lo stato del progetto',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Per favore, seleziona uno stato.';
+                        }
+                        return null;
+                      },
+                    ),
+                    if (_selectedStato == 'archiviato') ...[
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: _archivedStatus,
+                        items: ['fallito', 'finito'].map((String status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _archivedStatus = newValue;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Seleziona il tipo di archiviazione',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Per favore, seleziona un tipo di archiviazione.';
+                          }
+                          return null;
+                        },
+                      ),
+                      if (_archivedStatus == 'fallito') ...[
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: _motivazioneController,
+                          maxLength: 250,
+                          maxLines: null,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Inserisci motivazione del fallimento...',
+                          ),
+                        ),
+                      ],
+                    ],
+                    const SizedBox(height: 20),
                     const Text(
                       'Cosa vuoi fare?',
                       softWrap: true,
@@ -182,13 +259,13 @@ class EditProjectFormState extends State<EditProjectForm> {
                       ),
                     ),
                     TaskApp(
-                      onTasksChanged: (updatedTasks) {
+                      onTasksChanged: (newTasks) {
+                        // callback per ottenere le task inserite
                         setState(() {
-                          _tasks = updatedTasks;
+                          _tasks = newTasks;
                         });
                       },
                     ),
-                    // Visualizza le task iniziali caricate
                     Column(
                       children: _tasks.isNotEmpty
                           ? _tasks
@@ -241,27 +318,37 @@ class EditProjectFormState extends State<EditProjectForm> {
       nome: _nomeController.text,
       team: _selectedTeam ?? '',
       scadenza: _dateController.text,
-      stato: 'attivo',
+      stato: _selectedStato,
       descrizione: _descrizioneController.text,
-      completato: false, // Imposta questo campo come richiesto
-      motivazioneFallimento: null, // Imposta questo campo come richiesto
+      completato: false,
+      motivazioneFallimento:
+          _archivedStatus == 'fallito' ? _motivazioneController.text : null,
     );
 
-    //controlla se il nome del progetto esiste gia e non è lo stesso che stiamo usando ora
-    Progetto? progettoPresente = await DatabaseHelper.instance
-        .selectProgettoByNome(updatedProgetto.nome);
+    Progetto? progettoPresente =
+        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
     if (progettoPresente != null &&
-        progettoPresente.nome != widget.projectName) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Inserisci un nome del progetto non già usato!')),
-      );
-    } else {
-      await DatabaseHelper.instance.updateProgetto(updatedProgetto);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Progetto aggiornato con successo!')),
-      );
+        progettoPresente.nome != updatedProgetto.nome) {
+      await DatabaseHelper.instance.deleteProgetto(progettoPresente);
     }
+
+    await DatabaseHelper.instance.insertProgetto(updatedProgetto);
+
+    // Associa il progetto alle tasks
+    for (var task in _tasks) {
+      task.progetto = updatedProgetto.nome;
+    }
+
+    // Inserisce le tasks nel db
+    Future.wait(_tasks.map((task) => DatabaseHelper.instance.insertTask(task)))
+        .whenComplete(() {
+      setState(() {
+        _tasks.clear();
+      });
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Progetto aggiornato con successo!')),
+    );
   }
 }

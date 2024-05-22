@@ -436,6 +436,17 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+//metodo marco per aggiornare le task
+  Future<void> updateTaskProjectName(int taskId, String newProjectName) async {
+    final db = await database;
+    await db.update(
+      'tasks',
+      {'projectName': newProjectName},
+      where: 'id = ?',
+      whereArgs: [taskId],
+    );
+  }
+
   // Elimina un task dalla tabella utente
   Future<int> deleteTask(Task task) async {
     final db = await database;
