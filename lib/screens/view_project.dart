@@ -3,7 +3,6 @@ import 'package:OneTask/model/task.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
-import '../widgets/task_section.dart';
 
 class ViewProject extends StatelessWidget {
   final String projectName;
@@ -122,8 +121,7 @@ class ProjectDetails extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         )),
                     FutureBuilder<List<Task>>(
-                        future: DatabaseHelper.instance
-                            .getTasksByProject(projectName),
+                        future: DatabaseHelper.instance.getTasksByProject(projectName),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
