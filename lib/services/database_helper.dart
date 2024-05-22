@@ -27,52 +27,56 @@ class DatabaseHelper {
     /*##############################################################################*/
 
     return await openDatabase(
-      /// getdatabasePath restituisce la directory del db che varia a seconda dell'OS
-      /// il db si chiamerà OneTask_database
+      // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
+      // il db si chiamerà OneTask_database
       join(await getDatabasesPath(), 'OneTask_database.db'),
       version: _dbVersion,
       onCreate: (db, version) async {
-        /// creo le tabelle del database
-        /// Tabella utente, NOTA: GLOB è un operatore
+        // creo le tabelle del database
+        // Tabella utente, NOTA: GLOB è un operatore
         await db.execute('''
-            CREATE TABLE utente (
-              matricola CHAR(5) PRIMARY KEY CHECK (
-                  LENGTH(matricola) = 5 AND
-                  SUBSTR(matricola, 1, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
-                  SUBSTR(matricola, 2, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
-                  SUBSTR(matricola, 3, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
-                  SUBSTR(matricola, 4, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
-                  SUBSTR(matricola, 5, 1) IN ('0','1','2','3','4','5','6','7','8','9')
-                ),
-            nome TEXT, 
-            cognome TEXT)''');
+          CREATE TABLE utente (
+            matricola CHAR(5) PRIMARY KEY CHECK (
+                LENGTH(matricola) = 5 AND
+                SUBSTR(matricola, 1, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                SUBSTR(matricola, 2, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                SUBSTR(matricola, 3, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                SUBSTR(matricola, 4, 1) IN ('0','1','2','3','4','5','6','7','8','9') AND
+                SUBSTR(matricola, 5, 1) IN ('0','1','2','3','4','5','6','7','8','9')
+              ),
+          nome TEXT, 
+          cognome TEXT)'''
+        );
         await db.execute('CREATE TABLE team (nome TEXT PRIMARY KEY)');
         await db.execute('''
-            CREATE TABLE partecipazione (
-              utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
-              team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
-              ruolo INTEGER NOT NULL,
-              PRIMARY KEY(utente, team)
-            )''');
+          CREATE TABLE partecipazione (
+            utente CHAR(5) NOT NULL REFERENCES utente(matricola) ON DELETE CASCADE ON UPDATE CASCADE, 
+            team TEXT NOT NULL REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE, 
+            ruolo INTEGER NOT NULL,
+            PRIMARY KEY(utente, team)
+          )'''
+        );
         await db.execute('''
-            CREATE TABLE progetto (
-              nome TEXT PRIMARY KEY,
-              team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
-              scadenza TEXT NOT NULL,
-              stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'sospeso', 'archiviato')),
-              descrizione TEXT NOT NULL,
-              completato INTEGER CHECK (completato IS NULL OR
-                (completato IS NOT NULL AND stato = 'archiviato')),
-              motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
-                (motivazioneFallimento IS NOT NULL AND completato = 0))
-            )''');
+          CREATE TABLE progetto (
+            nome TEXT PRIMARY KEY,
+            team TEXT REFERENCES team(nome) ON DELETE CASCADE ON UPDATE CASCADE,
+            scadenza TEXT NOT NULL,
+            stato VARCHAR(10) NOT NULL CHECK (stato IN ('attivo', 'sospeso', 'archiviato')),
+            descrizione TEXT NOT NULL,
+            completato INTEGER CHECK (completato IS NULL OR
+              (completato IS NOT NULL AND stato = 'archiviato')),
+            motivazioneFallimento TEXT CHECK (motivazioneFallimento IS NULL OR 
+              (motivazioneFallimento IS NOT NULL AND completato = 0))
+          )'''
+        );
         await db.execute('''
-            CREATE TABLE task (
-              id INTEGER PRIMARY KEY,
-              progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
-              attivita TEXT NOT NULL,
-              completato INTEGER NOT NULL
-            )''');
+          CREATE TABLE task (
+            id INTEGER PRIMARY KEY,
+            progetto TEXT NOT NULL REFERENCES progetto(nome) ON DELETE CASCADE ON UPDATE CASCADE,
+            attivita TEXT NOT NULL,
+            completato INTEGER NOT NULL
+          )'''
+        );
       },
     );
   }
