@@ -90,7 +90,7 @@ class SearchBarDelegate extends SearchDelegate {
             if (result['type'] == 'Team') {
               onTapElem = () => Navigator.push(
                 context,
-                MaterialPageRoute( builder: (context) => ViewTeam(teamName: nomeElem))
+                MaterialPageRoute(builder: (context) => ViewTeam(teamName: nomeElem))
               );
               onPressedModify = () => Navigator.push(
                 context,

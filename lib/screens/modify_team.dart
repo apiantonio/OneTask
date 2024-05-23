@@ -238,8 +238,7 @@ class EditTeamFormState extends State<EditTeamForm> {
     for (var utente in userTeamList) {
       // Se un utente è stato rimosso dagli utenti del Team allora cancello la partecipazione
       if (!utentiTeamPreModifica.contains(utente)) {
-        await db.deletePartecipazione(
-            Partecipazione(utente: utente.matricola, team: widget.teamName));
+        await db.deletePartecipazione(Partecipazione(utente: utente.matricola, team: widget.teamName));
       }
 
       // Qui gestisco il caso in cui l'utente non è stato rimosso dal team ma il team è stato modificato
@@ -248,11 +247,11 @@ class EditTeamFormState extends State<EditTeamForm> {
 
       // Crea una nuova partecipazione con il nuovo nome del team
       Partecipazione newPart = Partecipazione(
-          utente: utente.matricola,
-          team: newNomeTeam,
-          ruolo: utente ==
-              selected // se selected == true allora l'utente è il manager del team
-          );
+        utente: utente.matricola,
+        team: newNomeTeam,
+        ruolo: utente ==
+            selected // se selected == true allora l'utente è il manager del team
+      );
 
       if (oldPart != null) {
         // Aggiorna la partecipazione esistente
@@ -263,14 +262,14 @@ class EditTeamFormState extends State<EditTeamForm> {
       }
     }
 
-// Aggiungi i nuovi utenti al team
+    // Aggiungi i nuovi utenti al team
     for (var utente in utentiTeamPreModifica) {
       if (!userTeamList.contains(utente)) {
         Partecipazione newPart = Partecipazione(
-            utente: utente.matricola,
-            team: newNomeTeam,
-            ruolo: false //  l'utente appena inserito non è il manager del team
-            );
+          utente: utente.matricola,
+          team: newNomeTeam,
+          ruolo: false //  l'utente appena inserito non è il manager del team
+        );
         await db.insertPartecipazione(newPart);
       }
     }
