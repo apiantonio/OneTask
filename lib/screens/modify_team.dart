@@ -48,7 +48,7 @@ class EditTeamFormState extends State<EditTeamForm> {
   //     setState(() {
   //       _nomeController.text = team!.nome;
   //     });
-  //   }
+  //    }
   // }
 
   @override
@@ -59,7 +59,8 @@ class EditTeamFormState extends State<EditTeamForm> {
 
   Future<void> _loadTeamData() async {
     // oggetto Team del team da modificare
-    Team? team = await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
+    Team? team =
+        await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
     if (team != null) {
       // lista di utenti del team
       List<Utente>? users = await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
@@ -88,12 +89,15 @@ class EditTeamFormState extends State<EditTeamForm> {
                   if (_formKey.currentState!.validate()) {
                     if (userTeamList.length < 2) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Servono almeno 2 persone nel team')),
+                        const SnackBar(
+                            content: Text('Servono almeno 2 persone nel team')),
                       );
                     } else {
                       if (selected == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Per favore, seleziona un responsabile per il tuo team')),
+                          const SnackBar(
+                              content: Text(
+                                  'Per favore, seleziona un responsabile per il tuo team')),
                         );
                       } else {
                         _addModifiedTeam();
@@ -167,14 +171,16 @@ class EditTeamFormState extends State<EditTeamForm> {
                   } else {
                     List<Utente> utenti = snapshot.data ?? [];
                     return Column(
-                      children: utenti.map((utente) => Container(
-                        margin: const EdgeInsets.only(bottom: 8.0),
-                        child: UserItem(
-                          utente: utente,
-                          onSelect: _addUtente,
-                          onDeselect: _removeUtente,
-                        ),
-                      )).toList(),
+                      children: utenti
+                          .map((utente) => Container(
+                                margin: const EdgeInsets.only(bottom: 8.0),
+                                child: UserItem(
+                                  utente: utente,
+                                  onSelect: _addUtente,
+                                  onDeselect: _removeUtente,
+                                ),
+                              ))
+                          .toList(),
                     );
                   }
                 },
@@ -214,11 +220,12 @@ class EditTeamFormState extends State<EditTeamForm> {
 
     // se il nome inserito è diverso da quello già presente
     if (newNomeTeam != widget.teamName) {
-     await db.selectTeamByNome(newNomeTeam)
-      .then((teamPresente) async {
+      await db.selectTeamByNome(newNomeTeam).then((teamPresente) async {
         if (teamPresente != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Inserisci un nome non già assegnato ad un altro team!')),
+            const SnackBar(
+                content: Text(
+                    'Inserisci un nome non già assegnato ad un altro team!')),
           );
         } else {
           // aggiorno il Team nella tabella Team
@@ -226,22 +233,48 @@ class EditTeamFormState extends State<EditTeamForm> {
         }
       });
     }
-    
+
     // aggiorno i componenti del team nella tabella partecipazione
-    for(var utente in userTeamList) {
-      // se un utente è stato rimosso dagli utenti del Team allora cancello la partecipazione
+    for (var utente in userTeamList) {
+      // Se un utente è stato rimosso dagli utenti del Team allora cancello la partecipazione
       if (!utentiTeamPreModifica.contains(utente)) {
-        await db.deletePartecipazione(Partecipazione(utente: utente.matricola, team: widget.teamName));
+        await db.deletePartecipazione(
+            Partecipazione(utente: utente.matricola, team: widget.teamName));
       }
-      // qui gestisco il caso in cui l'utente non è stato rimosso dal team ma il team è stato modificato
-      Partecipazione? oldPart = await db.selectPartecipazioneByUtenteAndTeam(utente.matricola, widget.teamName);
+
+      // Qui gestisco il caso in cui l'utente non è stato rimosso dal team ma il team è stato modificato
+      Partecipazione? oldPart = await db.selectPartecipazioneByUtenteAndTeam(
+          utente.matricola, widget.teamName);
+
+      // Crea una nuova partecipazione con il nuovo nome del team
       Partecipazione newPart = Partecipazione(
-        utente: utente.matricola,
-        team: newNomeTeam,
-        ruolo: utente == selected // se selected == true allora l'utente è il manager del team
-      );
-      db.updatePartecipazione(oldPart, newPart);
+          utente: utente.matricola,
+          team: newNomeTeam,
+          ruolo: utente ==
+              selected // se selected == true allora l'utente è il manager del team
+          );
+
+      if (oldPart != null) {
+        // Aggiorna la partecipazione esistente
+        await db.updatePartecipazione(oldPart, newPart);
+      } else {
+        // Aggiungi una nuova partecipazione per gli utenti nuovi
+        await db.insertPartecipazione(newPart);
+      }
     }
+
+// Aggiungi i nuovi utenti al team
+    for (var utente in utentiTeamPreModifica) {
+      if (!userTeamList.contains(utente)) {
+        Partecipazione newPart = Partecipazione(
+            utente: utente.matricola,
+            team: newNomeTeam,
+            ruolo: false //  l'utente appena inserito non è il manager del team
+            );
+        await db.insertPartecipazione(newPart);
+      }
+    }
+
     // Una volta inseriti mostriamo una SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Team Modificato!')),
