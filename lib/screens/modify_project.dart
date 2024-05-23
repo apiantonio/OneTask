@@ -314,19 +314,27 @@ class EditProjectFormState extends State<EditProjectForm> {
   }
 
   void _updateProgettoInDatabase() async {
+    Progetto? progettoPresente =
+        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
+
+    bool? completato = progettoPresente?.completato;
+
+    // Imposta il campo completato in base allo stato del progetto
+    if (_selectedStato == 'archiviato') {
+      completato = true;
+    }
+
     Progetto updatedProgetto = Progetto(
       nome: _nomeController.text,
       team: _selectedTeam ?? '',
       scadenza: _dateController.text,
       stato: _selectedStato,
       descrizione: _descrizioneController.text,
-      completato: false,
+      completato: completato, // Usa la variabile `completato` impostata sopra
       motivazioneFallimento:
           _archivedStatus == 'fallito' ? _motivazioneController.text : null,
     );
 
-    Progetto? progettoPresente =
-        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
     if (progettoPresente != null &&
         progettoPresente.nome != updatedProgetto.nome) {
       await DatabaseHelper.instance.deleteProgetto(progettoPresente);
@@ -337,14 +345,18 @@ class EditProjectFormState extends State<EditProjectForm> {
     // Associa il progetto alle tasks
     for (var task in _tasks) {
       task.progetto = updatedProgetto.nome;
+
+      if (task.id != null) {
+        // Aggiorna la task se ha un id (presumibilmente esiste già nel database)
+        await DatabaseHelper.instance.updateTask(task, task);
+      } else {
+        // Inserisci la task se non ha un id
+        await DatabaseHelper.instance.insertTask(task);
+      }
     }
 
-    // Inserisce le tasks nel db
-    Future.wait(_tasks.map((task) => DatabaseHelper.instance.insertTask(task)))
-        .whenComplete(() {
-      setState(() {
-        _tasks.clear();
-      });
+    setState(() {
+      _tasks.clear();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
