@@ -16,14 +16,14 @@ class DatabaseHelper {
   Future<Database> get database async => _database ??= await _initDatabase();
 
   // variabile globale per impostare la versione del DB
-  static final _dbVersion = 1;
+  static final _dbVersion = 10;
 
   /// crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
 
     /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
-    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     /*##############################################################################*/
 
     return await openDatabase(
@@ -33,7 +33,7 @@ class DatabaseHelper {
       version: _dbVersion,
       onCreate: (db, version) async {
         // creo le tabelle del database
-        // Tabella utente, NOTA: GLOB è un operatore
+        // Tabella utente
         await db.execute('''
           CREATE TABLE utente (
             matricola CHAR(5) PRIMARY KEY CHECK (

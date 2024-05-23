@@ -33,11 +33,11 @@ class EditTeamForm extends StatefulWidget {
 
 class EditTeamFormState extends State<EditTeamForm> {
   final _formKey = GlobalKey<FormState>();
-  var listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
-  final List<Utente> userTeamList = [];
-  final List<Utente> utentiTeamPreModifica = [];
-  late Utente responsabile;
-  Utente? selected;
+  Future<List<Utente>?> listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team(); // utenti possibili per il team
+  List<Utente> userTeamList = []; // Lista di utenti del Team da modificare durante la modifica, inizialmente avrà tutti gli utenti
+  final List<Utente> utentiTeamPreModifica = []; // Lista di utenti del Team da modificare prima che avengano le modifiche
+  late Utente responsabile; // Utente responsabile del team
+  Utente? selected; // Utente selezionato nel radio button per selezionare chi debba essere il responsabile del team
 
   final TextEditingController _nomeController = TextEditingController();
 
@@ -63,15 +63,11 @@ class EditTeamFormState extends State<EditTeamForm> {
     if (team != null) {
       // lista di utenti del team
       List<Utente>? users = await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
-      // Utente respo
+      // Utente responsabile del team
       responsabile = await DatabaseHelper.instance.getTeamManager(team);
-      // List<Partecipazione?>? parts = []; 
-      // users?.map((u) async => 
-      //   parts.add(await DatabaseHelper.instance.selectPartecipazioneByUtenteAndTeam(u.matricola, widget.teamName)
-      // ));
       setState(() {
         _nomeController.text = team.nome;
-        userTeamList.addAll(users ?? []);
+        userTeamList.addAll(users ?? []); 
         utentiTeamPreModifica.addAll(users ?? []);
       });
     }
@@ -139,11 +135,12 @@ class EditTeamFormState extends State<EditTeamForm> {
                     final utente = userTeamList[index];
                     return RadioListTile(
                       value: utente,
-                      selected: utente.matricola == responsabile.matricola,
                       groupValue: selected,
-                      onChanged: (Utente? value) => setState(() {
-                        selected = value;
-                      }),
+                      onChanged: (Utente? value) => 
+                        setState(() {
+                          selected = value;
+                        }
+                      ),
                       title: Text(utente.infoUtente()),
                     );
                   },
@@ -251,7 +248,6 @@ class EditTeamFormState extends State<EditTeamForm> {
     );
     // deseleziono gli utenti
     setState(() {
-      selected = null;
       // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
       // dato che ora potrebbero partecipare a due team
       listUtentiFuture = db.getUtentiNot2Team();
