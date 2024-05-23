@@ -603,7 +603,7 @@ class DatabaseHelper {
   }
 
   /// seleziona gli utenti di un team dato il nome del team
-  Future<List<Utente>?> selectUtentiByTeam(String nomeTeam) async {
+  Future<List<Utente>> selectUtentiByTeam(String nomeTeam) async {
     final db = await database;
     // uso una query per estrarre gli utenti che partecipano al team richiesto
     // la query non restituisce direttamente una lista du utenti ma una lista

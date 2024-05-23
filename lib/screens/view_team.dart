@@ -108,14 +108,16 @@ class TeamDetails extends StatelessWidget {
                   const Text('Progetti associati al team:',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Column(
+                  data.progetti == null ? const Text('Nessun progetto associato al team')
+                  : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: data.progetti
+                      children: data.progetti!
                           .map((progetto) => ListTile(
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(progetto.nome),
                               ))
-                          .toList()),
+                          .toList()
+                    ),
                 ],
               ),
             ),
@@ -135,13 +137,10 @@ class TeamDetails extends StatelessWidget {
     final members = await db.selectUtentiByTeam(teamName);
     final progetti = await db.selectProgettiByTeam(teamName);
 
-    if (manager == null || members == null || progetti == null) {
-      throw Exception('Errore nel caricamento dei dati del team');
-    }
-
     return TeamDetailsData(
         team: team, manager: manager, members: members, progetti: progetti);
   }
+
 }
 
 //classe di utilità che mi restituisce tutte le info che intendo memorizzare sul team
@@ -149,7 +148,7 @@ class TeamDetailsData {
   final Team team;
   final Utente manager;
   final List<Utente> members;
-  final List<Progetto> progetti;
+  final List<Progetto>? progetti;
 
   TeamDetailsData(
       {required this.team,
