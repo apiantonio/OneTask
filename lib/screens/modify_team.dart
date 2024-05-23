@@ -121,7 +121,6 @@ class EditTeamFormState extends State<EditTeamForm> {
                     final utente = userTeamList[index];
                     return RadioListTile(
                       value: utente,
-                      selected: utente.matricola == responsabile.matricola,
                       groupValue: selected,
                       onChanged: (Utente? value) => setState(() {
                         selected = value;
@@ -280,7 +279,6 @@ class EditTeamFormState extends State<EditTeamForm> {
 
     // deseleziono gli utenti
     setState(() {
-      selected = null;
       // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
       // dato che ora potrebbero partecipare a due team
       utentiNonInTeamFuture = db.getUtentiNonInTeam(newNomeTeam);

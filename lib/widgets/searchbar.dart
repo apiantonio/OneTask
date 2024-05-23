@@ -18,7 +18,7 @@ class SearchBarDelegate extends SearchDelegate {
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -45,22 +45,19 @@ class SearchBarDelegate extends SearchDelegate {
   Future<List<Map<String, dynamic>>> _searchResults(String query) async {
     // prendo tutti i team e tutti i progetti dal DB
     final List<Team?> teams = await DatabaseHelper.instance.getAllTeams();
-    final List<Progetto?> progetti =
-        await DatabaseHelper.instance.getAllProgetti();
+    final List<Progetto?> progetti = await DatabaseHelper.instance.getAllProgetti();
 
     // salvo i team il cui nome contiene la query scritta dall'utente
     final teamResults = teams
-        .where((team) =>
-            team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
-        .map((team) => {'nome': team?.nome, 'type': 'Team'})
-        .toList();
+      .where((team) => team?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
+      .map((team) => {'nome': team?.nome, 'type': 'Team'})
+      .toList();
 
     // salvo i progetti il cui nome contiene la query scritta dall'utente
     final progettoResults = progetti
-        .where((progetto) =>
-            progetto?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
-        .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto'})
-        .toList();
+      .where((progetto) => progetto?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
+      .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto'})
+      .toList();
 
     return teamResults + progettoResults;
   }
@@ -86,41 +83,38 @@ class SearchBarDelegate extends SearchDelegate {
             var result = results[index];
 
             // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
-            VoidCallback onTapElem =
-                () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () =>
-                {}; // funziona associata al tap sulla matita per modificare
+            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
+            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if (result['type'] == 'Team') {
               onTapElem = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ViewTeam(teamName: nomeElem)));
+                context,
+                MaterialPageRoute( builder: (context) => ViewTeam(teamName: nomeElem))
+              );
               onPressedModify = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ModifyTeam(teamName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ModifyTeam(teamName: nomeElem))
+              );
             } else if (result['type'] == 'Progetto') {
               // altrimenti per progetto
               onTapElem = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ViewProject(projectName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
+              );
               onPressedModify = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ModifyProject(projectName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
+              );
             }
 
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchTile(
-                  onTapElem: onTapElem,
-                  onPressedModify: onPressedModify,
-                  result: result),
+                onTapElem: onTapElem,
+                onPressedModify: onPressedModify,
+                result: result
+              ),
             );
           },
         );
@@ -135,10 +129,10 @@ class SearchBarDelegate extends SearchDelegate {
       future: _searchResults(query),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-          return Center(child: Text('Nessun risultato trovato.'));
+          return const Center(child: Text('Nessun risultato trovato.'));
         }
 
         final results = snapshot.data as List<Map<String, dynamic>>;
@@ -148,43 +142,38 @@ class SearchBarDelegate extends SearchDelegate {
           itemBuilder: (context, index) {
             final result = results[index];
 
-            VoidCallback onTapElem =
-                () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () =>
-                {}; // funziona associata al tap sulla matita per modificare
+            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
+            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if (result['type'] == 'Team') {
               onTapElem = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ViewTeam(teamName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ViewTeam(teamName: nomeElem))
+              );
               onPressedModify = () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => ModifyTeam(
-                            teamName: nomeElem,
-                          )));
+                  MaterialPageRoute(builder: (context) => ModifyTeam(teamName: nomeElem))
+              );
             } else if (result['type'] == 'Progetto') {
               // altrimenti per progetto
               onTapElem = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ViewProject(projectName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
+              );
               onPressedModify = () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ModifyProject(projectName: nomeElem)));
+                context,
+                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
+              );
             }
 
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: SearchTile(
-                  onTapElem: onTapElem,
-                  onPressedModify: onPressedModify,
-                  result: result),
+                onTapElem: onTapElem,
+                onPressedModify: onPressedModify,
+                result: result
+              ),
             );
           },
         );
