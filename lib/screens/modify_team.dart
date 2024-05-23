@@ -6,7 +6,6 @@ import 'package:OneTask/model/utente.dart';
 import '../widgets/user_item.dart';
 import 'package:OneTask/model/partecipazione.dart';
 
-/*da completare FRANCESCO RAGO, solo prova per vedere utilizzo della navigazione*/
 class ModifyTeam extends StatelessWidget {
   final String teamName;
   const ModifyTeam({super.key, required this.teamName});
@@ -20,7 +19,6 @@ class ModifyTeam extends StatelessWidget {
   }
 }
 
-//form
 class EditTeamForm extends StatefulWidget {
   final String teamName;
   const EditTeamForm({super.key, required this.teamName});
@@ -33,44 +31,28 @@ class EditTeamForm extends StatefulWidget {
 
 class EditTeamFormState extends State<EditTeamForm> {
   final _formKey = GlobalKey<FormState>();
-  var listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
+  final TextEditingController _nomeController = TextEditingController();
   final List<Utente> userTeamList = [];
   final List<Utente> utentiTeamPreModifica = [];
   late Utente responsabile;
   Utente? selected;
-
-  final TextEditingController _nomeController = TextEditingController();
-
-  // Future<void> _loadProjectData() async {
-  //   Team? team = await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
-  //   if (team != null) {
-  //     List<Utente>? users = await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
-  //     setState(() {
-  //       _nomeController.text = team!.nome;
-  //     });
-  //    }
-  // }
+  late Future<List<Utente>> utentiNonInTeamFuture;
 
   @override
   void initState() {
     super.initState();
     _loadTeamData();
+    utentiNonInTeamFuture =
+        DatabaseHelper.instance.getUtentiNonInTeam(widget.teamName);
   }
 
   Future<void> _loadTeamData() async {
-    // oggetto Team del team da modificare
     Team? team =
         await DatabaseHelper.instance.selectTeamByNome(widget.teamName);
     if (team != null) {
-      // lista di utenti del team
       List<Utente>? users =
           await DatabaseHelper.instance.selectUtentiByTeam(widget.teamName);
-      // Utente respo
       responsabile = await DatabaseHelper.instance.getTeamManager(team);
-      // List<Partecipazione?>? parts = [];
-      // users?.map((u) async =>
-      //   parts.add(await DatabaseHelper.instance.selectPartecipazioneByUtenteAndTeam(u.matricola, widget.teamName)
-      // ));
       setState(() {
         _nomeController.text = team.nome;
         userTeamList.addAll(users ?? []);
@@ -125,16 +107,11 @@ class EditTeamFormState extends State<EditTeamForm> {
                   labelText: 'Modifica il nome del team',
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               const Text(
                 'Modifica il Responsabile',
                 softWrap: true,
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
@@ -149,33 +126,38 @@ class EditTeamFormState extends State<EditTeamForm> {
                       onChanged: (Utente? value) => setState(() {
                         selected = value;
                       }),
-                      title: Text(utente.infoUtente()),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(utente.infoUtente()),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle,
+                                color: Colors.red),
+                            onPressed: () => _removeUtenteFromTeam(utente),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               const Text(
                 'Modifica i partecipanti',
                 softWrap: true,
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              FutureBuilder<List<Utente>?>(
-                future: listUtentiFuture,
+              FutureBuilder<List<Utente>>(
+                future: utentiNonInTeamFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return const Text('Errore caricamento utenti dal db');
                   } else {
-                    List<Utente> utenti = snapshot.data ?? [];
+                    List<Utente> utentiNonInTeam = snapshot.data ?? [];
                     return Column(
-                      children: utenti
+                      children: utentiNonInTeam
                           .map((utente) => Container(
                                 margin: const EdgeInsets.only(bottom: 8.0),
                                 child: UserItem(
@@ -197,7 +179,7 @@ class EditTeamFormState extends State<EditTeamForm> {
   }
 
   bool _addUtente(Utente utente) {
-    //nel team è possibile inserire al massimo 6 persone
+    // nel team è possibile inserire al massimo 6 persone
     if (userTeamList.length < 6) {
       setState(() {
         userTeamList.add(utente);
@@ -211,10 +193,22 @@ class EditTeamFormState extends State<EditTeamForm> {
     }
   }
 
-  //metodo di utilità per eliminare gi utenti al click
+  // metodo di utilità per eliminare gli utenti al click
   void _removeUtente(Utente utente) {
     setState(() {
       userTeamList.remove(utente);
+    });
+  }
+
+  void _removeUtenteFromTeam(Utente utente) async {
+    await DatabaseHelper.instance.deletePartecipazione(Partecipazione(
+      utente: utente.matricola,
+      team: widget.teamName,
+    ));
+    setState(() {
+      userTeamList.remove(utente);
+      utentiNonInTeamFuture =
+          DatabaseHelper.instance.getUtentiNonInTeam(widget.teamName);
     });
   }
 
@@ -252,11 +246,11 @@ class EditTeamFormState extends State<EditTeamForm> {
 
       // Crea una nuova partecipazione con il nuovo nome del team
       Partecipazione newPart = Partecipazione(
-          utente: utente.matricola,
-          team: newNomeTeam,
-          ruolo: utente ==
-              selected // se selected == true allora l'utente è il manager del team
-          );
+        utente: utente.matricola,
+        team: newNomeTeam,
+        ruolo: utente ==
+            selected, // se selected == true allora l'utente è il manager del team
+      );
 
       if (oldPart != null) {
         // Aggiorna la partecipazione esistente
@@ -267,14 +261,14 @@ class EditTeamFormState extends State<EditTeamForm> {
       }
     }
 
-// Aggiungi i nuovi utenti al team
+    // Aggiungi i nuovi utenti al team
     for (var utente in utentiTeamPreModifica) {
       if (!userTeamList.contains(utente)) {
         Partecipazione newPart = Partecipazione(
-            utente: utente.matricola,
-            team: newNomeTeam,
-            ruolo: false //  l'utente appena inserito non è il manager del team
-            );
+          utente: utente.matricola,
+          team: newNomeTeam,
+          ruolo: false, // l'utente appena inserito non è il manager del team
+        );
         await db.insertPartecipazione(newPart);
       }
     }
@@ -283,12 +277,13 @@ class EditTeamFormState extends State<EditTeamForm> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Team Modificato!')),
     );
+
     // deseleziono gli utenti
     setState(() {
       selected = null;
       // infine ricalcolo quali sono gli utenti mostrabili poiché potrebbero essere cambiati
       // dato che ora potrebbero partecipare a due team
-      listUtentiFuture = db.getUtentiNot2Team();
+      utentiNonInTeamFuture = db.getUtentiNonInTeam(newNomeTeam);
     });
   }
 }
