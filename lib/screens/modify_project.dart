@@ -36,11 +36,12 @@ class EditProjectFormState extends State<EditProjectForm> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _descrizioneController = TextEditingController();
-  TextEditingController _motivazioneController = TextEditingController();
+  final TextEditingController _motivazioneController = TextEditingController();
   String? _selectedTeam;
   String _selectedStato = 'attivo';
   String? _archivedStatus;
   List<Task> _tasks = [];
+  List<Task> _originalTasks = [];
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class EditProjectFormState extends State<EditProjectForm> {
         _selectedStato = progetto.stato;
         _motivazioneController.text = progetto.motivazioneFallimento ?? '';
         _tasks = tasks;
+        _originalTasks = List.from(tasks);
         if (_selectedStato == 'archiviato') {
           _archivedStatus =
               progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
@@ -260,9 +262,9 @@ class EditProjectFormState extends State<EditProjectForm> {
                     ),
                     TaskApp(
                       onTasksChanged: (newTasks) {
-                        // callback per ottenere le task inserite
+                        // Aggiungi le nuove task alla lista esistente di task
                         setState(() {
-                          _tasks = newTasks;
+                          _tasks.addAll(newTasks);
                         });
                       },
                     ),
@@ -342,7 +344,14 @@ class EditProjectFormState extends State<EditProjectForm> {
 
     await DatabaseHelper.instance.insertProgetto(updatedProgetto);
 
-    // Associa il progetto alle tasks
+    // Rimuovi le task originali non presenti nella nuova lista
+    for (var originalTask in _originalTasks) {
+      if (!_tasks.contains(originalTask)) {
+        await DatabaseHelper.instance.deleteTask(originalTask);
+      }
+    }
+
+    // Aggiorna o inserisci le task nuove
     for (var task in _tasks) {
       task.progetto = updatedProgetto.nome;
 
@@ -357,6 +366,7 @@ class EditProjectFormState extends State<EditProjectForm> {
 
     setState(() {
       _tasks.clear();
+      _originalTasks.clear();
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
