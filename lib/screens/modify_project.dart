@@ -65,8 +65,7 @@ class EditProjectFormState extends State<EditProjectForm> {
         _tasks = tasks;
         _originalTasks = List.from(tasks);
         if (_selectedStato == 'archiviato') {
-          _archivedStatus =
-              progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
+          _archivedStatus = progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
         }
       });
     }
@@ -100,10 +99,6 @@ class EditProjectFormState extends State<EditProjectForm> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _updateProgettoInDatabase();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Sto processando i dati...')),
-                          );
                         }
                       },
                       child: const Text('Aggiorna progetto'),
@@ -333,12 +328,10 @@ class EditProjectFormState extends State<EditProjectForm> {
       stato: _selectedStato,
       descrizione: _descrizioneController.text,
       completato: completato, // Usa la variabile `completato` impostata sopra
-      motivazioneFallimento:
-          _archivedStatus == 'fallito' ? _motivazioneController.text : null,
+      motivazioneFallimento: _archivedStatus == 'fallito' ? _motivazioneController.text : null,
     );
 
-    if (progettoPresente != null &&
-        progettoPresente.nome != updatedProgetto.nome) {
+    if (progettoPresente != null && progettoPresente.nome != updatedProgetto.nome) {
       await DatabaseHelper.instance.deleteProgetto(progettoPresente);
     }
 

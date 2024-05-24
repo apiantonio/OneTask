@@ -235,8 +235,7 @@ class EditTeamFormState extends State<EditTeamForm> {
     for (var utente in userTeamList) {
       // Se un utente è stato rimosso dagli utenti del Team allora cancello la partecipazione
       if (!utentiTeamPreModifica.contains(utente)) {
-        await db.deletePartecipazione(
-            Partecipazione(utente: utente.matricola, team: widget.teamName));
+        await db.deletePartecipazione(Partecipazione(utente: utente.matricola, team: widget.teamName));
       }
 
       // Qui gestisco il caso in cui l'utente non è stato rimosso dal team ma il team è stato modificato
@@ -248,7 +247,7 @@ class EditTeamFormState extends State<EditTeamForm> {
         utente: utente.matricola,
         team: newNomeTeam,
         ruolo: utente ==
-            selected, // se selected == true allora l'utente è il manager del team
+            selected // se selected == true allora l'utente è il manager del team
       );
 
       if (oldPart != null) {
@@ -266,7 +265,7 @@ class EditTeamFormState extends State<EditTeamForm> {
         Partecipazione newPart = Partecipazione(
           utente: utente.matricola,
           team: newNomeTeam,
-          ruolo: false, // l'utente appena inserito non è il manager del team
+          ruolo: false //  l'utente appena inserito non è il manager del team
         );
         await db.insertPartecipazione(newPart);
       }

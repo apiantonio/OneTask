@@ -215,13 +215,12 @@ class ProjectViewState extends State<ProjectView> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const MultipleChoice(),
-          const SizedBox(
-            height: 20,
-          ),
-          FutureBuilder<List<Progetto>?>(
+      child: Column(children: [
+        const MultipleChoice(),
+        const SizedBox(
+          height: 20,
+        ),
+        FutureBuilder<List<Progetto>?>(
             future: listProjectFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -233,38 +232,37 @@ class ProjectViewState extends State<ProjectView> {
                 List<Progetto> projects = snapshot.data ?? [];
                 //devo obbligatoriamente usare questo e non ListView altrimenti darebbe problemi con singleChildScrollView
                 return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: projects.length,
-                  itemBuilder: (context, index) {
-                    Progetto project = projects[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8.0),
-                      child: ProjectItem(
-                        project: project,
-                        viewSingleProject: _onTapProject,
-                        updateProject: _onEditProject,
-                      ),
-                    );
-                  }
-                );
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: projects.length,
+                    itemBuilder: (context, index) {
+                      Progetto project = projects[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        child: ProjectItem(
+                          project: project,
+                          viewSingleProject: _onTapProject,
+                          updateProject: _onEditProject,
+                        ),
+                      );
+                    });
               }
-            }
-          ),
-        ]
-      ),
+            }),
+      ]),
     );
   }
 
   void _onTapProject(project) {
     Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ViewProject(projectName: project.nome)));
+        MaterialPageRoute(
+            builder: (context) => ViewProject(projectName: project.nome)));
   }
 
   void _onEditProject(project) {
     Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ModifyProject(projectName: project.nome)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ModifyProject(projectName: project.nome)));
   }
 }

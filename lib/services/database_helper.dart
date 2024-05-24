@@ -17,7 +17,11 @@ class DatabaseHelper {
 
   // variabile globale per impostare la versione del DB
   static final _dbVersion = 10;
-
+  // per abilitare le foreign keys (references) alla creazione del DB
+  static Future _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
+  
   /// crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
     print("initDataBase executed");
@@ -31,6 +35,7 @@ class DatabaseHelper {
       // il db si chiamerà OneTask_database
       join(await getDatabasesPath(), 'OneTask_database.db'),
       version: _dbVersion,
+      onConfigure: _onConfigure,
       onCreate: (db, version) async {
         // creo le tabelle del database
         // Tabella utente
