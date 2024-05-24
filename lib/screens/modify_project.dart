@@ -65,7 +65,8 @@ class EditProjectFormState extends State<EditProjectForm> {
         _tasks = tasks;
         _originalTasks = List.from(tasks);
         if (_selectedStato == 'archiviato') {
-          _archivedStatus = progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
+          _archivedStatus =
+              progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
         }
       });
     }
@@ -99,6 +100,10 @@ class EditProjectFormState extends State<EditProjectForm> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _updateProgettoInDatabase();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Sto processando i dati...')),
+                          );
                         }
                       },
                       child: const Text('Aggiorna progetto'),
@@ -328,23 +333,26 @@ class EditProjectFormState extends State<EditProjectForm> {
       stato: _selectedStato,
       descrizione: _descrizioneController.text,
       completato: completato, // Usa la variabile `completato` impostata sopra
-      motivazioneFallimento: _archivedStatus == 'fallito' ? _motivazioneController.text : null,
+      motivazioneFallimento:
+          _archivedStatus == 'fallito' ? _motivazioneController.text : null,
     );
 
-    if (progettoPresente != null && progettoPresente.nome != updatedProgetto.nome) {
+    // Se il nome del progetto è cambiato, elimina il progetto vecchio
+    if (progettoPresente != null &&
+        progettoPresente.nome != updatedProgetto.nome) {
       await DatabaseHelper.instance.deleteProgetto(progettoPresente);
     }
 
     await DatabaseHelper.instance.insertProgetto(updatedProgetto);
 
-    // Rimuovi le task originali non presenti nella nuova lista
+    // Task da eliminare
     for (var originalTask in _originalTasks) {
-      if (!_tasks.contains(originalTask)) {
+      if (!_tasks.any((task) => task.id == originalTask.id)) {
         await DatabaseHelper.instance.deleteTask(originalTask);
       }
     }
 
-    // Aggiorna o inserisci le task nuove
+    // Task da aggiornare o aggiungere
     for (var task in _tasks) {
       task.progetto = updatedProgetto.nome;
 
@@ -356,11 +364,6 @@ class EditProjectFormState extends State<EditProjectForm> {
         await DatabaseHelper.instance.insertTask(task);
       }
     }
-
-    setState(() {
-      _tasks.clear();
-      _originalTasks.clear();
-    });
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Progetto aggiornato con successo!')),
