@@ -45,11 +45,12 @@ class EditProjectFormState extends State<EditProjectForm> {
   List<String> _nomiTeams = [];  // lista dei nomi dei teams disponibili
 
   //serve per indicarmi gli stati e i sottostati corrispondenti
-  final Map<String, List<String>> _stato = {
-    'attivo' : [],
-    'sospeso' : [],
-    'archiviato': ['completato', 'fallito'],
-  };
+  final List<String> _stato = [
+    'attivo',
+    'sospeso',
+    'completato', 
+    'fallito',
+  ];
 
   final String _labelDropdownMenuT = 'Seleziona Team';
   String? _validaTeamText; 
@@ -232,7 +233,6 @@ class EditProjectFormState extends State<EditProjectForm> {
                   initialValue: _statoController.text,
                   onSelected: (String value) => {
                     setState(() {
-                      //TRASFORMARE COMPLETATO E FALLITO DI NUOVO IN ARCHIVIATO PRIMA DI AGGIORNARE
                       _statoController.text = value;
                       _validaStatoText = null; 
                     })
@@ -246,22 +246,14 @@ class EditProjectFormState extends State<EditProjectForm> {
                   ),
                   itemBuilder: (BuildContext context) {
                     List<PopupMenuEntry<String>> tendina = [];
-                    _stato.forEach((stato, List<String> sottostati) {
+                    for (var stato in _stato) {
                       tendina.add(
                         PopupMenuItem<String>(
                           value: stato,
                           child: Text(stato, style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       );
-                      for(String substate in sottostati){
-                        tendina.add(
-                          PopupMenuItem<String>(
-                            value: substate,
-                            child: Text(substate),
-                          ),
-                        );
-                      }
-                    });
+                    }
                     return tendina;
                   }
                 ),
@@ -284,6 +276,12 @@ class EditProjectFormState extends State<EditProjectForm> {
                     border: OutlineInputBorder(),
                     hintText: 'Inserisci motivazione del fallimento...',
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "La motivazione è obbligatoria per i progetti falliti!";
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -364,17 +362,15 @@ class EditProjectFormState extends State<EditProjectForm> {
         });
 
         // salvo le stringhe necessarie per stato e completato
-        String stato = _statoController.text == 'completato' 
-            ? 'archiviato' 
-            : _statoController.text == 'fallito' 
-              ? 'archiviato'
-              : _statoController.text;
+        String stato = (_statoController.text == 'completato'  ||  _statoController.text == 'fallito')
+          ? 'archiviato' 
+          : _statoController.text;
 
         bool? completato = _statoController.text == 'completato' 
-            ? true // se lo stato è completato allora true
-            : _statoController.text == 'fallito' 
-              ? false // se è fallito allora false
-              : null; // in tutti gli altri casi null
+          ? true // se lo stato è completato allora true
+          : _statoController.text == 'fallito' 
+            ? false // se è fallito allora false
+            : null; // in tutti gli altri casi null
 
         // creo un nuovo progetto con i dati inseriti
         // che sarà usato per aggiornare i dati del progetto modificato
@@ -385,7 +381,7 @@ class EditProjectFormState extends State<EditProjectForm> {
           descrizione: _descrizioneController.text,
           stato: stato,
           completato: completato,
-          motivazioneFallimento: _motivazioneController.text
+          motivazioneFallimento: completato == false ? _motivazioneController.text : null
         );
 
         // associa il progetto alle tasks

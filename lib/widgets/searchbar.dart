@@ -56,7 +56,7 @@ class SearchBarDelegate extends SearchDelegate {
     // salvo i progetti il cui nome contiene la query scritta dall'utente
     final progettoResults = progetti
       .where((progetto) => progetto?.nome.toLowerCase().contains(query.toLowerCase()) ?? false)
-      .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto'})
+      .map((progetto) => {'nome': progetto?.nome, 'type': 'Progetto', 'stato': progetto?.stato})
       .toList();
 
     return teamResults + progettoResults;
@@ -83,8 +83,8 @@ class SearchBarDelegate extends SearchDelegate {
             var result = results[index];
 
             // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
-            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            void Function() onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
+            void Function() onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if (result['type'] == 'Team') {
@@ -142,8 +142,8 @@ class SearchBarDelegate extends SearchDelegate {
           itemBuilder: (context, index) {
             final result = results[index];
 
-            VoidCallback onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
-            VoidCallback onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+            void Function() onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
+            void Function() onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
             String nomeElem = result['nome'];
             // se è un Team porta alle pagine del Team
             if (result['type'] == 'Team') {

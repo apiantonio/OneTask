@@ -17,7 +17,7 @@ class TaskItem extends StatelessWidget {
         title: Text(
           task.attivita,
         ),
-        leading: task.completato ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),     //icona a sinistra, se completato abbiamo il check, altrimenti la casella vuota
+        leading: task.completato ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank), //icona a sinistra, se completato abbiamo il check, altrimenti la casella vuota
         trailing: IconButton(   //icona a destra
           iconSize: 16,
           icon: const Icon(Icons.remove),

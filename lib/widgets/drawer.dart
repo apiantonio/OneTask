@@ -6,7 +6,7 @@ import '../screens/calendar.dart';
 import '../main.dart';
 
 class OTDrawer extends StatefulWidget {
-  const OTDrawer({Key? key}) : super(key: key);
+  const OTDrawer({super.key});
 
   @override
   State<OTDrawer> createState() => _OTDrawerState();

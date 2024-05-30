@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SearchTile extends StatelessWidget {
-  final VoidCallback onTapElem; // funzione associata al tap sull'elemento della lista
-  final VoidCallback onPressedModify; // funziona associata al tap sulla matita per modificare
+  final void Function() onTapElem; // funzione associata al tap sull'elemento della lista
+  final void Function() onPressedModify; // funziona associata al tap sulla matita per modificare
   final Map<String, dynamic> result; // mappa passata dalla searchbar che contiene nome e tipo di un progetto o team
 
   const SearchTile({
@@ -48,13 +48,15 @@ class SearchTile extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      // pulsante per la modifica
-      trailing: IconButton(
-        iconSize: 20,
-        icon: const Icon(Icons.edit),
-        color: Colors.black,
-        onPressed: onPressedModify,
-      ),
+      // pulsante per la modifica, visibile solo se il progetto non è archiviato
+      trailing: result['stato'] != 'archiviato' 
+        ? IconButton(
+            iconSize: 20,
+            icon: const Icon(Icons.edit),
+            color: Colors.black,
+            onPressed: onPressedModify,
+          ) 
+        : null
     );
   }
 }
