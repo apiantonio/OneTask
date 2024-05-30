@@ -47,7 +47,7 @@ class ViewTeam extends StatelessWidget {
                 await DatabaseHelper.instance.selectTeamByNome(teamName);
             if (team != null) {
               await DatabaseHelper.instance.deleteTeam(team);
-              Navigator.of(context).pop(); // Torna alla schermata precedente
+              Navigator.of(context).pop(true); // Torna alla schermata precedente
             }
           }
         },

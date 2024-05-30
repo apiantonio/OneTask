@@ -36,11 +36,12 @@ class EditProjectFormState extends State<EditProjectForm> {
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _descrizioneController = TextEditingController();
-  TextEditingController _motivazioneController = TextEditingController();
+  final TextEditingController _motivazioneController = TextEditingController();
   String? _selectedTeam;
   String _selectedStato = 'attivo';
   String? _archivedStatus;
   List<Task> _tasks = [];
+  List<Task> _originalTasks = [];
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class EditProjectFormState extends State<EditProjectForm> {
         _selectedStato = progetto.stato;
         _motivazioneController.text = progetto.motivazioneFallimento ?? '';
         _tasks = tasks;
+        _originalTasks = List.from(tasks);
         if (_selectedStato == 'archiviato') {
           _archivedStatus =
               progetto.motivazioneFallimento != null ? 'fallito' : 'finito';
@@ -260,9 +262,9 @@ class EditProjectFormState extends State<EditProjectForm> {
                     ),
                     TaskApp(
                       onTasksChanged: (newTasks) {
-                        // callback per ottenere le task inserite
+                        // Aggiungi le nuove task alla lista esistente di task
                         setState(() {
-                          _tasks = newTasks;
+                          _tasks.addAll(newTasks);
                         });
                       },
                     ),
@@ -314,19 +316,28 @@ class EditProjectFormState extends State<EditProjectForm> {
   }
 
   void _updateProgettoInDatabase() async {
+    Progetto? progettoPresente =
+        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
+
+    bool? completato = progettoPresente?.completato;
+
+    // Imposta il campo completato in base allo stato del progetto
+    if (_selectedStato == 'archiviato') {
+      completato = true;
+    }
+
     Progetto updatedProgetto = Progetto(
       nome: _nomeController.text,
       team: _selectedTeam ?? '',
       scadenza: _dateController.text,
       stato: _selectedStato,
       descrizione: _descrizioneController.text,
-      completato: false,
+      completato: completato, // Usa la variabile `completato` impostata sopra
       motivazioneFallimento:
           _archivedStatus == 'fallito' ? _motivazioneController.text : null,
     );
 
-    Progetto? progettoPresente =
-        await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
+    // Se il nome del progetto è cambiato, elimina il progetto vecchio
     if (progettoPresente != null &&
         progettoPresente.nome != updatedProgetto.nome) {
       await DatabaseHelper.instance.deleteProgetto(progettoPresente);
@@ -334,18 +345,25 @@ class EditProjectFormState extends State<EditProjectForm> {
 
     await DatabaseHelper.instance.insertProgetto(updatedProgetto);
 
-    // Associa il progetto alle tasks
-    for (var task in _tasks) {
-      task.progetto = updatedProgetto.nome;
+    // Task da eliminare
+    for (var originalTask in _originalTasks) {
+      if (!_tasks.any((task) => task.id == originalTask.id)) {
+        await DatabaseHelper.instance.deleteTask(originalTask);
+      }
     }
 
-    // Inserisce le tasks nel db
-    Future.wait(_tasks.map((task) => DatabaseHelper.instance.insertTask(task)))
-        .whenComplete(() {
-      setState(() {
-        _tasks.clear();
-      });
-    });
+    // Task da aggiornare o aggiungere
+    for (var task in _tasks) {
+      task.progetto = updatedProgetto.nome;
+
+      if (task.id != null) {
+        // Aggiorna la task se ha un id (presumibilmente esiste già nel database)
+        await DatabaseHelper.instance.updateTask(task, task);
+      } else {
+        // Inserisci la task se non ha un id
+        await DatabaseHelper.instance.insertTask(task);
+      }
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Progetto aggiornato con successo!')),

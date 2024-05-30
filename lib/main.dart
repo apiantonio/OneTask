@@ -25,7 +25,8 @@ class OTDashboard extends StatelessWidget {
         appBar: OTAppBar(),
         drawer: OTDrawer(),
         // body: TODO
-        floatingActionButton: const FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
+        floatingActionButton:
+            const FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
       ),
     );
   }
