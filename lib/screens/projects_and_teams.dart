@@ -121,7 +121,7 @@ class TeamViewState extends State<TeamView> {
               //l'allineamento sarà in basso a destra
               alignment: Alignment.bottomRight, 
               child: FloatingActionButton(   
-                backgroundColor: const Color(0XFFEB701D),   
+                backgroundColor: const Color(0XFF0E4C56),   
                 onPressed: () {
                   Navigator.push(
                     context, 
@@ -238,7 +238,7 @@ class ProjectViewState extends State<ProjectView> {
             //il bottone verrà posizionato in basso a destra
             alignment: Alignment.bottomRight,
             child: FloatingActionButton( 
-                backgroundColor: const Color(0XFF0E4C56),     
+                backgroundColor: const Color(0Xff167485),     
                 onPressed: () {
                   Navigator.push(
                     context, 

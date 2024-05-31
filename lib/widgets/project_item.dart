@@ -72,6 +72,7 @@ class ProjectItem extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(30.0), //per arrotondare i bordi
                     ),
+                    //all'interno del container abbiamo a sx l'icona del calendario e a dx la data di scadenza
                     child: Row(
                       children: [
                         const Icon(   //icona dell'orologio
@@ -88,6 +89,7 @@ class ProjectItem extends StatelessWidget {
                       ],
                     )
                   ),
+                  //se il progetto non è stato archiviato allora sarà presente il bottone per la modifica
                   project.completato == null ?
                     //in basso a dx anche il bottone per modificare il progetto
                     IconButton(   
@@ -105,7 +107,7 @@ class ProjectItem extends StatelessWidget {
       );
   }
 
-  //metodo per stabilire il colore del bottone
+  //metodo per stabilire il colore del bottone sulla base dello stato del progetto
   Color _colorIcon(String state){
     Color color;
     switch(state){
