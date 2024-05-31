@@ -182,6 +182,36 @@ class DatabaseHelper {
     )).toList();
   }
 
+  //metodo per estrarre gli utenti che non partecipano a 2 team e che non sono già presenti nel team di partenza
+  Future<List<Utente>?> getUtentiNonInTeam(String nomeTeam) async {
+    final db = await database;
+    final List<Map<String, Object?>> utenti = await db.rawQuery('''
+      SELECT *
+      FROM utente
+      WHERE matricola IN (
+        SELECT matricola
+        FROM utente
+                EXCEPT
+        SELECT utente
+        FROM partecipazione
+        GROUP BY utente
+        HAVING COUNT(*) >= 2
+      )
+        EXCEPT
+      SELECT matricola, nome, cognome
+      FROM utente JOIN partecipazione 
+        ON utente.matricola = partecipazione.utente
+      WHERE partecipazione.team = ?
+    '''
+    , [nomeTeam]);
+    // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
+    return utenti.map((m) => Utente(
+      matricola: m['matricola'] as String,
+      nome: m['nome'] as String,
+      cognome: m['cognome'] as String,
+    )).toList();
+  }
+
   /*
     ### INTERAZIONE CON I PROGETTI ###
   */

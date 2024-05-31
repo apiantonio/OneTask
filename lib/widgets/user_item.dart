@@ -4,22 +4,29 @@ import 'package:flutter/material.dart';
 //rappresenta una classe di utilità di appoggio per rappresentare i singoli utenti
 class UserItem extends StatefulWidget {
   final Utente utente;  
-  final onSelect;
-  final onDeselect;
+  final Function(Utente) onSelect;
+  final Function(Utente) onDeselect;
   const UserItem({super.key, required this.utente, required this.onSelect, required this.onDeselect});
 
   @override
-  _UserItemState createState() => _UserItemState(utente: utente, onSelect: onSelect, onDeselect: onDeselect);
+  UserItemState createState() => UserItemState();
 }
 
-class _UserItemState extends State<UserItem> {
+class UserItemState extends State<UserItem> {
   bool isSelected = false; // Stato iniziale, nessun utente selezionato
 
-  final Utente utente;
-  final onSelect;
-  final onDeselect;
+  late Utente utente;
+  late Function(Utente) onSelect;
+  late Function(Utente) onDeselect;
   bool aggiunta = false;    //una variabile in cui salvo se l'aggiunta è andata a buon fine
-  _UserItemState({required this.utente, required this.onSelect, required this.onDeselect});
+  
+  @override
+  void initState(){
+    super.initState();
+    utente = widget.utente;
+    onSelect = widget.onSelect;
+    onDeselect = widget.onDeselect;
+  }
 
   @override
   Widget build(BuildContext context) {
