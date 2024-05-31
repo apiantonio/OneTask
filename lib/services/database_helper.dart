@@ -52,8 +52,10 @@ class DatabaseHelper {
             nome TEXT, 
             cognome TEXT)'''
           );
-          await db.execute(
-            'CREATE TABLE team (nome TEXT PRIMARY KEY)'
+          await db.execute('''
+            CREATE TABLE team (
+              nome TEXT PRIMARY KEY
+            )'''
           );
           await db.execute('''
             CREATE TABLE partecipazione (
@@ -303,8 +305,8 @@ class DatabaseHelper {
     return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM progetto')) ?? 0;
   }
 
-  // restituisce tutti i progetti che hanno lo stato specificato
-  // Ricorda: '''stato IN ('attivo', 'sospeso', 'archiviato')'''
+  /// restituisce tutti i progetti che hanno lo stato specificato.
+  /// Ricorda: '''stato IN ('attivo', 'sospeso', 'archiviato')'''
   Future<List<Progetto>?> getProgettiByState(String stato) async {
     // se lo stato richiesto è non valido ritorna un errore
     if(!['attivo', 'sospeso', 'archiviato'].contains(stato)) {
@@ -325,29 +327,34 @@ class DatabaseHelper {
       whereArgs: [stato]
     );
 
-    if(progetti.isEmpty) {
-      return null;
-    } else {
-      return [
-        for ( final {
-          'nome': nome as String,
-          'team': team as String,
-          'scadenza': scadenza as String,
-          // 'stato': stato as String, è passato come parametro
-          'descrizione': descrizione as String,
-          'completato': completato as int,
-          'motivazioneFallimento': motiv as String,
-        } in progetti) 
-          Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, // lo stato è quello passato come argomento
-            descrizione: descrizione, completato: completato == 1, motivazioneFallimento: motiv),
-      ];
+    try {
+      if(progetti.isEmpty) {
+        return null;
+      } else {
+        return [
+          for ( final {
+            'nome': nome as String,
+            'team': team as String,
+            'scadenza': scadenza as String,
+            // 'stato': stato as String, è passato come parametro
+            'descrizione': descrizione as String,
+            'completato': completato as int,
+            'motivazioneFallimento': motiv as String,
+          } in progetti) 
+            Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, // lo stato è quello passato come argomento
+              descrizione: descrizione, completato: completato == 1, motivazioneFallimento: motiv),
+        ];
+      }
+    } catch (e) {
+      print('Errore nella query del database: $e');
+      return [];
     }
   } 
 
   /*
     ### INTERAZIONE CON I TEAM ###
   */
-  // Inserisci un nuovo team nel db
+  /// Inserisci un nuovo team nel db
   Future<void> insertTeam(Team team) async {
     final db = await database;
     await db.insert(
@@ -357,7 +364,7 @@ class DatabaseHelper {
     );
   }
 
-  // Esegue un UPDATE sulla tabella team
+  /// Esegue un UPDATE sulla tabella team
   Future<int> updateTeam(Team team) async {
     final db = await database;
     return await db.update(
@@ -636,19 +643,19 @@ class DatabaseHelper {
   }
 
   //metodo per la dashboard sui 3 team più grandi, mi restituisce i nomi dei team
-  Future<List<String>?> getTeamPiuGrandi() async {
+  Future<List<String>?> getTeamPiuGrandi(int limit) async {
     final db = await database;
     final List<Map<String, Object?>> teamNumerosi = await db.rawQuery('''
-        SELECT partecipazione.team, count(*) as Num
-        FROM utente JOIN partecipazione
-          ON utente.matricola = partecipazione.utente
-        GROUP BY partecipazione.team
-        ORDER BY Num DESC
-    '''
+        SELECT p.team, count(*) as numUtenti
+        FROM utente u
+          JOIN partecipazione p ON u.matricola = p.utente
+        GROUP BY p.team
+        ORDER BY numUtenti DESC
+        LIMIT ?
+    ''', [limit]
     );
-    List<Map<String, Object?>> primiTre = teamNumerosi.getRange(0, 3).toList();
 
-    return primiTre.map((t) => t['partecipazione.team'] as String).toList();
+    return teamNumerosi.map((t) => t['team'] as String).toList();
   }
 
   // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
