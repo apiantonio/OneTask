@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 //un nuovo widget per ciascuna task
 class TaskItem extends StatelessWidget {
-  const TaskItem({super.key, required this.task, required this.onChangeTask, required this.onDeleteTask});
+  const TaskItem({super.key, required this.task, required this.onChangeTask, this.onDeleteTask});
   final Task task;    //un oggetto di tipo task
   final onChangeTask;
   final onDeleteTask;
@@ -18,12 +18,14 @@ class TaskItem extends StatelessWidget {
           task.attivita,
         ),
         leading: task.completato ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank), //icona a sinistra, se completato abbiamo il check, altrimenti la casella vuota
-        trailing: IconButton(   //icona a destra
-          iconSize: 16,
-          icon: const Icon(Icons.remove),
-          color: Colors.black,
-          onPressed: () {onDeleteTask(task);},   //cosa fare quando premi sul bottone a destra
-        )
+        trailing: onDeleteTask != null
+          ? IconButton(   //icona a destra
+            iconSize: 16,
+            icon: const Icon(Icons.remove),
+            color: Colors.black,
+            onPressed: () {onDeleteTask(task);},   //cosa fare quando premi sul bottone a destra
+          )
+          : null
     );
   }
 }

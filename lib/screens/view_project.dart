@@ -1,6 +1,7 @@
 import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/task.dart';
 import 'package:OneTask/services/database_helper.dart';
+import 'package:OneTask/widgets/tasks_list.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 class ViewProject extends StatelessWidget {
@@ -116,16 +117,7 @@ class ProjectDetails extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     )),
                 dataProj.tasks == null ? const Text('Non ci sono tasks associati al progetto')
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: dataProj.tasks!
-                      .map((task) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: _checkboxIcon(task),
-                        title: Text(task.attivita),
-                        )
-                      ).toList(),
-                  ),
+                : TasksList(tasks: dataProj.tasks!),
               ],
             );
           }
@@ -145,10 +137,6 @@ class ProjectDetails extends StatelessWidget {
     } else {
       return ProjectElements(progetto: progetto, tasks: tasksProg);
     }
-  }
-
-  Icon _checkboxIcon(Task task){
-    return task.completato ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank);
   }
 }
 

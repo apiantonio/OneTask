@@ -484,17 +484,28 @@ class DatabaseHelper {
     );
   }
 
-  // Esegue un UPDATE sulla tabella utente
-  Future<int> updateTask(Task task) async {
+  /// Esegue un UPDATE su una Task
+  Future<int> updateTask(int oldId, String oldProjectName, Task task) async {
     final db = await database;
     return await db.update(
       'task', 
       task.toMap(),
       where: 'id = ? AND progetto = ?',
-      whereArgs: [task.id, task.progetto],
+      whereArgs: [oldId, oldProjectName],
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  /// Inverte lo stato di completamento di un task, se è non completato viene impstato a completato e viceversa
+  Future<int> toggleStateTask(Task task) async {
+    final db = await database;
+    return await db.update(
+      'task', 
+      {'completato': !task.completato},
+      where: 'id = ? AND progetto = ?',
+      whereArgs: [task.id, task.progetto],
+      conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+  
   /// Elimina un task dalla tabella utente
   Future<int> deleteTask(Task task) async {
     final db = await database;
