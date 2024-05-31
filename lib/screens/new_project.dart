@@ -36,21 +36,15 @@ class NewProjectFormState extends State<NewProjectForm> {
   // classe che rappresenta lo State di un Form generico
   final _formKey = GlobalKey<FormState>();
   //il controller che mi serve per la data
-  final TextEditingController _dateController =
-      TextEditingController(); // controller per la data
-  final TextEditingController _nomeController =
-      TextEditingController(); // controller per il nome del progetto
-  final TextEditingController _descrizioneController =
-      TextEditingController(); // controller per la descrizione del progetto
-  final TextEditingController _teamController =
-      TextEditingController(); // controller per il menu a tendina per selezionare il team
+  final TextEditingController _dateController = TextEditingController(); // controller per la data
+  final TextEditingController _nomeController = TextEditingController(); // controller per il nome del progetto
+  final TextEditingController _descrizioneController = TextEditingController(); // controller per la descrizione del progetto
+  final TextEditingController _teamController = TextEditingController(); // controller per il menu a tendina per selezionare il team
 
   List<String> _nomiTeams = []; // Lista per memorizzare i nomi dei team
-  String _labelDropdownMenu =
-      'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
+  String _labelDropdownMenu = 'Seleziona Team'; // testo nel menu a tendina per selezionare il team che varia a seconda che ci siano o meno dei team
   List<Task> _tasks = []; // lista di tasks del progetto
-  String?
-      _validaTeamText; // stringa per evidenziare l'obbligatorietà di selezionare un team (se disponibile) per il progetto
+  String? _validaTeamText; // stringa per evidenziare l'obbligatorietà di selezionare un team (se disponibile) per il progetto
 
   @override
   void initState() {
@@ -121,31 +115,25 @@ class NewProjectFormState extends State<NewProjectForm> {
               ),
               //DropDownMenu per selezionare i team scelti da db o file json
               DropdownMenu(
-                enableFilter:
-                    true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
-                enabled: _nomiTeams
-                    .isNotEmpty, // il menù è disattivato se non ci sono team nel b
-                leadingIcon:
-                    const Icon(Icons.people), // icoa a sinistra del testo
-                label: Text(
-                    _labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
+                enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
+                enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
+                leadingIcon: const Icon(Icons.people), // icoa a sinistra del testo
+                label: Text(_labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
                 // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
-                width: MediaQuery.of(context).size.width *
-                    0.69, // dimensione del menu
+                width: MediaQuery.of(context).size.width *0.69, // dimensione del menu
                 controller: _teamController, // controller
-                requestFocusOnTap:
-                    true, // permette di scrivere all'interno del menu per cercare gli elementi
+                requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
                 dropdownMenuEntries: _nomiTeams
-                    .map(
-                        (nomeTeam) => // elementi del menu a tendina (i nomi dei team)
-                            DropdownMenuEntry<String>(
-                              value: nomeTeam,
-                              label: nomeTeam,
-                              style: MenuItemButton.styleFrom(
-                                foregroundColor: Colors.blue[700],
-                              ),
-                            ))
-                    .toList(),
+                  .map(
+                    (nomeTeam) => // elementi del menu a tendina (i nomi dei team)
+                        DropdownMenuEntry<String>(
+                          value: nomeTeam,
+                          label: nomeTeam,
+                          style: MenuItemButton.styleFrom(
+                            foregroundColor: Colors.blue[700],
+                          ),
+                        ))
+                  .toList(),
                 inputDecorationTheme: const InputDecorationTheme(
                   filled: true,
                   focusedBorder: OutlineInputBorder(
@@ -158,13 +146,11 @@ class NewProjectFormState extends State<NewProjectForm> {
                 onSelected: (String? value) {
                   setState(() {
                     _teamController.text = value!;
-                    _validaTeamText =
-                        null; // se il team è selezionato allora tutt ok
+                    _validaTeamText = null; // se il team è selezionato allora tutt ok
                   });
                 },
               ),
-              if (_validaTeamText !=
-                  null) // se non è selezionato un team mostra testo di errore
+              if (_validaTeamText != null) // se non è selezionato un team mostra testo di errore
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -180,8 +166,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                 //larghezza la metà dello schermo per garantire responsività
                 width: MediaQuery.of(context).size.width * 0.69,
                 child: TextFormField(
-                  controller:
-                      _dateController, // Associa il controller al campo di testo della data
+                  controller: _dateController, // Associa il controller al campo di testo della data
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Per favore, inserisci una scadenza al progetto.";
@@ -191,8 +176,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                   decoration: const InputDecoration(
                     labelText: 'Aggiungi scadenza...',
                     filled: true, //il campo avrà un colore di sfondo
-                    prefixIcon: Icon(Icons
-                        .calendar_today), //aggiunge l'icona nel campo prima del testo
+                    prefixIcon: Icon(Icons.calendar_today), //aggiunge l'icona nel campo prima del testo
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide.none,
                     ),
