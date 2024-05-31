@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:OneTask/main.dart';
 import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/task.dart';
@@ -21,7 +19,7 @@ class DashboardView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
           children: [
-            //ViewDasboardProjects(),
+            ViewDasboardProjects(),
             ViewDashboardTeam(),
           ]
         ),
@@ -30,7 +28,7 @@ class DashboardView extends StatelessWidget {
   }
 }
  
- /* TO DO
+
 class ViewDasboardProjects extends StatelessWidget {
   const ViewDasboardProjects({super.key});
 
@@ -140,4 +138,4 @@ class ProjectDashboardWidget extends StatelessWidget {
     };
   }
 }
-*/
+
