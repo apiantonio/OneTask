@@ -1,8 +1,8 @@
 import 'package:OneTask/screens/statistiche.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:OneTask/screens/add_user.dart';
 import '../screens/projects_and_teams.dart';
-import '../screens/calendar.dart';
 import '../main.dart';
 
 class OTDrawer extends StatefulWidget {
@@ -13,24 +13,47 @@ class OTDrawer extends StatefulWidget {
 }
 
 class _OTDrawerState extends State<OTDrawer> {
+  int isSelected = 0;   //variabile che uso per far cambiare il colore all'icona se siamo su quella pagina
+
   @override
   Widget build(BuildContext context){
     return Drawer(
+      backgroundColor: const Color(0XFFCFCCC3),   //colore di sfondo del drawer
       child: ListView(
         //rimuovere il padding da questa ListView
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
+          //il drawer header è la sezione in alto del drawer
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color(0Xff167485),
             ),
-            child: Text('OneTask menu'),
+            child: Text(
+              'OneTask menu', 
+              style:GoogleFonts.inter(
+                fontSize: 25, 
+                fontWeight: FontWeight.bold,    //per lo spessore del testo
+                color: const Color(0XFFEFECE9),   //del colore OX sono obbligatorie, FF indica l'opacità
+              ),
+            ),
           ),
           
+          //ciascun listTile contiene le voci che sono presenti nel menu ad hamburger
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
+            leading: Icon(Icons.home, color: (isSelected == 0) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            title: Text(
+              'Home', 
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                color: const Color(0XFF125F6C),   //del colore OX sono obbligatorie, FF indica l'opacità
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            //al click sulla sezione di interesse ti porta alla pagina relativa
             onTap: () {
+              setState(() {
+                isSelected = 0;
+              });
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const OTDashboard())
@@ -39,10 +62,19 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: const Icon(Icons.group_work),
-            title: const Text('Progetti e Team'),
+            leading: Icon(Icons.group_work, color: (isSelected == 1) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            title: Text(
+              'Progetti e Team',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                color: const Color(0XFF125F6C),   //del colore OX sono obbligatorie, FF indica l'opacità
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             onTap: () {
-              //passa a quella pagina e poi
+              setState(() {
+                isSelected = 1;
+              });
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const ProjectTeam())
@@ -51,9 +83,19 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: const Icon(Icons.bar_chart),
-            title: const Text('Statistiche'),
+            leading: Icon(Icons.bar_chart, color: (isSelected == 2) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            title: Text(
+              'Statistiche',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                color: const Color(0XFF125F6C),   //del colore OX sono obbligatorie, FF indica l'opacità
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             onTap: () {  
+              setState(() {
+                isSelected = 2;
+              });
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const Statistiche())
@@ -62,26 +104,25 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: const Icon(Icons.person_add),
-            title: const Text('Nuovo Utente'),
+            leading: Icon(Icons.person_add, color: (isSelected == 3) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            title: Text(
+              'Nuovo Utente',
+              style: GoogleFonts.inter(
+                fontSize: 18,
+                color: const Color(0XFF125F6C),   //del colore OX sono obbligatorie, FF indica l'opacità
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             onTap: () { 
+              setState(() {
+                isSelected = 3;
+              });
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => AddUser())
               );
             },
-          ),
-
-          ListTile(
-            leading: const Icon(Icons.calendar_today),
-            title: const Text('Calendario'),
-            onTap: () { 
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const OTCalendar())
-              );
-            },
-          ),       
+          ),      
         ],
       ),
     );

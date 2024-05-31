@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/database_helper.dart';
 import 'package:OneTask/model/utente.dart';
 
 // Questo widget rappresenterà il form per l'inserimento di un utente
 class AddUserForm extends StatefulWidget{
+  const AddUserForm({super.key});
+
   @override
   AddUserFormState createState() => AddUserFormState();
 }
@@ -32,15 +35,31 @@ class AddUserFormState extends State<AddUserForm> {
             TextFormField(
               controller: _nomeController,
               // aggiugno dello stile
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 // aggiungo il bordo al campo di testo
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                //i 3 bordi a seguire sono necessari per settare lo stile normalmente, se selezionato e in caso di errore
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                ),
                 // icona interna al box di testi
-                prefixIcon: Icon(Icons.person),
+                prefixIcon: const Icon(Icons.person, color: Color(0XFF0E4C56)),
                 hintText: 'Inserisci nome utente',
                 labelText: 'Nome',
+                //serve a settare lo stile del label
+                labelStyle: GoogleFonts.inter(
+                    fontSize: 15,
+                    color:Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w400,
+                ),
                 // imposta una dimensione al box di testo
-                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -55,12 +74,26 @@ class AddUserFormState extends State<AddUserForm> {
             TextFormField(
                 controller: _cognomeController,
                 // stesso stile del precedente
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.account_circle_outlined),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  prefixIcon: const Icon(Icons.account_circle_outlined, color: Color(0XFF0E4C56)),
                   hintText: 'Inserisci cognome utente',
                   labelText: 'Cognome',
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                  labelStyle: GoogleFonts.inter(
+                      fontSize: 15,
+                      color:Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.w400,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -75,12 +108,26 @@ class AddUserFormState extends State<AddUserForm> {
               controller: _matricolaController,
               maxLength: 5, // la lunghezza del campo è di 5 cifre
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.bookmark_add),
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                ),
+                prefixIcon: const Icon(Icons.bookmark_add, color: Color(0XFF0E4C56)),
                 hintText: 'Inserisci la matricola dell\'utente',
                 labelText: 'Matricola',
-                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                labelStyle: GoogleFonts.inter(
+                    fontSize: 15,
+                    color:Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w400,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -103,7 +150,19 @@ class AddUserFormState extends State<AddUserForm> {
                   _addUtenteToDatabase();
                 }
               },
-              child: const Text('Inserisci utente'),
+              //serve a personalizzare lo stile del bottone
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(const Color(0Xff167485)),
+                elevation: MaterialStateProperty.all(4),
+              ),
+              child: Text(
+                'Aggiungi utente',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: const Color(0XFFEFECE9),   //del colore OX sono obbligatorie, FF indica l'opacità
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ),
