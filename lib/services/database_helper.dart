@@ -184,9 +184,14 @@ class DatabaseHelper {
     )).toList();
   }
 
-  //metodo per estrarre gli utenti che non partecipano a 2 team e che non sono già presenti nel team di partenza
-  Future<List<Utente>?> getUtentiNonInTeam(String nomeTeam) async {
+  //metodo per estrarre gli utenti che non partecipano a 2 team (escluso quello corrente)
+  //e che non sono già presenti nel team di partenza
+  //UTILIZZATA IN MODIFY TEAM
+  Future<List<Utente>?> getUtentiNotInTeam(List<String> team, String teamName) async {
     final db = await database;
+    //ottengo una stringa costituita dalle matricole degli utenti del team
+    String listToString = team.map((mat) => "'$mat'").join(',');
+    String condition = team.isEmpty ? "" : "AND matricola NOT IN ($listToString)";
     final List<Map<String, Object?>> utenti = await db.rawQuery('''
       SELECT *
       FROM utente
@@ -196,16 +201,13 @@ class DatabaseHelper {
                 EXCEPT
         SELECT utente
         FROM partecipazione
+        WHERE partecipazione.team <> ?
         GROUP BY utente
         HAVING COUNT(*) >= 2
       )
-        EXCEPT
-      SELECT matricola, nome, cognome
-      FROM utente JOIN partecipazione 
-        ON utente.matricola = partecipazione.utente
-      WHERE partecipazione.team = ?
-    '''
-    , [nomeTeam]);
+        $condition
+    ''', [teamName]
+    );
     // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
     return utenti.map((m) => Utente(
       matricola: m['matricola'] as String,
@@ -667,6 +669,24 @@ class DatabaseHelper {
       nome: m['nome'] as String,
       cognome: m['cognome'] as String,
     )).toList();
+  }
+
+  // seleziona le matricole degli utenti del team
+  // UTILIZZATA IN MODIFICA TEAM
+  Future<List<String>> selectMatricoleByTeam(String nomeTeam) async {
+    final db = await database;
+    // uso una query per estrarre le matricole degli utenti che partecipano al team richiesto
+    final List<Map<String, Object?>> matricoleUtenti = await db.rawQuery('''
+        SELECT matricola
+        FROM utente JOIN partecipazione 
+          ON utente.matricola = partecipazione.utente
+        WHERE partecipazione.team = ?
+    '''
+    , [nomeTeam]);
+    // restituisco le matricole degli utenti
+    return matricoleUtenti.map((m) =>
+      m['matricola'] as String,
+    ).toList();
   }
 
   /// ritorna il numero di utenti nel DB
