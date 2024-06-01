@@ -91,7 +91,7 @@ class TeamDashboardWidget extends StatelessWidget {
     final manager = await db.getTeamManager(teamName);
     final numUsers = await db.countUtentiTeam(teamName);
 
-    return InfoTeamDashboard(manager: manager, count: numUsers);
+    return InfoTeamDashboard(manager: manager!, count: numUsers);
   }
 
 }

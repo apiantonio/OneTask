@@ -61,11 +61,11 @@ class EditTeamFormState extends State<EditTeamForm> {
     //ricavo dal db le matricole degli utenti del team
     List<String> mat = await DatabaseHelper.instance.selectMatricoleByTeam(widget.teamName);
     //ricavo dal db il nome del responsabile per quel team
-    Utente responsabile = await DatabaseHelper.instance.getTeamManager(widget.teamName);
+    Utente? responsabile = await DatabaseHelper.instance.getTeamManager(widget.teamName);
     setState(() {
       _nomeController.text = widget.teamName;
       //all'inizio il responsabile risulta uguale a quello estratto dal db
-      _respController.text = responsabile.infoUtente();
+      _respController.text = responsabile?.infoUtente() ?? '';
       userTeamList.addAll(users);
       matricoleUtentiTeam.addAll(mat);
       //accedo al db per recuperare gli utenti che non sono in quel team
@@ -260,7 +260,7 @@ class EditTeamFormState extends State<EditTeamForm> {
   }
   
   /// metodo per aggiornare le informazioni relative al team nel database
-  void _editTeam() async {
+  Future<void> _editTeam() async {
     // se non è stato selezionato un manager allora mostra messaggio di errore    
     if (_respController.text.isEmpty) {
       setState(() {
@@ -268,66 +268,64 @@ class EditTeamFormState extends State<EditTeamForm> {
       });
       return;
     }
-    // altrimenti passo a modificare il necessario nel db
+
     final db = DatabaseHelper.instance;
-    // nome del team inserito nel campo di modifica nome
     final nomeTeamController = _nomeController.text.trim();
 
     // controllo che non ci sia un team con lo stesso nome già presente nel db
-    await db.selectTeamByNome(nomeTeamController)
-      .then((teamPresente) async {
-        if (teamPresente != null && teamPresente.nome != _nomeTeamOnEdit) {
-          ScaffoldMessenger.of(this.context).showSnackBar(
-            const SnackBar(content: Text('Inserisci un nome del team non già usato!'))
-          );
-        } else {
-          // aggiorno il team
-          // nota che UPDATE aggiorna a cascata le Partecipazioni
-          await db.updateTeam(_nomeTeamOnEdit,  Team(nome: nomeTeamController))
-            .then((value) async { 
-              // ora devo aggiornare le partecipazioni associate al team,
-              // poiché è possibile che siano stati rimossi utenti dal team questi saranno ancora associati come
-              // 'partecipanti' al team anche con nome aggiornato, 
-              // dunque è necessario cancellare le partecipazioni inconsistenti se presenti
-              
-              final partecipazioni = await db.selectPartecipazioniOfTeam(nomeTeamController);
-              
-              // elenco delle matricole degli utenti presenti in userTeamList, ovvero che saranno nel team aggiornato
-              final matricoleTeamList = userTeamList.map((user) => user.matricola).toList();
-              
-              // filtro le partecipazioni che non sono in matricoleTeamList
-              final partecipazioniDaCancellare = partecipazioni?.where((p) => !matricoleTeamList.contains(p.utente)).toList();
+    final teamPresente = await db.selectTeamByNome(nomeTeamController);
+    if (teamPresente != null && teamPresente.nome != _nomeTeamOnEdit) {
+      ScaffoldMessenger.of(this.context).showSnackBar(
+        const SnackBar(content: Text('Inserisci un nome del team non già usato!'))
+      );
+      return;
+    }
 
-              // ora cancello le partecipazioni filtrate
-              Future.wait(partecipazioniDaCancellare!.map((partecipazione) => db.deletePartecipazione(partecipazione)))
-                .whenComplete(() async {
-                  // controllo se il manager è stato cambiato
-                  db.getTeamManager(nomeTeamController)
-                    .then((manager) {          
-                      if (!_respController.text.contains(manager.matricola)) {
-                        db.updatePartecipazione(manager.matricola, false, Partecipazione(utente: manager.matricola, team: nomeTeamController));
-                      } 
-                    }).whenComplete(() async {
-                       // aggiungo le nuove partecipazioni
-                      for (var user in userTeamList) {
-                        await db.insertPartecipazione(Partecipazione(utente: user.matricola, team: nomeTeamController));
-                        if (_respController.text.contains(user.matricola)) {
-                          await db.updatePartecipazione(user.matricola, true, Partecipazione(utente: user.matricola, team: nomeTeamController));
-                        }
-                      }
-                    }).whenComplete(() {
-                      // aggiorno la variabile di stato che mantiene il nome del team aggiornato
-                      setState(() {
-                        _nomeTeamOnEdit = nomeTeamController;
-                      });
+    // aggiorno il team
+    await db.updateTeam(_nomeTeamOnEdit, Team(nome: nomeTeamController));
 
-                      ScaffoldMessenger.of(this.context).showSnackBar(
-                        const SnackBar(content: Text('Team aggiornato con successo!')),
-                      );
-                    });              
-                });
-            });
-        }
-      });
+    // gestisco le partecipazioni
+    await _gestisciPartecipazioni(db, nomeTeamController);
+
+    // aggiorno la variabile di stato che mantiene il nome del team aggiornato
+    setState(() {
+      _nomeTeamOnEdit = nomeTeamController;
+    });
+
+    ScaffoldMessenger.of(this.context).showSnackBar(
+      const SnackBar(content: Text('Team aggiornato con successo!')),
+    );
+  }
+
+  // metodo di utilità per gestire le partecipazioni dopo la modifica del team
+  _gestisciPartecipazioni(DatabaseHelper db, String nomeTeamController) async {
+    // ottengo le partecipazioni attuali
+    final partecipazioni = await db.selectPartecipazioniOfTeam(nomeTeamController) ?? [];
+    
+    // elenco delle matricole degli utenti presenti in userTeamList
+    final matricoleTeamList = userTeamList.map((user) => user.matricola).toList();
+    
+    // filtro le partecipazioni che non sono in matricoleTeamList
+    final partecipazioniDaCancellare = partecipazioni.where((p) => !matricoleTeamList.contains(p.utente)).toList();
+
+    // cancello le partecipazioni filtrate
+    await Future.wait(partecipazioniDaCancellare.map((partecipazione) => db.deletePartecipazione(partecipazione)));
+
+    // controllo se il manager è stato cambiato
+    final manager = await db.getTeamManager(nomeTeamController);
+    if (manager != null && !_respController.text.contains(manager.matricola)) {
+      final managerPart = await db.selectPartecipazioneByUtenteAndTeam(manager.matricola, nomeTeamController);
+      if (managerPart != null) {
+        await db.updatePartecipazione(manager.matricola, false, managerPart);
+      }
+    }
+
+    // aggiungo le nuove partecipazioni
+    for (var user in userTeamList) {
+      await db.insertPartecipazione(Partecipazione(utente: user.matricola, team: nomeTeamController));
+      if (_respController.text.contains(user.matricola)) {
+        await db.updatePartecipazione(user.matricola, true, Partecipazione(utente: user.matricola, team: nomeTeamController));
+      }
+    }
   }
 }

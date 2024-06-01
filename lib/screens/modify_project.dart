@@ -392,29 +392,23 @@ class EditProjectFormState extends State<EditProjectForm> {
         final db = DatabaseHelper.instance;
 
         // aggiorno il progetto nel db
-        // prima elimino tutte le task associate precedentemente al progetto
-        db.getTasksByProject(widget.projectName)
-        .then((oldTasks) {
-          if (oldTasks != null) {
-            Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)))
-            .whenComplete(() {
-              // aggiorno il progetto   
-              db.updateProgetto(widget.projectName, modifiedProgetto)
-              .whenComplete(() {
-                // infine aggiungo tutte le nuove/aggiornate task
-                Future.wait(_tasks.map((task) => db.insertTask(task)))
-                .whenComplete(() {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Progetto modificato!')),
-                  );
-                });
-              });
-            });
-          }
-        });
+        // Prendo tutte le task associate precedentemente al progetto
+        final oldTasks = await db.getTasksByProject(widget.projectName);
+        if (oldTasks != null) {
+          // elimino tutte le task associate precedentemente al progetto
+          await Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)));
 
+          // aggiorno il progetto
+          await db.updateProgetto(widget.projectName, modifiedProgetto);
+
+          // aggiungo tutte le nuove/aggiornate task
+          await Future.wait(_tasks.map((task) => db.insertTask(task)));
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Progetto modificato!')),
+          );
+        }
       }
     });
-
   }
 }

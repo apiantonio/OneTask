@@ -436,7 +436,7 @@ class DatabaseHelper {
   }
 
   // query per sapere chi è il responsabile del team
-  Future<Utente> getTeamManager(String teamName) async {
+  Future<Utente?> getTeamManager(String teamName) async {
     final db = await database;
     // prima prendo la matricola del responsabile
     final List<Map<String, Object?>> utente = await db.rawQuery('''
@@ -451,11 +451,15 @@ class DatabaseHelper {
       , [teamName]
     );
 
-    return Utente(
-      matricola: utente[0]['matricola'] as String, 
-      nome: utente[0]['nome'] as String, 
-      cognome: utente[0]['cognome'] as String
-    );
+    if (utente.isEmpty) {
+      return null;
+    } else {
+      return Utente(
+        matricola: utente[0]['matricola'] as String, 
+        nome: utente[0]['nome'] as String, 
+        cognome: utente[0]['cognome'] as String
+      );
+    }
   }
 
   // Restituisce una lista contenente tutti i team della tabella 'team' 

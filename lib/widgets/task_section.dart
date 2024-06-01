@@ -22,13 +22,11 @@ class _TaskAppState extends State<TaskApp> {
   @override
   void initState() {
     super.initState();
-    if (widget.oldTasks != null) {
-      tasks.addAll(widget.oldTasks ?? []);
+    if (widget.oldTasks != null && widget.oldTasks!.isNotEmpty) {
+      tasks.addAll(widget.oldTasks!);
       // associo al contatore per l'id delle task il massimo valore presente nelle task già associate al progetto
       // + 1 perché count rappresenta il prossimo id
-      tasks.isEmpty 
-        ? count = 0
-        : count = tasks.map((task) => task.id).reduce((value, element) => value > element ? value : element); 
+      count = 1 + widget.oldTasks!.map((task) => task.id).reduce((value, element) => value > element ? value : element); 
     }
   }
 
