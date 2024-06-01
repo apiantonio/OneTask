@@ -342,12 +342,7 @@ class DatabaseHelper {
   Future<List<Progetto>?> getProgettiByState(String stato) async {
     // se lo stato richiesto è non valido ritorna un errore
     if(!['attivo', 'sospeso', 'archiviato'].contains(stato)) {
-      return Error.throwWithStackTrace(
-        '''Richiesto uno stato non valido dei progetti. Lo stato di un progetto 
-        può essere uno dei seguenti valori: 'attivo', 'sospeso', 'archiviato',
-        è stato richiesto lo stato: $stato ''', 
-        StackTrace.current
-      );
+      return [];
     }
 
     final db = await database;
@@ -368,13 +363,17 @@ class DatabaseHelper {
             'nome': nome as String,
             'team': team as String,
             'scadenza': scadenza as String,
-            // 'stato': stato as String, è passato come parametro
-            'descrizione': descrizione as String,
-            'completato': completato as int,
-            'motivazioneFallimento': motiv as String,
+          //'stato': è già fornito come parametro
+            'descrizione': descrizione as String?,
+            'completato': completato as int?,
+            'motivazioneFallimento': motiv as String?,
           } in progetti) 
             Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, // lo stato è quello passato come argomento
-              descrizione: descrizione, completato: completato == 1, motivazioneFallimento: motiv),
+              descrizione: descrizione, motivazioneFallimento: motiv,
+              completato: completato != null 
+                ? completato == 1 
+                : null
+            ),
         ];
       }
     } catch (e) {

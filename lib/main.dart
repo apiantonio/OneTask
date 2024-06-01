@@ -7,10 +7,10 @@ import './model/utente.dart';
 import 'screens/dashboard_view.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.populateDatabase();
   runApp(const OTDashboard());
-  DatabaseHelper.instance.populateDatabase();
 }
-
 class OTDashboard extends StatelessWidget {
   const OTDashboard({super.key});
 
