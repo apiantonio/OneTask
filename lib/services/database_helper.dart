@@ -396,14 +396,14 @@ class DatabaseHelper {
     );
   }
 
-  /// Esegue un UPDATE sulla tabella team
-  Future<int> updateTeam(Team team) async {
+  /// Esegue un UPDATE sulla tabella team, sostituisce il team con nome oldNomeTeam con il i dati del team newTeam
+  Future<int> updateTeam(String oldNomeTeam, Team newTeam) async {
     final db = await database;
     return await db.update(
       'team', 
-      team.toMap(),
+      newTeam.toMap(),
       where: 'nome = ?',
-      whereArgs: [team.nome],
+      whereArgs: [oldNomeTeam],
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -589,15 +589,16 @@ class DatabaseHelper {
     );
   }
 
-  // Esegue un UPDATE sulla tabella partecipazione
-  Future<int> updatePartecipazione(Partecipazione part) async {
+  /// Esegue un UPDATE sulla tabella partecipazione
+  Future<int> updatePartecipazione(String utente, bool ruolo, Partecipazione oldPart) async {
     final db = await database;
     return await db.update(
       'partecipazione', 
-      part.toMap(),
+      {'utente': utente, 'ruolo': ruolo ? 1 : 0},
       where: 'utente = ? AND team = ?',
-      whereArgs: [part.utente, part.team],
-      conflictAlgorithm: ConflictAlgorithm.replace);
+      whereArgs: [oldPart.utente, oldPart.team],
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
   }
 
   // Elimina un utente dalla tabella partecipazione
@@ -611,7 +612,7 @@ class DatabaseHelper {
   }
 
   /// restituisce le partecipazioni ad un team 
-  Future<List<Partecipazione?>> selectPartecipazioniOfTeam(String nomeTeam) async {
+  Future<List<Partecipazione>?> selectPartecipazioniOfTeam(String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
       'partecipazione',

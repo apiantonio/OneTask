@@ -174,9 +174,9 @@ class AddUserFormState extends State<AddUserForm> {
   void _addUtenteToDatabase() async {
     // Crea il nuovo utente con i valori inseriti nel form
     Utente newUtente = Utente(
-      matricola: _matricolaController.text,
-      nome: _nomeController.text,
-      cognome: _cognomeController.text,
+      matricola: _matricolaController.text.trim(),
+      nome: _nomeController.text.trim(),
+      cognome: _cognomeController.text.trim(),
     );
 
     // Controlla se la matricola c'è già nel db 

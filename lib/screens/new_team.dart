@@ -188,7 +188,7 @@ class NewTeamFormState extends State<NewTeamForm> {
   
   void _addNewTeam() async {
     final db = DatabaseHelper.instance; 
-    final nomeTeam = _nomeController.text;
+    final nomeTeam = _nomeController.text.trim();
 
     await db.selectTeamByNome(nomeTeam)
     .then((teamPresente) {
@@ -201,13 +201,15 @@ class NewTeamFormState extends State<NewTeamForm> {
           // inserisco il Team nella tabella Team
         db.insertTeam(Team(nome: nomeTeam));
         // ora inserisco i componenti del team nella tabella partecipazione
-        userTeamList.forEach((utente) => db.insertPartecipazione(
+        for (var utente in userTeamList) {
+          db.insertPartecipazione(
           Partecipazione(
             utente: utente.matricola,
             team: nomeTeam,
             ruolo: utente == selected // se selected == true allora l'utente è il manager del team
           )
-        ));
+        );
+        }
         // Una volta inseriti mostriamo una SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Team creato!')),  

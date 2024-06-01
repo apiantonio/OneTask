@@ -102,9 +102,6 @@ class EditProjectFormState extends State<EditProjectForm> {
 
   @override
   Widget build(BuildContext context) {
-    // if (!_isDataLoaded) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
     
       return Form(
         key: _formKey,
@@ -186,8 +183,7 @@ class EditProjectFormState extends State<EditProjectForm> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       _validaTeamText!,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
+                      style: TextStyle(color: Theme.of(context).colorScheme.error),
                     ),
                   ),
                 const SizedBox(
@@ -345,20 +341,24 @@ class EditProjectFormState extends State<EditProjectForm> {
       return;
     }
 
+    // nuovo nome del team inserito
+    final nomeControllerProgetto = _nomeController.text.trim();
+
     // controllo che non esista già un Progetto con lo stesso nome nel db
     await DatabaseHelper.instance
-    .selectProgettoByNome(_nomeController.text)
+    .selectProgettoByNome(nomeControllerProgetto)
     .then((progettoPresente) async {
       // se esiste già un progetto con lo stesso nome che non sia lo stesso progetto modificato
-      if (progettoPresente?.nome != _nomeProgettoWhenModificato && progettoPresente != null) {
+      if (progettoPresente != null && progettoPresente.nome != _nomeProgettoWhenModificato) {
         // il progetto NON può essere inserito nella tabella, mostro un messaggio di errore
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')));
+          const SnackBar(content: Text('Inserisci un nome del progetto non già usato!'))
+        );
       } else {
 
         // salvo la modifica corrente del nome associato al progetto
         setState(() {
-          _nomeProgettoWhenModificato = _nomeController.text;
+          _nomeProgettoWhenModificato = nomeControllerProgetto;
         });
 
         // salvo le stringhe necessarie per stato e completato
@@ -375,13 +375,13 @@ class EditProjectFormState extends State<EditProjectForm> {
         // creo un nuovo progetto con i dati inseriti
         // che sarà usato per aggiornare i dati del progetto modificato
         Progetto modifiedProgetto = Progetto(
-          nome: _nomeController.text,
+          nome: nomeControllerProgetto,
           team: _teamController.text,
           scadenza: _dateController.text,
-          descrizione: _descrizioneController.text,
+          descrizione: _descrizioneController.text.trim(),
           stato: stato,
           completato: completato,
-          motivazioneFallimento: completato == false ? _motivazioneController.text : null
+          motivazioneFallimento: completato == false ? _motivazioneController.text.trim() : null
         );
 
         // associa il progetto alle tasks

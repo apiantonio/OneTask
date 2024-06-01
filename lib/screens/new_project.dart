@@ -254,7 +254,7 @@ class NewProjectFormState extends State<NewProjectForm> {
 
     // controllo che non esista già un Progetto con lo stesso nome nel db
     await DatabaseHelper.instance
-        .selectProgettoByNome(_nomeController.text)
+        .selectProgettoByNome(_nomeController.text.trim())
         .then((progettoPresente) async {
       // se esiste già un progetto con lo stesso nome
       if (progettoPresente != null) {
@@ -269,10 +269,10 @@ class NewProjectFormState extends State<NewProjectForm> {
         // nota che i campi 'stato', 'completato' e 'motivazioneFallimento' assumeranno i valori di default
         // rispettivamente 'attivo', false e NULL
         Progetto newProgetto = Progetto(
-          nome: _nomeController.text,
+          nome: _nomeController.text.trim(),
           team: _teamController.text,
           scadenza: _dateController.text,
-          descrizione: _descrizioneController.text,
+          descrizione: _descrizioneController.text.trim(),
         );
 
         // associa il progetto alle tasks
@@ -291,11 +291,11 @@ class NewProjectFormState extends State<NewProjectForm> {
             );
 
         // inserisco le tasks nel db
-        Future.wait(_tasks.map((task) => (db.insertTask(task))))
-            .whenComplete(() => setState(() {
-                  _tasks.clear();
-                })
-            );
+        Future.wait(_tasks.map((task) => db.insertTask(task)))
+          .whenComplete(() => setState(() {
+                _tasks.clear();
+              })
+          );
 
         // svuoto i campi del form e aggiorno lo stato
         setState(() {
