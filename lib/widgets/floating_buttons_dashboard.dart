@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 // questo widget rappresenta i due pulsanti floating della dashboard che 
 // consentono di navigare alle pagine Nuovo team e Nuovo Progetto
 class FloatingActionButtonsDashboard extends StatelessWidget {
-  const FloatingActionButtonsDashboard({
-    super.key,
-  });
+  const FloatingActionButtonsDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -157,8 +157,7 @@ class TeamDetails extends StatelessWidget {
     final members = await db.selectUtentiByTeam(teamName);
     final progetti = await db.selectProgettiByTeam(teamName);
 
-    return TeamDetailsData(
-        team: team, manager: manager!, members: members, progetti: progetti);
+    return TeamDetailsData(team: team, manager: manager!, members: members, progetti: progetti);
   }
 
 }
@@ -170,9 +169,10 @@ class TeamDetailsData {
   final List<Utente> members;
   final List<Progetto>? progetti;
 
-  TeamDetailsData(
-      {required this.team,
-      required this.manager,
-      required this.members,
-      required this.progetti});
+  TeamDetailsData({
+    required this.team,
+    required this.manager,
+    required this.members,
+    required this.progetti
+  });
 }
