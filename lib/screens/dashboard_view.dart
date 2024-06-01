@@ -14,15 +14,13 @@ class DashboardView extends StatelessWidget {
     return const SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
-            children: [
-              ViewDasboardProjects(),
-              SizedBox(height: 20), // Spazio tra le sezioni
-              ViewDashboardTeam(),
-            ]
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
+          children: [
+            ViewDasboardProjects(),
+            SizedBox(height: 20), // Spazio tra le sezioni
+            ViewDashboardTeam(),
+          ]
         ),
       ),
     );
@@ -219,13 +217,11 @@ class _ProjectDashboardWidgetState extends State<ProjectDashboardWidget> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          widget.progetto.nome,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
+                      Text(
+                        widget.progetto.nome,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
                       ),
                       Column(
@@ -284,11 +280,9 @@ class DashboardTasks extends StatelessWidget {
                     children: [
                       task.completato ? const Icon(Icons.check_box, size: 24) : const Icon(Icons.check_box_outline_blank, size: 24),
                       const SizedBox(width: 10), // spazio orizzontale tra l'icona e il testo
-                      Expanded(
-                        child: Text(
-                          task.attivita,
-                          style: TextStyle(fontSize: 16),
-                        ),
+                      Text(
+                        task.attivita,
+                        style: TextStyle(fontSize: 16),
                       ),
                     ],
                   ),
