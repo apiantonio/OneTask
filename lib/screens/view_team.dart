@@ -20,7 +20,11 @@ class ViewTeam extends StatelessWidget {
       body: TeamDetails(teamName: teamName),
       backgroundColor: const Color(0XFFE8E5E0),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.delete),
+        backgroundColor: const Color.fromARGB(255, 217, 122, 54),
+        child: const Icon(
+          Icons.delete,
+          color: Color(0XFFE8E5E0),
+        ),
         onPressed: () async {
           List<Progetto>? checkProgetti = await DatabaseHelper.instance.selectProgettiByTeam(teamName);
           if (checkProgetti.isNotEmpty) {
@@ -28,11 +32,30 @@ class ViewTeam extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Impossibile eliminare il Team!'),
-                  content: const Text('Non è possibile eliminare il team perché è associato a uno o più progetti.'),
+                  title: Text(
+                    'Impossibile eliminare il Team!',
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      color:const Color(0XFF0E4C56),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: Text(
+                    'Non è possibile eliminare il team perché è associato a uno o più progetti.',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                    )
+                  ),
                   actions: [
                     TextButton(
-                      child: const Text('Ok'),
+                      child: Text(
+                        'Ok',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: const Color(0Xff167485),
+                          fontWeight: FontWeight.w600,
+                        )  
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -46,18 +69,43 @@ class ViewTeam extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Conferma Eliminazione'),
-                  content:
-                      const Text('Sei sicuro di voler eliminare questo Team?'),
+                  title: Text(
+                    'Conferma Eliminazione',
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      color:const Color(0XFF0E4C56),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content:Text(
+                    'Sei sicuro di voler eliminare questo Team?',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                    )
+                  ),
                   actions: [
                     TextButton(
-                      child: const Text('Annulla'),
+                      child: Text(
+                        'Annulla',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: const Color(0Xff167485),
+                          fontWeight: FontWeight.w600,
+                        )  
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
                     ),
                     TextButton(
-                      child: const Text('Elimina'),
+                      child: Text(
+                        'Elimina',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          color: const Color(0XFFEB701D),
+                          fontWeight: FontWeight.w600,
+                        )  
+                      ),
                       onPressed: () {
                         Navigator.of(context).pop(true);
                       },
