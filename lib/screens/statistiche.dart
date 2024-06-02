@@ -174,7 +174,6 @@ class StatisticheState extends State<Statistiche> {
     Map<String, double> percentualiProgetti = _calcolaDati(progetti);
 
     // stili
-    const fontSize = 18.0;
     const radius = 60.0;
     const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
@@ -182,10 +181,10 @@ class StatisticheState extends State<Statistiche> {
       PieChartSectionData(
         color: Colors.green,
         value: percentualiProgetti['attivi'],
-        title: '${percentualiProgetti['attivi']!.toStringAsFixed(2)}%',
+        title: '${percentualiProgetti['attivi']!.toStringAsFixed(1)}%',
         radius: radius,
-        titleStyle: const TextStyle(
-          fontSize: fontSize,
+        titleStyle: GoogleFonts.inter(
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: shadows,
@@ -194,10 +193,10 @@ class StatisticheState extends State<Statistiche> {
       PieChartSectionData(
         color: Colors.orange,
         value: percentualiProgetti['sospesi'],
-        title: '${percentualiProgetti['sospesi']!.toStringAsFixed(2)}%',
+        title: '${percentualiProgetti['sospesi']!.toStringAsFixed(1)}%',
         radius: radius,
-        titleStyle: const TextStyle(
-          fontSize: fontSize,
+        titleStyle: GoogleFonts.inter(
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: shadows,
@@ -206,10 +205,10 @@ class StatisticheState extends State<Statistiche> {
       PieChartSectionData(
         color: Colors.red,
         value: percentualiProgetti['archiviati'],
-        title: '${percentualiProgetti['archiviati']!.toStringAsFixed(2)}%',
+        title: '${percentualiProgetti['archiviati']!.toStringAsFixed(1)}%',
         radius: radius,
-        titleStyle: const TextStyle(
-          fontSize: fontSize,
+        titleStyle: GoogleFonts.inter(
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: shadows,
@@ -233,9 +232,9 @@ class StatisticheState extends State<Statistiche> {
       final int numArchiviati = progetti.where((p) => p.stato == 'archiviato').toList().length;
 
       // calcola le percentuali
-      final double percAttivi = numAttivi / numProgetti;
-      final double percSospesi = numSospesi / numProgetti;
-      final double percArchiviati = numArchiviati / numProgetti;
+      final double percAttivi = (numAttivi / numProgetti)*100;
+      final double percSospesi = (numSospesi / numProgetti)*100;
+      final double percArchiviati = (numArchiviati / numProgetti)*100;
 
       // restituisco una mappa con i dati calcolati
       return {
