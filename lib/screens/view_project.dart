@@ -203,22 +203,25 @@ class ProjectDetails extends StatelessWidget {
                   ]
                 ),
                 const SizedBox(height: 16),
-                Row(
+                //questo widget mi serve per far in modo che i suoi figli vadano a capo in caso
+                //di mancanza di spazio risolvendo ipotetici causi di overflow dovuti da
+                //un'eccessiva lunghezza del campo della descrizione del progetto
+                Wrap(
                   children: [
                     Text(
-                      'Descrizione progetto: ',
-                      style: GoogleFonts.inter(
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0XFFEB701D),
+                        'Descrizione progetto: ',
+                        style: GoogleFonts.inter(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0XFFEB701D),
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${dataProj.progetto.descrizione}',
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
+                      Text(
+                        '${dataProj.progetto.descrizione}',
+                        style: GoogleFonts.inter(
+                          fontSize: 17,
+                        ),
                       ),
-                    ),
                   ]
                 ),
                 const SizedBox(height: 16),
