@@ -39,8 +39,6 @@ class StatisticheState extends State<Statistiche> {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return const Center(child: Text('Errore nel caricamento dei dati'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Nessun progetto disponibile'));
             }
 
             List<Progetto> progetti = snapshot.data!;
@@ -60,104 +58,118 @@ class StatisticheState extends State<Statistiche> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    children: [
-                      // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
-                      Expanded(
-                        child: Align(
-                          alignment: AlignmentDirectional.topCenter,
-                          child: AspectRatio(
-                            aspectRatio: 1.5, 
-                            child: PieChart(
-                              PieChartData(
-                                // spazio al centro
-                                centerSpaceRadius: 20,
-                                sections: _sezioni(progetti),
+                  snapshot.data!.isEmpty 
+                    ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                          'Per visualizzare le statistiche dei progetti prima inserisci dei progetti!',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: const Color(0Xff167485),
+                            fontWeight: FontWeight.w600,
+                          ) ,
+                        ),
+                    )
+                    : Row( // sezione del diagramma a torta
+                      children: [
+                        // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
+                        Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.topCenter,
+                            child: AspectRatio(
+                              aspectRatio: 1.5, 
+                              child: PieChart(
+                                PieChartData(
+                                  // spazio al centro
+                                  centerSpaceRadius: 20,
+                                  sections: _sezioni(progetti),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      // colonna contente la legenda del grafico
-                      const Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Indicator(color: Colors.green,text: 'Attivi'),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Indicator(color: Colors.orange,text: 'Sospesi'),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Indicator(color: Colors.red,text: 'Archiviati'),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20,),
-                  FutureBuilder<DatiStatistiche>(
-                    future: _fetchDatiStatistiche(), 
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return const Center(
-                            child: Text('Errore nel caricamento dei dettagli progetti'));
-                      } else {
-                        final datiStat = snapshot.data!;
-                        final percComp = (datiStat.completati/datiStat.totale)*100;
-                        final percFall = (datiStat.falliti/datiStat.totale)*100;
-                        return Column(
+                        // colonna contente la legenda del grafico
+                        const Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Progetti completati:',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 18,
-                                    color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '$percComp%',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
+                            Indicator(color: Colors.green,text: 'Attivi'),
+                            SizedBox(
+                              height: 4,
                             ),
-                            const SizedBox(height: 15,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Progetti falliti:',
-                                  softWrap: true,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 18,
-                                    color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '$percFall%',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
+                            Indicator(color: Colors.orange,text: 'Sospesi'),
+                            SizedBox(
+                              height: 4,
                             ),
+                            Indicator(color: Colors.red,text: 'Archiviati'),
                           ],
-                        );
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20,),
+                    // statistiche sulle percentuali di completamento
+                    if (!snapshot.data!.isEmpty )
+                      FutureBuilder<DatiStatistiche>(
+                        future: _fetchDatiStatistiche(), 
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return const Center(
+                                child: Text('Errore nel caricamento dei dettagli progetti'));
+                          } else {
+                            final datiStat = snapshot.data!;
+                            final percComp = (datiStat.completati/datiStat.totale)*100;
+                            final percFall = (datiStat.falliti/datiStat.totale)*100;
+                            return Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Progetti completati:',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 18,
+                                        color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$percComp%',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 15,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Progetti falliti:',
+                                      softWrap: true,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 18,
+                                        color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$percFall%',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                            ],
+                          );
+                        }
                       }
-                    }
-                  )
+                    )
                 ]
               ),
             );
@@ -255,9 +267,9 @@ class StatisticheState extends State<Statistiche> {
 }
 
 Future<DatiStatistiche> _fetchDatiStatistiche() async {
-  final numCompletati = await DatabaseHelper.instance.getNumProgettiCompletati();
-  final numFalliti = await DatabaseHelper.instance.getNumProgettiFalliti();
   final progetti = await DatabaseHelper.instance.getAllProgetti();
+  final numCompletati = progetti.where((p) => p.completato == true).length; // conta numero di progetti completati
+  final numFalliti = progetti.where((p) => p.completato == false).length; // conta numero di porgetti falliti
 
   return DatiStatistiche(completati: numCompletati, falliti: numFalliti, totale: progetti.length);
 }

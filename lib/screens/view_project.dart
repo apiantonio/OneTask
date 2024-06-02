@@ -5,6 +5,8 @@ import 'package:OneTask/widgets/tasks_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/appbar.dart';
+
+/// Widget che rappresenta la visualizzazione di un progetto
 class ViewProject extends StatelessWidget {
   final String projectName;
 

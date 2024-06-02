@@ -3,6 +3,7 @@ import 'package:OneTask/model/task.dart';
 import 'package:OneTask/screens/view_project.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/view_dashboard_team.dart';
 
@@ -73,69 +74,80 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
         } else {  
           // team composti da più utenti
           List<Progetto> projects = snapshot.data ?? [];
-    
-          if(projects.isEmpty) {
-            return const Center(child: Text('Nessun progetto presente al momento'));
-          }else{
-            return Container(
-              padding: const EdgeInsets.all(8.0),
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row( // riga che contiene il titolo 'Progetti' e il menu a tre puntini
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(12.0, 0, 0, 0),
+  
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row( // riga che contiene il titolo 'Progetti' e il menu a tre puntini
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(12.0, 0, 0, 0),
+                      child: Text(
+                        'Progetti',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '$_numProgettiVisualizzati',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        ),
+                        PopupMenuButton<int>(
+                          onSelected: (value) {
+                            _updateNumPreference(value);
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 5,
+                              child: Text('Mostra 5 progetti'),
+                            ),
+                            const PopupMenuItem(
+                              value: 10,
+                              child: Text('Mostra 10 progetti'),
+                            ),
+                            const PopupMenuItem(
+                              value: 20,
+                              child: Text('Mostra 20 progetti'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ), 
+                SizedBox( // box che contiene una lista orizzontale di widget che contengono i progetti
+                  height: 100,
+                  child: projects.isEmpty // se non ci sono progetti mostra un testo
+                    ? Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
                         child: Text(
-                          'Progetti',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          'Nessun progetto presente al momento!',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0XFFEB701D),
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            '$_numProgettiVisualizzati',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                          ),
-                          PopupMenuButton<int>(
-                            onSelected: (value) {
-                              _updateNumPreference(value);
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 5,
-                                child: Text('Mostra 5 progetti'),
-                              ),
-                              const PopupMenuItem(
-                                value: 10,
-                                child: Text('Mostra 10 progetti'),
-                              ),
-                              const PopupMenuItem(
-                                value: 20,
-                                child: Text('Mostra 20 progetti'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ), 
-                  SizedBox( // box che contiene una lista orizzontale di widget che contengono i progetti
-                    height: 250,
-                    child: ListView.builder(
+                    )
+                    : ListView.builder( // se ci sono progetti mostra una lista orizzontale
                       scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
                       shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
                       itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
@@ -149,11 +161,10 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                         );
                       }
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
+                ),
+              ],
+            ),
+          );
         }
       }
     );
