@@ -110,6 +110,7 @@ class AddUserFormState extends State<AddUserForm> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
+                //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
                 enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
                 ),
@@ -151,9 +152,9 @@ class AddUserFormState extends State<AddUserForm> {
                 }
               },
               //serve a personalizzare lo stile del bottone
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(const Color(0Xff167485)),
-                elevation: MaterialStateProperty.all(4),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0Xff167485),
+                elevation: 5,
               ),
               child: Text(
                 'Aggiungi utente',

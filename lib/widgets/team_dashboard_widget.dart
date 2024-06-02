@@ -1,4 +1,3 @@
-import 'package:OneTask/main.dart';
 import 'package:OneTask/model/utente.dart';
 import 'package:OneTask/screens/view_team.dart';
 import 'package:OneTask/services/database_helper.dart';

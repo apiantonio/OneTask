@@ -1,14 +1,13 @@
-import 'package:OneTask/services/database_helper.dart';
+//import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/floating_buttons_dashboard.dart';
 import 'package:flutter/material.dart';
 import './widgets/appbar.dart';
 import './widgets/drawer.dart';
-import './model/utente.dart';
 import 'screens/dashboard_view.dart';
 
 void main() async {
   runApp(const OTDashboard());
-  DatabaseHelper.instance.populateDatabase();
+  //DatabaseHelper.instance.populateDatabase();
 }
 
 class OTDashboard extends StatelessWidget {

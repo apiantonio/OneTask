@@ -27,7 +27,7 @@ class DatabaseHelper {
     
     
     /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
-    await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
+    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     /*##############################################################################*/
 
     return await openDatabase(
@@ -543,7 +543,7 @@ class DatabaseHelper {
   }
 
   /// per prendere tutti i task di un progetto
-  Future<List<Task>?> getTasksByProject(String projectName) async {
+  Future<List<Task>> getTasksByProject(String projectName) async {
     final db = await database;
     final List<Map<String, Object?>> taskMaps = await db.query(
       'task',

@@ -1,5 +1,6 @@
 import 'package:OneTask/model/task.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// widget di utilità per visualizzare una colonna contente una lista di tasks
 class TasksList extends StatelessWidget {
@@ -12,12 +13,17 @@ class TasksList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: tasks
-        .map((task) => Container(
+        .map((task) => SizedBox(
           height: 30,
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: task.completato ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),
-            title: Text(task.attivita),
+            leading: task.completato ? const Icon(Icons.check_box, color: Color(0XFF0E4C56)) : const Icon(Icons.check_box_outline_blank, color: Color(0XFF0E4C56)),
+            title: Text(
+              task.attivita,
+              style: GoogleFonts.inter(
+                fontSize: 17,
+              ),
+            ),
           ),
         )
       ).toList(),

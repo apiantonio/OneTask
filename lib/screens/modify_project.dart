@@ -70,7 +70,7 @@ class EditProjectFormState extends State<EditProjectForm> {
     Progetto? progetto = await DatabaseHelper.instance.selectProgettoByNome(widget.projectName);
 
     if (progetto != null) {
-      _tasks = await DatabaseHelper.instance.getTasksByProject(widget.projectName) ?? [];
+      _tasks = await DatabaseHelper.instance.getTasksByProject(widget.projectName);
 
       setState(() {
         _nomeController.text = progetto.nome;
@@ -279,15 +279,6 @@ class EditProjectFormState extends State<EditProjectForm> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Cosa vuoi fare?',
-                  softWrap: true,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 FutureBuilder(
                   future: _oldTasks,
                   builder: (context, snapshot) {
@@ -394,7 +385,7 @@ class EditProjectFormState extends State<EditProjectForm> {
         // aggiorno il progetto nel db
         // Prendo tutte le task associate precedentemente al progetto
         final oldTasks = await db.getTasksByProject(widget.projectName);
-        if (oldTasks != null) {
+        if (oldTasks.isNotEmpty) {
           // elimino tutte le task associate precedentemente al progetto
           await Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)));
 

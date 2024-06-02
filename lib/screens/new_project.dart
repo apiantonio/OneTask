@@ -2,6 +2,7 @@ import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/task.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import '../widgets/task_section.dart';
@@ -14,6 +15,7 @@ class NewProject extends StatelessWidget {
     return const Scaffold(
       appBar: OTAppBar(title: 'Nuovo Progetto'),
       body: NewProjectForm(),
+      backgroundColor: Color(0XFFE8E5E0),
     );
   }
 }
@@ -64,8 +66,7 @@ class NewProjectFormState extends State<NewProjectForm> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           //mettere Column in Padding perchè quest'ultimo non accetta children ma un solo child
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment
-                .start, // Allinea a sinistra, di default è centrale
+            crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -75,7 +76,18 @@ class NewProjectFormState extends State<NewProjectForm> {
                     _addProgettoToDatabase();
                   }
                 },
-                child: const Text('Aggiungi progetto'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0Xff167485),
+                  elevation: 5,
+                ),
+                child: Text(
+                  'Aggiungi progetto',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: const Color(0XFFEFECE9),   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
               TextFormField(
                 controller: _nomeController,
@@ -85,9 +97,24 @@ class NewProjectFormState extends State<NewProjectForm> {
                   }
                   return null;
                 },
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
                   labelText: 'Inserisci il nome del progetto',
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    color:Colors.black54,  
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
               const SizedBox(
@@ -97,30 +124,48 @@ class NewProjectFormState extends State<NewProjectForm> {
                 controller: _descrizioneController,
                 maxLength: 250, //massimo 250 parole
                 maxLines: null, //quando termina lo spazio continua a capo
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFF0E4C56), width: 1.0),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
                   hintText: 'Inserisci descrizione del progetto...',
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                  )
                 ),
               ),
               const SizedBox(
-                height: 5,
+                height: 3,
               ),
-              const Text(
+              Text(
                 'Team',
                 softWrap: true, //se non c'è abbastanza spazio manda a capo
-                style: TextStyle(
-                  fontSize: 25,
+                style: GoogleFonts.inter(
+                  fontSize: 28,
+                  color:const Color(0Xff167485),  
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              const SizedBox(
+                height: 6,
               ),
               //DropDownMenu per selezionare i team scelti da db o file json
               DropdownMenu(
                 enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
                 enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
-                leadingIcon: const Icon(Icons.people), // icoa a sinistra del testo
+                leadingIcon: const Icon(Icons.people, color: Color(0XFFEB701D)), // icoa a sinistra del testo
                 label: Text(_labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
                 // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
-                width: MediaQuery.of(context).size.width *0.69, // dimensione del menu
+                width: MediaQuery.of(context).size.width*0.69, // dimensione del menu
                 controller: _teamController, // controller
                 requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
                 dropdownMenuEntries: _nomiTeams
@@ -130,17 +175,23 @@ class NewProjectFormState extends State<NewProjectForm> {
                           value: nomeTeam,
                           label: nomeTeam,
                           style: MenuItemButton.styleFrom(
-                            foregroundColor: Colors.blue[700],
+                            foregroundColor: Colors.black54,
                           ),
                         ))
                   .toList(),
                 inputDecorationTheme: const InputDecorationTheme(
-                  filled: true,
+                  filled: true,     //dice che deve esserci un riempimento, non trasparente
+                  fillColor:Color.fromARGB(255, 214, 209, 204),   //imposta il colore di riempimento della sezione
+                  //imposto il colore del bordo quando è selezionato, normalmente o quando si verificano errori
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.orange),
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
                   ),
+                  enabledBorder: InputBorder.none,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
+                  ),                 
                   labelStyle: TextStyle(
-                    color: Colors.blue,
+                    color: Color(0XFF0E4C56),
                   ),
                 ),
                 onSelected: (String? value) {
@@ -166,6 +217,7 @@ class NewProjectFormState extends State<NewProjectForm> {
                 //larghezza la metà dello schermo per garantire responsività
                 width: MediaQuery.of(context).size.width * 0.69,
                 child: TextFormField(
+                  readOnly: true,   //vieto in questo modo che l'utente possa inserire caratteri indesiderati se non la data
                   controller: _dateController, // Associa il controller al campo di testo della data
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -176,12 +228,18 @@ class NewProjectFormState extends State<NewProjectForm> {
                   decoration: const InputDecoration(
                     labelText: 'Aggiungi scadenza...',
                     filled: true, //il campo avrà un colore di sfondo
-                    prefixIcon: Icon(Icons.calendar_today), //aggiunge l'icona nel campo prima del testo
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
+                    fillColor:Color.fromARGB(255, 214, 209, 204),   //imposta il colore di riempimento della sezione
+                    prefixIcon: Icon(Icons.calendar_today, color: Color(0Xff167485)), //aggiunge l'icona nel campo prima del testo
+                    //imposto il colore del bordo quando è selezionato, normalmente o quando si verificano errori
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
+                      borderSide: BorderSide(color: Color(0XFF0E4C56)),
+                    ),
+                    enabledBorder: InputBorder.none,
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0XFF0E4C56)),
+                    ),                 
+                    labelStyle: TextStyle(
+                      color: Color(0XFFEB701D),
                     ),
                   ),
                   onTap: () {
@@ -191,14 +249,6 @@ class NewProjectFormState extends State<NewProjectForm> {
               ),
               const SizedBox(
                 height: 15,
-              ),
-              const Text(
-                'Cosa vuoi fare?',
-                softWrap: true, //se non c'è abbastanza spazio manda a capo
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
               TaskApp(
                 onTasksChanged: (newTasks) {

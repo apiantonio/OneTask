@@ -3,6 +3,7 @@ import 'package:OneTask/model/task.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/tasks_list.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/appbar.dart';
 class ViewProject extends StatelessWidget {
   final String projectName;
@@ -16,6 +17,7 @@ class ViewProject extends StatelessWidget {
         title: 'Visualizza Progetto',
       ),
       body: ProjectDetails(projectName: projectName),
+      backgroundColor: const Color(0XFFE8E5E0),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.delete),
         onPressed: () async {
@@ -65,6 +67,8 @@ class ProjectDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      //tramite questo future builder posso estrarre tutte le info che mi servono del progetto
+      //(compresi i task associati)
       child: FutureBuilder<ProjectElements>(
         future: _fetchProjectDetails(),
         builder: (context, snapshot) {
@@ -73,51 +77,162 @@ class ProjectDetails extends StatelessWidget {
           } else if (snapshot.hasError) {
             return const Text('Errore caricamento infoProgetto dal db');
           } else {
-            //sono sicuro che mi restituisca qualcosa
+            //se sono arrivata qui sono sicuro che mi restituisca qualcosa
             ProjectElements dataProj = snapshot.data!;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(dataProj.progetto.nome,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    )),
-                const SizedBox(height: 20),
-                (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento == null) ?
-                  const Text('Stato: completato',
-                    style: TextStyle(fontSize: 15))
-                : (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento != null) ?
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Stato: fallito',
-                        style: TextStyle(fontSize: 15)),
-                      const SizedBox(height: 20),
-                      Text('Causa fallimento: ${dataProj.progetto.motivazioneFallimento}',
-                        style: const TextStyle(fontSize: 15))
-                    ]
-                  )
-                : Text('Stato: ${dataProj.progetto.stato}',
-                    style: const TextStyle(fontSize: 15)),
-
-                const SizedBox(height: 20),
-                Text('Scadenza: ${dataProj.progetto.scadenza}',
-                    style: const TextStyle(fontSize: 15)),
-                const SizedBox(height: 20),
-                Text('Descrizione: ${dataProj.progetto.descrizione}',
-                    style: const TextStyle(fontSize: 15)),
-                const SizedBox(height: 20),
-                Text('Team: ${dataProj.progetto.team}',
-                    style: const TextStyle(fontSize: 15)),
-                const SizedBox(height: 20),
-                const Text('I tuoi tasks',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    )),
-                dataProj.tasks == null ? const Text('Non ci sono tasks associati al progetto')
-                : TasksList(tasks: dataProj.tasks!),
+                Text(
+                  dataProj.progetto.nome,
+                  style: GoogleFonts.inter(
+                    fontSize: 28,
+                    color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Stato: ',
+                      style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0XFFEB701D),
+                      ),
+                    ),
+                  //per i progetti archiviati voglio mi dica con esattezza se sono completati (dunque non esiste la motivazione di fallimento)
+                  (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento == null) ?              
+                    Text(
+                      'archiviato - completato',
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    )
+                  //se invece non sono archiviati stampa solo lo stato
+                  : (dataProj.progetto.stato != 'archiviato') ?
+                    Text(
+                      dataProj.progetto.stato,
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    )
+                  //oppure se sono falliti (e dunque la motivazione del fallimento è necessaria)
+                  //in questo caso voglio venga restituita anche la motivazione oltre che lo stato
+                  : Text(
+                      'archiviato - fallito',
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    ),        
+                  ]
+                ),
+                //se il progetto è archiviato e fallito permetto la visualizzazione della motivazione del fallimento
+                (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento != null) ?
+                Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'Causa fallimento: ',
+                          style: GoogleFonts.inter(
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0XFFEB701D),
+                          ),
+                        ),
+                        Text(
+                          '${dataProj.progetto.motivazioneFallimento}',
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                          ),
+                        ),
+                      ]
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ) :
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Scadenza: ',
+                      style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0XFFEB701D),
+                      ),
+                    ),
+                    Text(
+                      dataProj.progetto.scadenza,
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    ),
+                  ]
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Descrizione progetto: ',
+                      style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0XFFEB701D),
+                      ),
+                    ),
+                    Text(
+                      '${dataProj.progetto.descrizione}',
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    ),
+                  ]
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Team: ',
+                      style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0XFFEB701D),
+                      ),
+                    ),
+                    Text(
+                      dataProj.progetto.team,
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
+                    ),
+                  ]
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'I tuoi tasks',
+                  style: GoogleFonts.inter(
+                    fontSize: 22,
+                    color: const Color(0Xff167485),   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.bold,
+                  ),     
+                ),
+                //poichè un progetto potrebbe non avere al momento task associati 
+                //questo comportamento è stato necessario gestirlo
+                dataProj.tasks.isEmpty ? 
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10), 
+                  child: Text(
+                    'Non ci sono tasks associati al progetto', 
+                    style: GoogleFonts.inter(
+                      fontSize: 17, 
+                      color: const Color(0XFF0E4C56),
+                      )
+                    )
+                )
+                : TasksList(tasks: dataProj.tasks),
               ],
             );
           }
@@ -126,6 +241,8 @@ class ProjectDetails extends StatelessWidget {
     );
   }
 
+  //questo metodo asincrono è utile per ottenere rapidamente tutte le info sul progetto:
+  //info di carattere generale e quali sono i task associati
   Future<ProjectElements> _fetchProjectDetails() async{
     final db = DatabaseHelper.instance;
     final progetto = await db.selectProgettoByNome(projectName);
@@ -144,7 +261,7 @@ class ProjectDetails extends StatelessWidget {
 //post estrazione dal db
 class ProjectElements {
   final Progetto progetto;
-  final List<Task>? tasks;
+  final List<Task> tasks;
 
   ProjectElements({required this.progetto, required this.tasks});
 }

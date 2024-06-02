@@ -3,6 +3,7 @@ import '../model/team.dart';
 import '../model/utente.dart';
 import 'package:flutter/material.dart';
 import '../services/database_helper.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/appbar.dart';
 
 class ViewTeam extends StatelessWidget {
@@ -13,8 +14,11 @@ class ViewTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const OTAppBar(title: 'Visualizza Team'),
+      appBar: const OTAppBar(
+        title: 'Visualizza Team'
+      ),
       body: TeamDetails(teamName: teamName),
+      backgroundColor: const Color(0XFFE8E5E0),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.delete),
         onPressed: () async {
@@ -83,6 +87,8 @@ class TeamDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //tramite questo future builder posso estrarre tutte le info che mi servono del team
+    //(compresi i progetti a cui lavora)
     return FutureBuilder<TeamDetailsData>(
       future: _fetchTeamDetails(),
       builder: (context, snapshot) {
@@ -101,40 +107,93 @@ class TeamDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.team.nome,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold)),
+                  Text(
+                    data.team.nome,
+                    style: GoogleFonts.inter(
+                      fontSize: 28,
+                      color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  const Text('Responsabile:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('${data.manager.nome} ${data.manager.cognome}',
-                      style: const TextStyle(fontSize: 18)),
+                  Text(
+                    'Responsabile:',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      color: const Color(0Xff167485),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${data.manager.nome} ${data.manager.cognome}',
+                    style:  GoogleFonts.inter(
+                      fontSize: 18,
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  const Text('Membri del Team:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(
+                    'Membri del Team:',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      color: const Color(0Xff167485),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),   
+                  //questo widget column contiene tutte le persone che lavorano al team
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: data.members
                           .map((utente) => ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text('${utente.nome} ${utente.cognome}'),
-                                subtitle:
-                                    Text('Matricola: ${utente.matricola}'),
+                                title: Text(
+                                  '${utente.nome} ${utente.cognome}',
+                                  style:  GoogleFonts.inter(
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  'Matricola: ${utente.matricola}',
+                                  style:  GoogleFonts.inter(
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ))
                           .toList()),
-                  const SizedBox(height: 16),
-                  const Text('Progetti associati al team:',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  data.progetti == null ? const Text('Nessun progetto associato al team')
+                  const SizedBox(height: 6),
+                  Text(
+                    'Progetti associati al team:',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      color: const Color(0Xff167485),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.bold,
+                    ),      
+                  ),
+                  //poichè un team potrebbe non avere al momento progetti associati 
+                  //questo comportamento è stato necessario gestirlo
+                  data.progetti.isEmpty ? 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10), 
+                    child: Text(
+                      'Non ci sono progetti associati al team', 
+                      style: GoogleFonts.inter(
+                        fontSize: 17, 
+                        color: const Color(0XFF0E4C56),
+                        )
+                      )
+                  )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: data.progetti!
+                      children: data.progetti
                           .map((progetto) => ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text(progetto.nome),
+                                title: Text(
+                                  progetto.nome,
+                                  style: GoogleFonts.inter(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0XFFEB701D),
+                                  ),
+                                ),
                               )
                           ).toList()
                     ),
@@ -147,6 +206,8 @@ class TeamDetails extends StatelessWidget {
     );
   }
 
+  //questo metodo asincrono è utile per ottenere rapidamente tutte le info sul team:
+  //info di carattere generale, chi è il manager,quali sono i progetti associati
   Future<TeamDetailsData> _fetchTeamDetails() async {
     final db = DatabaseHelper.instance;
     final team = await db.selectTeamByNome(teamName);
@@ -167,7 +228,7 @@ class TeamDetailsData {
   final Team team;
   final Utente manager;
   final List<Utente> members;
-  final List<Progetto>? progetti;
+  final List<Progetto> progetti;
 
   TeamDetailsData({
     required this.team,
