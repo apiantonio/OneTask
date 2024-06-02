@@ -330,6 +330,35 @@ class DatabaseHelper {
     ];
   }
 
+  //nelle STATISTICHE dovrebbe restituirmi quanti progetti sono completati
+  //ossia quelli per cui il booleano non è null, ma la motivazione di fallimento si
+  Future<int> getNumProgettiCompletati() async {
+    final db = await database;
+    return Sqflite.firstIntValue(await db.rawQuery(
+      '''
+        SELECT COUNT(*) 
+        FROM progetto 
+        WHERE completato == 1
+      '''
+      )
+    ) ?? 0;
+  }
+
+  //nelle STATISTICHE dovrebbe restituirmi quanti progetti sono falliti
+  //ossia quelli per cui il booleano non è null e neppure la motivazione di fallimento
+  Future<int> getNumProgettiFalliti() async {
+    final db = await database;
+    return Sqflite.firstIntValue(await db.rawQuery(
+      '''
+        SELECT COUNT(*) 
+        FROM progetto 
+        WHERE completato == 0 
+      '''
+      )
+    ) ?? 0;
+  }
+  
+
   /// restituisce il numero di progetti nel DB
   Future<int> countProgetti() async {
     final db = await database;

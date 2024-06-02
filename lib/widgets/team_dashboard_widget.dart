@@ -74,7 +74,7 @@ class TeamDashboardWidget extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    'Manager: ${info.manager.nome} ${info.manager.cognome} (${info.manager.matricola})',
+                    'Manager: ${info.manager.matricola}',
                   )
                 ]
               ),

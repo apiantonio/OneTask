@@ -4,7 +4,7 @@ import 'package:OneTask/widgets/appbar.dart';
 import 'package:OneTask/widgets/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/indicator.dart';
 
 /// Classe che rappresenta la pagina di statistiche
@@ -17,6 +17,8 @@ class Statistiche extends StatefulWidget {
 
 class StatisticheState extends State<Statistiche> {
   late Future<List<Progetto>> progetti; // lista dei progetti presenti nel DB
+  late Future<int> numCompletati;
+  late Future<int> numFalliti;
 
   @override
   void initState() {
@@ -26,77 +28,141 @@ class StatisticheState extends State<Statistiche> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: const OTAppBar(),
       drawer: const OTDrawer(),
-      body: FutureBuilder<List<Progetto>>( // il future builder si baserà sui progetti 
-        future: progetti,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Errore nel caricamento dei dati'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nessun progetto disponibile'));
-          }
+      body: SingleChildScrollView(
+        child: FutureBuilder<List<Progetto>>( // il future builder si baserà sui progetti 
+          future: progetti,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Errore nel caricamento dei dati'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('Nessun progetto disponibile'));
+            }
 
-          List<Progetto> progetti = snapshot.data!;
+            List<Progetto> progetti = snapshot.data!;
 
-          return Padding( 
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              children: [
-                const Text(
-                  'Statistiche progetti',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  )
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
-                    Expanded(
-                      child: Align(
-                        alignment: AlignmentDirectional.topCenter,
-                        child: AspectRatio(
-                          aspectRatio: 1.5, 
-                          child: PieChart(
-                            PieChartData(
-                              // spazio al centro
-                              centerSpaceRadius: 20,
-                              sections: _sezioni(progetti),
+            return Padding( 
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                children: [
+                  Text(
+                    'Statistiche progetti',
+                    style: GoogleFonts.inter(
+                      fontSize: 28,
+                      color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.topCenter,
+                          child: AspectRatio(
+                            aspectRatio: 1.5, 
+                            child: PieChart(
+                              PieChartData(
+                                // spazio al centro
+                                centerSpaceRadius: 20,
+                                sections: _sezioni(progetti),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    // colonna contente la legenda del grafico
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Indicator(color: Colors.green,text: 'Attivi'),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Indicator(color: Colors.orange,text: 'Sospesi'),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Indicator(color: Colors.red,text: 'Archiviati'),
-                      ],
-                    ),
-                  ],
-                ),
-              ]
-            ),
-          );
-        }
+                      // colonna contente la legenda del grafico
+                      const Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Indicator(color: Colors.green,text: 'Attivi'),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Indicator(color: Colors.orange,text: 'Sospesi'),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Indicator(color: Colors.red,text: 'Archiviati'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20,),
+                  FutureBuilder<DatiStatistiche>(
+                    future: _fetchDatiStatistiche(), 
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                            child: Text('Errore nel caricamento dei dettagli progetti'));
+                      } else {
+                        final datiStat = snapshot.data!;
+                        final percComp = (datiStat.completati/datiStat.totale)*100;
+                        final percFall = (datiStat.falliti/datiStat.totale)*100;
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Progetti completati:',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18,
+                                    color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '$percComp%',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 15,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Progetti falliti:',
+                                  softWrap: true,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 18,
+                                    color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '$percFall%',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        );
+                      }
+                    }
+                  )
+                ]
+              ),
+            );
+          }
+        ),
       ),
     );
   }
@@ -187,4 +253,26 @@ class StatisticheState extends State<Statistiche> {
       };
     }
   } 
+}
+
+Future<DatiStatistiche> _fetchDatiStatistiche() async {
+  final numCompletati = await DatabaseHelper.instance.getNumProgettiCompletati();
+  final numFalliti = await DatabaseHelper.instance.getNumProgettiFalliti();
+  final progetti = await DatabaseHelper.instance.getAllProgetti();
+
+  return DatiStatistiche(completati: numCompletati, falliti: numFalliti, totale: progetti.length);
+}
+
+//classe di utilità per le statistiche, non per i grafici
+class DatiStatistiche {
+  final int completati;
+  final int falliti;
+  final int totale;
+
+  DatiStatistiche({
+    required this.completati,
+    required this.falliti,
+    required this.totale
+  });
+
 }

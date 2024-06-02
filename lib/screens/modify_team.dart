@@ -6,7 +6,7 @@ import '../widgets/appbar.dart';
 import '../services/database_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:OneTask/model/utente.dart';
-import '../widgets/user_item.dart';
+import '../widgets/user_mod_item.dart';
 class ModifyTeam extends StatelessWidget {
   final String teamName;
   const ModifyTeam({super.key, required this.teamName});
@@ -121,16 +121,31 @@ class EditTeamFormState extends State<EditTeamForm> {
                   }
                   return null;
                 },
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
                   labelText: 'Modifica il nome del team',
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    color:Colors.black54,  
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
               const SizedBox(height: 15),
               //DropDownMenu per selezionare gli utenti scelti da db
               DropdownMenu(
                 enabled: userTeamList.isNotEmpty, // il menù è disattivato se non ci sono utenti nel team
-                leadingIcon: const Icon(Icons.people), // icona a sinistra del testo
+                leadingIcon: const Icon(Icons.people,color: Color(0XFFEB701D)), // icona a sinistra del testo
                 label: userTeamList.isNotEmpty ? Text(_labelDropdownMenu) : const Text('Nessun utente nel team'), // testo dentro il menu di base, varia seconda che ci siano o meno persone nel team
                 width: MediaQuery.of(context).size.width *0.69, // dimensione del menu
                 controller: _respController, // controller
@@ -141,16 +156,21 @@ class EditTeamFormState extends State<EditTeamForm> {
                       value: utente.infoUtente(),
                       label: utente.infoUtente(),
                       style: MenuItemButton.styleFrom(
-                        foregroundColor: Colors.blue[700],
+                        foregroundColor:Colors.black54,
                       ),
                     )).toList(),
                 inputDecorationTheme: const InputDecorationTheme(
                   filled: true,
+                  fillColor: Color.fromARGB(255, 214, 209, 204),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.orange),
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
                   ),
+                  enabledBorder: InputBorder.none,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
+                  ),                 
                   labelStyle: TextStyle(
-                    color: Colors.blue,
+                    color: Color(0XFF0E4C56),
                   ),
                 ),
                 onSelected: (String? value) {
@@ -169,10 +189,14 @@ class EditTeamFormState extends State<EditTeamForm> {
                   ),
                 ),
               const SizedBox(height: 15),
-              const Text(
+              Text(
                 'Partecipanti',
                 softWrap: true,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(
+                  fontSize: 25,
+                  color:const Color(0XFF0E4C56),  
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
@@ -183,17 +207,24 @@ class EditTeamFormState extends State<EditTeamForm> {
                     return ListTile(
                       title:Text(utente.infoUtente()),
                       leading: IconButton(
-                        icon: const Icon(Icons.remove), 
+                        icon: const Icon(Icons.remove, color: Color(0XFFEB701D)), 
                         onPressed: () => _removeUtente(utente),
                       ),
                     );
                   }
                 ),
               ),
-              const Text(
+              Text(
                 'Aggiungi partecipanti',
                 softWrap: true,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(
+                  fontSize: 25,
+                  color:const Color(0XFF0E4C56),  
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 5,
               ),
               FutureBuilder<List<Utente>?>(
                 future: listUtentiFuture,
@@ -206,14 +237,22 @@ class EditTeamFormState extends State<EditTeamForm> {
                   }else{
                     //se non da problemi crea/restituisci la lista di utenti
                     List<Utente> utenti = snapshot.data ?? [];
-                    return Column(
+                    return utenti.isEmpty ? 
+                    Text(
+                      'Nessun utente disponibile', 
+                      style: GoogleFonts.inter(
+                        fontSize: 17, 
+                        color: const Color(0XFF0E4C56),
+                      ),
+                    )
+                    //altrimenti in un widget Column saranno visualizzati i diversi utenti
+                    :Column(
                       children: utenti.map((utente) =>
                         Container(
                           margin: const EdgeInsets.only(bottom: 8.0),
-                          child: UserItem(
+                          child: UserModItem(
                             utente: utente,
                             onSelect: _addUtente,
-                            onDeselect: _removeUtente,
                           ),
                         ),
                       ).toList(),
@@ -231,11 +270,18 @@ class EditTeamFormState extends State<EditTeamForm> {
   bool _addUtente(Utente utente) {
     // nel team è possibile inserire al massimo 6 persone
     if (userTeamList.length < 6) {
-      setState(() {
-        userTeamList.add(utente);
-        matricoleUtentiTeam.add(utente.matricola);
-      });
-      return true;
+      if(userTeamList.contains(utente)){
+        return false;
+      }else{
+        setState(() {
+          userTeamList.add(utente);
+          matricoleUtentiTeam.add(utente.matricola);
+          //nel momento in cui un utente viene aggiunto al team dovremmo aggiornare la lista di utenti
+          //che potrebbero prendere parte al team
+          listUtentiFuture = DatabaseHelper.instance.getUtentiNotInTeam(matricoleUtentiTeam, widget.teamName);
+        });
+        return true;
+      }
     } else {
       ScaffoldMessenger.of(context as BuildContext).showSnackBar(
         const SnackBar(content: Text('Team al completo!')),
