@@ -59,7 +59,7 @@ class _TaskAppState extends State<TaskApp> {
                 ),
                 padding: const EdgeInsets.fromLTRB(30, 10, 30, 5),
                 decoration: BoxDecoration(
-                  color: Colors.white60,
+                  color: Colors.white70,
                   //è stata utilizzata per assegnare un'ombra e per dare il senso di
                   //tridimensionalità al container
                   boxShadow: const [BoxShadow(
@@ -88,9 +88,9 @@ class _TaskAppState extends State<TaskApp> {
                 _addTask(_taskController.text); // Chiamiamo la funzione per aggiungere un Task all'interno di setState
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:const Color.fromARGB(255, 231, 128, 56),
+                backgroundColor:const Color.fromARGB(255, 231, 128, 56),  //colore di sfondo del bottone
                 elevation: 5,
-                foregroundColor: Colors.white,
+                foregroundColor: Colors.white,    //colore del testo
                 padding: const EdgeInsets.all(16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10), //per settare quanto debba essere rotondo

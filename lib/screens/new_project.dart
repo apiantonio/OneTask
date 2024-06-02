@@ -124,7 +124,6 @@ class NewProjectFormState extends State<NewProjectForm> {
                 controller: _descrizioneController,
                 maxLength: 250, //massimo 250 parole
                 maxLines: null, //quando termina lo spazio continua a capo
-                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori

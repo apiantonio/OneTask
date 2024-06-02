@@ -229,8 +229,8 @@ class ProjectDetails extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 17, 
                       color: const Color(0XFF0E4C56),
-                      )
                     )
+                  )
                 )
                 : TasksList(tasks: dataProj.tasks),
               ],

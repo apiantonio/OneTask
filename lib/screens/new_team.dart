@@ -2,6 +2,7 @@ import 'package:OneTask/model/partecipazione.dart';
 import 'package:OneTask/model/team.dart';
 import 'package:OneTask/model/utente.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/appbar.dart';
 import '../services/database_helper.dart';
 import '../widgets/user_item.dart';
@@ -14,11 +15,12 @@ class NewTeam extends StatelessWidget {
     return const Scaffold(
         appBar: OTAppBar(title: 'NuovoTeam'),
         body: NewTeamForm(),
+        backgroundColor:Color(0XFFE8E5E0),
     );
   }
 }
 
-//rappresenta il nostro form
+//rappresenta il form in cui verranno inserite le informazioni per inserire un nuovo team
 class NewTeamForm extends StatefulWidget {
   const NewTeamForm({super.key});
 
@@ -28,7 +30,6 @@ class NewTeamForm extends StatefulWidget {
   }
 }
 
-/*work in progress*/ 
 class NewTeamFormState extends State<NewTeamForm> {
   final _formKey = GlobalKey<FormState>();
   var listUtentiFuture = DatabaseHelper.instance.getUtentiNot2Team();
@@ -36,7 +37,7 @@ class NewTeamFormState extends State<NewTeamForm> {
   final List<Utente> userTeamList = []; 
 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
-
+  //è il controller del campo di testo in cui è possibile inserire il nome del team
   final TextEditingController _nomeController = TextEditingController();
 
   @override
@@ -44,7 +45,7 @@ class NewTeamFormState extends State<NewTeamForm> {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
-        //per settare una distanza fissa dai bordi dello schermo
+        //uso un padding per settare una distanza fissa dai bordi dello schermo
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Allinea a sinistra, di default è centrale
@@ -71,7 +72,18 @@ class NewTeamFormState extends State<NewTeamForm> {
                   }
                 }
               },
-              child: const Text('Aggiungi Team'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0Xff167485),
+                elevation: 5,
+              ),
+              child: Text(
+                'Aggiungi Team',
+                style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: const Color(0XFFEFECE9),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      fontWeight: FontWeight.w500,
+                ),
+              ),
               ),
               /*campo aggiunta nome team*/
               TextFormField(
@@ -82,19 +94,35 @@ class NewTeamFormState extends State<NewTeamForm> {
                   }
                   return null;
                 },
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
                   labelText: 'Inserisci il nome del team',
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    color:Colors.black54,  
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
               const SizedBox(
-                height: 5,
+                height: 16,
               ),
-              const Text(
+              Text(
                 'Scegli un responsabile',
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 25,
+                  color:const Color(0XFF0E4C56),  
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -109,12 +137,20 @@ class NewTeamFormState extends State<NewTeamForm> {
                     final utente = userTeamList[index];
                     //RadioListTile mi restituisce un RadioButton 
                     return RadioListTile(
-                      value: utente,
-                      groupValue: selected,
+                      value: utente,      //qual è il valore di quel listTile
+                      groupValue: selected,   //indica quale deve essere spuntato
+                      //quando si clicca su un nuovo listTile, il valore di selected cambia
                       onChanged: (value) => setState(() {
                         selected = value;
                       }),
-                      title: Text(utente.infoUtente()),
+                      //a video sono mostrate le info dell'utente così come sono esposte nel metodo infoUtente
+                      title: Text(
+                        utente.infoUtente(),
+                        style: GoogleFonts.inter(
+                          fontSize: 16,  
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -122,15 +158,18 @@ class NewTeamFormState extends State<NewTeamForm> {
               const SizedBox(
                 height: 5,
               ),
-              const Text(
+              Text(
                 'Scegli i partecipanti',   
                 softWrap: true,   //se non c'è abbastanza spazio manda a capo
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 25,
+                  color:const Color(0XFF0E4C56),  
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
+              const SizedBox(
+                height: 5,
+              ),
               FutureBuilder<List<Utente>?>(
                 future: listUtentiFuture,
                 builder: (context, snapshot) {
@@ -142,7 +181,19 @@ class NewTeamFormState extends State<NewTeamForm> {
                   }else{
                     //se non da problemi crea/restituisci la lista di utenti
                     List<Utente> utenti = snapshot.data ?? [];
-                    return Column(
+                    //ciò che restituisce il futureBuilder varia a seconda che la lista sia piena o vuota
+                    //se non ci sono utenti in generale o tutti gli utenti già partecipano a due team
+                    //allora visualizza un messaggio testuale che notifica il problema
+                    return utenti.isEmpty ? 
+                    Text(
+                      'Nessun utente disponibile', 
+                      style: GoogleFonts.inter(
+                        fontSize: 17, 
+                        color: const Color(0XFF0E4C56),
+                      ),
+                    )
+                    //altrimenti in un widget Column saranno visualizzati i diversi utenti
+                    : Column(
                       children: utenti.map((utente) =>
                         Container(
                           margin: const EdgeInsets.only(bottom: 8.0),

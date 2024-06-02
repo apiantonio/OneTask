@@ -1,5 +1,6 @@
 import 'package:OneTask/model/utente.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 //rappresenta una classe di utilità di appoggio per rappresentare i singoli utenti
 class UserItem extends StatefulWidget {
@@ -30,6 +31,7 @@ class UserItemState extends State<UserItem> {
 
   @override
   Widget build(BuildContext context) {
+    //viene restituito un listTile
     return ListTile(
       //azione quando premi sulla riga
       onTap: () { 
@@ -45,10 +47,14 @@ class UserItemState extends State<UserItem> {
       },  
       //per arrotondare i bordi
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      tileColor: (isSelected & aggiunta) ? Colors.pink : Colors.blue.shade50,  //la riga si colora solo se puoi ancora aggiungere
+      tileColor: (isSelected & aggiunta) ? const Color.fromARGB(255, 220, 133, 71) : const Color.fromARGB(255, 171, 197, 202),  //la riga si colora solo se puoi ancora aggiungere
       //il testo di ogni singolo componente all'interno della lista di utenti - formato mat/cognome/nome
       title: Text(
         "${utente.matricola} ${utente.cognome} ${utente.nome}",
+        style: GoogleFonts.inter(
+          fontSize: 16,  
+          fontWeight: FontWeight.w400,
+        ),
       ),
     );
   }

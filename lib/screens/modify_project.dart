@@ -2,6 +2,7 @@ import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/task.dart';
 import '../model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import '../widgets/appbar.dart';
 import '../widgets/task_section.dart';
@@ -16,6 +17,7 @@ class ModifyProject extends StatelessWidget {
     return Scaffold(
       appBar: const OTAppBar(title: 'Modifica Progetto'),
       body: EditProjectForm(projectName: projectName),
+      backgroundColor: const Color(0XFFE8E5E0),
     );
   }
 }
@@ -102,210 +104,305 @@ class EditProjectFormState extends State<EditProjectForm> {
 
   @override
   Widget build(BuildContext context) {
-    
-      return Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _modificaProgetto();
-                    }
-                  },
-                  child: const Text('Aggiorna progetto'),
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _modificaProgetto();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0Xff167485),
+                  elevation: 5,
                 ),
-                TextFormField(
-                  controller: _nomeController,
+                child: Text(
+                  'Aggiorna progetto',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: const Color(0XFFEFECE9),   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              TextFormField(
+                controller: _nomeController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Per favore, inserisci un nome al progetto.";
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0Xff167485), width: 1.0),
+                  ),
+                  focusedBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  labelText: 'Inserisci il nome del progetto',
+                  labelStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                    color:Colors.black54,  
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _descrizioneController,
+                maxLength: 250,
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFF0E4C56), width: 1.0),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  hintText: 'Inserisci descrizione del progetto...',
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                  )
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                'Team',
+                softWrap: true, //se non c'è abbastanza spazio manda a capo
+                style: GoogleFonts.inter(
+                  fontSize: 25,
+                  color:const Color(0Xff167485),  
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              //DropDownMenu per selezionare i team scelti da db o file json
+              DropdownMenu(
+                enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
+                enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
+                leadingIcon:
+                    const Icon(Icons.people, color: Color(0XFFEB701D)), // icoa a sinistra del testo
+                label: Text(_labelDropdownMenuT), // testo dentro il menu di base, varia seconda che ci siano o meno team
+                // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
+                width: MediaQuery.of(context).size.width *0.69, // dimensione del menu
+                controller: _teamController, // controller
+                requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
+                dropdownMenuEntries: _nomiTeams.map((nomeTeam) => // elementi del menu a tendina (i nomi dei team)
+                  DropdownMenuEntry<String>(
+                    value: nomeTeam,
+                    label: nomeTeam,
+                    style: MenuItemButton.styleFrom(
+                      foregroundColor:Colors.black54,
+                    ),
+                  )).toList(),
+                inputDecorationTheme: const InputDecorationTheme(
+                  filled: true,
+                  fillColor:Color.fromARGB(255, 214, 209, 204),   //imposta il colore di riempimento della sezione
+                  //imposto il colore del bordo quando è selezionato, normalmente o quando si verificano errori
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
+                  ),
+                  enabledBorder: InputBorder.none,
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D)),
+                  ),                 
+                  labelStyle: TextStyle(
+                    color: Color(0XFF0E4C56),
+                  ),
+                ),
+                onSelected: (String? value) {
+                  setState(() {
+                    _teamController.text = value!;
+                    _validaTeamText = null; // se il team è selezionato allora tutt ok
+                  });
+                },
+              ),
+              if (_validaTeamText != null) // se non è selezionato un team mostra testo di errore
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _validaTeamText!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.69,
+                child: TextFormField(
+                  readOnly: true,   //vieto in questo modo che l'utente possa inserire caratteri indesiderati se non la data
+                  controller: _dateController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Per favore, inserisci un nome al progetto.";
+                      return "Per favore, inserisci una scadenza al progetto.";
                     }
                     return null;
                   },
                   decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Inserisci il nome del progetto',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _descrizioneController,
-                  maxLength: 250,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Inserisci descrizione del progetto...',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                //DropDownMenu per selezionare i team scelti da db o file json
-                DropdownMenu(
-                  enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
-                  enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
-                  leadingIcon:
-                      const Icon(Icons.people), // icoa a sinistra del testo
-                  label: Text(_labelDropdownMenuT), // testo dentro il menu di base, varia seconda che ci siano o meno team
-                  // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
-                  width: MediaQuery.of(context).size.width *0.69, // dimensione del menu
-                  controller: _teamController, // controller
-                  requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
-                  dropdownMenuEntries: _nomiTeams.map((nomeTeam) => // elementi del menu a tendina (i nomi dei team)
-                    DropdownMenuEntry<String>(
-                      value: nomeTeam,
-                      label: nomeTeam,
-                      style: MenuItemButton.styleFrom(
-                        foregroundColor: Colors.blue[700],
-                      ),
-                    )).toList(),
-                  inputDecorationTheme: const InputDecorationTheme(
+                    labelText: 'Aggiungi scadenza...',
                     filled: true,
+                    fillColor:Color.fromARGB(255, 214, 209, 204),   //imposta il colore di riempimento della sezione
+                    prefixIcon: Icon(Icons.calendar_today, color: Color(0Xff167485)), //aggiunge l'icona nel campo prima del testo
+                    //imposto il colore del bordo quando è selezionato, normalmente o quando si verificano errori
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange),
+                      borderSide: BorderSide(color: Color(0XFF0E4C56)),
                     ),
+                    enabledBorder: InputBorder.none,
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0XFF0E4C56)),
+                    ),                 
                     labelStyle: TextStyle(
-                      color: Colors.blue,
+                      color: Color(0XFFEB701D),
                     ),
                   ),
-                  onSelected: (String? value) {
-                    setState(() {
-                      _teamController.text = value!;
-                      _validaTeamText = null; // se il team è selezionato allora tutt ok
-                    });
+                  onTap: () {
+                    _selectDate();
                   },
                 ),
-                if (_validaTeamText != null) // se non è selezionato un team mostra testo di errore
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      _validaTeamText!,
-                      style: TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  'Stato del progetto',
+                  style: GoogleFonts.inter(
+                    fontSize: 25,
+                    color:const Color(0Xff167485),  
+                    fontWeight: FontWeight.bold,
                   ),
-                const SizedBox(
-                  height: 20,
                 ),
-                SizedBox(
+              ),
+              //rappresenta il menu a tendina dal quale è possibile selezionare qual è il nuovo stato
+              //del progetto
+              PopupMenuButton<String>(
+                //il valore iniziale è quello estratto dal db
+                initialValue: _statoController.text,
+                //ogni volta che viene selezionato qualcosa si aggiorna il controller
+                onSelected: (String value) => {
+                  setState(() {
+                    _statoController.text = value;
+                    _validaStatoText = null; 
+                  })
+                },
+                //all'interno di un sizedBox rendo visibile lo stato attuale
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.45,
-                  child: TextFormField(
-                    controller: _dateController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Per favore, inserisci una scadenza al progetto.";
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Aggiungi scadenza...',
-                      filled: true,
-                      prefixIcon: Icon(Icons.calendar_today),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
+                  child: ListTile(
+                    title: Text(
+                      _statoController.text,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,  
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    onTap: () {
-                      _selectDate();
-                    },
+                    trailing: const Icon(Icons.arrow_drop_down),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    'Stato del progetto',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  initialValue: _statoController.text,
-                  onSelected: (String value) => {
-                    setState(() {
-                      _statoController.text = value;
-                      _validaStatoText = null; 
-                    })
-                  },
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    child: ListTile(
-                      title: Text(_statoController.text),
-                      trailing: const Icon(Icons.arrow_drop_down),
-                    ),
-                  ),
-                  itemBuilder: (BuildContext context) {
-                    List<PopupMenuEntry<String>> tendina = [];
-                    for (var stato in _stato) {
-                      tendina.add(
-                        PopupMenuItem<String>(
-                          value: stato,
-                          child: Text(stato, style: const TextStyle(fontWeight: FontWeight.bold)),
+                //serve per creare l'elenco delle voci nel menu a comparsa
+                itemBuilder: (BuildContext context) {
+                  List<PopupMenuEntry<String>> tendina = [];
+                  //iterando sulla lista di stati (di stringhe) creata in partenza 
+                  for (var stato in _stato) {
+                    //aggiungo le voci all'interno degli item che compongono il PopupMenuEntry
+                    tendina.add(
+                      PopupMenuItem<String>(
+                        value: stato,
+                        child: Text(
+                          stato, 
+                          style: GoogleFonts.inter(
+                            fontSize: 15,  
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      );
-                    }
-                    return tendina;
+                      ),
+                    );
                   }
-                ),
-                if (_validaStatoText != null) // se non è selezionato un team mostra testo di errore
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      _validaStatoText!,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.error),
-                    ),
+                  return tendina;
+                }
+              ),
+              if (_validaStatoText != null) // se non è selezionato uno stato mostra testo di errore
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _validaStatoText!,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _motivazioneController,
-                  enabled: _statoController.text == 'fallito' ? true : false,
-                  maxLength: 50,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Inserisci motivazione del fallimento...',
-                  ),
-                  validator: (value) {
-                    if (_statoController.text == 'fallito' && (value == null || value.isEmpty)) {
-                      return "La motivazione è obbligatoria per i progetti falliti!";
-                    }
-                    return null;
-                  },
                 ),
-                FutureBuilder(
-                  future: _oldTasks,
-                  builder: (context, snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }else if(snapshot.hasError){
-                      return const Text('Errore task progetti dal db');
-                    }else{
-                      List<Task>? oldTasks = snapshot.data ?? [];
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _motivazioneController,
+                enabled: _statoController.text == 'fallito' ? true : false,
+                maxLength: 50,
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  //rappresenta la decorazione del bordo normalmente, quando selezionato ed in caso di errori
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFF0E4C56), width: 1.0),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0XFFEB701D), width: 2.0),
+                  ),
+                  hintText: 'Inserisci motivazione del fallimento...',
+                  hintStyle: GoogleFonts.inter(
+                    fontSize: 16,
+                  )
+                ),
+                validator: (value) {
+                  if (_statoController.text == 'fallito' && (value == null || value.isEmpty)) {
+                    return "La motivazione è obbligatoria per i progetti falliti!";
+                  }
+                  return null;
+                },
+              ),
+              FutureBuilder(
+                future: _oldTasks,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }else if(snapshot.hasError){
+                    return const Text('Errore task progetti dal db');
+                  }else{
+                    List<Task>? oldTasks = snapshot.data ?? [];
 
-                      return TaskApp(
-                        oldTasks: oldTasks,
-                        onTasksChanged: (newTasks) {
-                          // Aggiungo le nuove task alla lista esistente di task
-                          setState(() {
-                            _tasks = newTasks;
-                          });
-                        }
-                      ); 
-                    }
+                    return TaskApp(
+                      oldTasks: oldTasks,
+                      onTasksChanged: (newTasks) {
+                        // Aggiungo le nuove task alla lista esistente di task
+                        setState(() {
+                          _tasks = newTasks;
+                        });
+                      }
+                    ); 
                   }
-                ),
-              ],
-            ),
+                }
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 
   Future<void> _selectDate() async {
