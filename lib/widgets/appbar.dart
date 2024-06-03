@@ -3,22 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 //deve obbligatoriamente implementare PreferredSizedWidget altrimenti non potrei passarla allo Scaffold come appbar
-class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
+class OTAppBar extends StatefulWidget implements PreferredSizeWidget{
   //di default se non passato tabbar non viene visualizzata
-  const OTAppBar({super.key, this.title, this.withTabbar = false, this.controller, this.withSearchbar = true});
+  const OTAppBar(
+    {super.key,
+    this.title, // Titolo da inserire nella appbar
+    this.withTabbar = false, // flag per indicare se mostrare o meno la TabBar
+    this.tabController, // TabController se presente mostra un tabController
+    this.withSearchbar = true, // flag che indica se mostrare o meno la searchabr
+    this.sourcePage, // stringa che indica lapagina in cui è applicat l'appbar
+  });
 
   final String? title; // Parametro titolo che è opzionale
-
   //il parametro passato risulta opzionale, serve per capire se serva o meno il tabbar per quella schermata
   final bool withTabbar;
-  final TabController? controller;
-  //quando implementiamo PreferredSizeWidget mi serve questo override per stabilire l'alteza dell'appBar
+  final TabController? tabController;
+  final bool withSearchbar; 
+  final String? sourcePage;
+
   @override
-  Size get preferredSize => Size.fromHeight(withTabbar ? 120 : 56); //l'altezza dell'appbar cambia a seconda che ci sia o meno la tabbar
+  State<OTAppBar> createState() => _OTAppBarState();
+  
+  @override
+  Size get preferredSize => Size.fromHeight(withTabbar ? 120 : 56); 
+}
 
-  // parametro opzionale per includere o meno la searchbar
-  final bool withSearchbar;
+class _OTAppBarState extends State<OTAppBar> {
 
+  //quando implementiamo PreferredSizeWidget mi serve questo override per stabilire l'alteza dell'appBar
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -28,7 +40,7 @@ class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
       ),
       backgroundColor: const Color(0Xff167485),   //rappresenta il colore di sfondo dell'appbar
       title: Text(
-        title ?? 'OneTask',   //il titolo sarà pari a OneTask o a quanto passato dalle pagine che la richiamano
+        widget.title ?? 'OneTask',   //il titolo sarà pari a OneTask o a quanto passato dalle pagine che la richiamano
         //per settare lo stile utilizziamo un google font opportunamente importato come package
         style: GoogleFonts.inter(
           fontSize: 25, 
@@ -37,14 +49,14 @@ class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
         ),
       ),
       actions: [  //gli passo un array di widget, in particolare di IconButton
-        if (withSearchbar) 
+        if (widget.withSearchbar) 
           IconButton(
             onPressed: (() {
               // metodo che mostra la barra di ricerca
               showSearch(
                 context: context, 
                 // delega la costruzione ad un widget figlio
-                delegate: SearchBarDelegate()
+                delegate: SearchBarDelegate(sourcePage: widget.sourcePage)
               );
             }), 
             icon: const Icon(Icons.search),
@@ -52,14 +64,14 @@ class OTAppBar extends StatelessWidget implements PreferredSizeWidget{
           )
       ],
       //aggiunge ai piedi dell'appbar il tabbar solo se il booleano tabbar è true
-      bottom: withTabbar
+      bottom: widget.withTabbar
         ? TabBar(
-            controller: controller,
+            controller: widget.tabController,
             dividerColor: Colors.transparent,     //non c'è alcuna divisione tra i due tabs
             labelColor: const Color(0XFFEFECE9),    //rappresenta il colore del testo selezionato
             unselectedLabelColor: const Color(0XFFEFECE9).withOpacity(0.5),   //rappresenta il colore del testo non selezionato
             tabs: [
-                Tab(icon: Icon(Icons.assignment, color:const Color(0XFFEFECE9).withOpacity(0.8)), text: 'I miei progetti'),
+              Tab(icon: Icon(Icons.assignment, color:const Color(0XFFEFECE9).withOpacity(0.8)), text: 'I miei progetti'),
               Tab(icon: Icon(Icons.people, color:const Color(0XFFEFECE9).withOpacity(0.8)), text: 'I miei team'),
             ]
           ) 

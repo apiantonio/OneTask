@@ -26,7 +26,7 @@ class OTDashboard extends StatelessWidget {
       title: appTitle,
       debugShowCheckedModeBanner: false, //così non si vede la striscia in alto a dx di debug
       home: Scaffold(
-        appBar: OTAppBar(), // appbar dell'app OneTask
+        appBar: OTAppBar(sourcePage: 'Dashboard'), // appbar dell'app OneTask
         drawer: OTDrawer(), // drawer dell'app
         body: DashboardView(), // view della dashboard
         floatingActionButton: FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto

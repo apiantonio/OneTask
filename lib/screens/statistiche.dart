@@ -29,7 +29,7 @@ class StatisticheState extends State<Statistiche> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const OTAppBar(title: 'Statistiche', withSearchbar: false),
+      appBar: const OTAppBar(title: 'Statistiche', withSearchbar: false, sourcePage: 'Statistiche'),
       drawer: const OTDrawer(),
       backgroundColor: const Color(0XFFE8E5E0),
       body: SingleChildScrollView(
