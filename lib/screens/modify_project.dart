@@ -16,7 +16,7 @@ class ModifyProject extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const OTAppBar(title: 'Modifica Progetto'),
+      appBar: const OTAppBar(title: 'Modifica Progetto', withSearchbar: false),
       body: EditProjectForm(projectName: projectName),
       backgroundColor: const Color(0XFFE8E5E0),
     );

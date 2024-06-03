@@ -13,7 +13,7 @@ class NewProject extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: OTAppBar(title: 'Nuovo Progetto'),
+      appBar: OTAppBar(title: 'Nuovo Progetto', withSearchbar: false),
       body: NewProjectForm(),
       backgroundColor: Color(0XFFE8E5E0),
     );

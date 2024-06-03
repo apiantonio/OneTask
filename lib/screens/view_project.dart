@@ -15,9 +15,7 @@ class ViewProject extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const OTAppBar(
-        title: 'Visualizza Progetto',
-      ),
+      appBar: const OTAppBar(title: 'Visualizza Progetto', withSearchbar: false),
       body: ProjectDetails(projectName: projectName),
       backgroundColor: const Color(0XFFE8E5E0),
       floatingActionButton: FloatingActionButton(

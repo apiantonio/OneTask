@@ -14,9 +14,7 @@ class ViewTeam extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const OTAppBar(
-        title: 'Visualizza Team'
-      ),
+      appBar: const OTAppBar(title: 'Visualizza Team', withSearchbar: false),
       body: TeamDetails(teamName: teamName),
       backgroundColor: const Color(0XFFE8E5E0),
       floatingActionButton: FloatingActionButton(

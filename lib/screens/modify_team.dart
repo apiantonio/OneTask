@@ -15,7 +15,7 @@ class ModifyTeam extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0XFFE8E5E0),
-      appBar: const OTAppBar(title: 'Modifica team'),
+      appBar: const OTAppBar(title: 'Modifica team', withSearchbar: false),
       body: EditTeamForm(teamName: teamName),
     );
   }
