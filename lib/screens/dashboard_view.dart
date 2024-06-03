@@ -302,9 +302,11 @@ class DashboardTasks extends StatelessWidget {
                     children: [
                       task.completato ? const Icon(Icons.check_box, size: 24) : const Icon(Icons.check_box_outline_blank, size: 24),
                       const SizedBox(width: 10), // spazio orizzontale tra l'icona e il testo
-                      Text(
-                        task.attivita,
-                        style: TextStyle(fontSize: 16),
+                      Expanded( // necessario per rendere il testo fexible in modo che non causi oveflow
+                        child: Text(
+                          task.attivita,
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
