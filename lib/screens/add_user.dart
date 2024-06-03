@@ -13,7 +13,7 @@ class AddUser extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Color(0XFFE8E5E0),   //il colore di background di questa pagina
-      appBar: OTAppBar(title: 'Nuovo Utente'),    //nell'appbar questo sarà il testo visualizzato
+      appBar: OTAppBar(title: 'Nuovo Utente', withSearchbar: false),    //nell'appbar questo sarà il testo visualizzato
       drawer: OTDrawer(),
       body: SingleChildScrollView( // Permette allo schermo di scorrere se il form è troppo grande per lo schermo
         child: Padding(
