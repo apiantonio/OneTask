@@ -1,4 +1,4 @@
-//questa classe rappresenta l'associazione tra utente e team
+/// Questa classe rappresenta l'associazione tra utente e team
 class Partecipazione {
   //ciascuna partecipazione ha la coppua (utente, team) univoca
   final String utente;

@@ -4,6 +4,7 @@ import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/add_user_form.dart';
 import 'package:OneTask/widgets/appbar.dart';
 
+/// Pagina per la creazione di un nuovo utente
 class AddUser extends StatelessWidget {
   final dbHelper = DatabaseHelper.instance;
 

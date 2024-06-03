@@ -1,4 +1,4 @@
-//questa classe si occupa dei singoli task
+/// questa classe si occupa di rappresentare i singoli task
 class Task {
   //ciascun task ha un id numerico univoco, un progetto a cui è assegnato, una descrizione ed un booleano per lo stato
   final int id;

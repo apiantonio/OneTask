@@ -4,18 +4,7 @@ import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// utilità
-class InfoTeamDashboard {
-  Utente manager;
-  int count;
-
-  InfoTeamDashboard({
-    required this.manager,
-    required this.count,
-  });
-}
-
-// visualizza i team nelal dashboard
+/// Widget per rappresentare i team nella dashboard
 class TeamDashboardWidget extends StatelessWidget {
   final String teamName;
   const TeamDashboardWidget({super.key, required this.teamName});
@@ -112,4 +101,15 @@ class TeamDashboardWidget extends StatelessWidget {
     return InfoTeamDashboard(manager: manager!, count: numUsers);
   }
 
+}
+
+// utilità
+class InfoTeamDashboard {
+  Utente manager;
+  int count;
+
+  InfoTeamDashboard({
+    required this.manager,
+    required this.count,
+  });
 }

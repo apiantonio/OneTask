@@ -8,7 +8,13 @@ class TeamItem extends StatelessWidget {
   final Team team;  
   final Function(Team) viewSingleTeam;
   final Function(Team) updateTeam;
-  const TeamItem({super.key, required this.team, required this.viewSingleTeam, required this.updateTeam});
+  
+  const TeamItem({
+    super.key, 
+    required this.team, 
+    required this.viewSingleTeam, 
+    required this.updateTeam
+  });
 
   @override
   Widget build(BuildContext context){

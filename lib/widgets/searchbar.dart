@@ -1,4 +1,3 @@
-import 'package:OneTask/main.dart';
 import 'package:OneTask/screens/modify_project.dart';
 import 'package:OneTask/screens/modify_team.dart';
 import 'package:OneTask/screens/projects_and_teams.dart';
@@ -11,6 +10,8 @@ import 'package:OneTask/model/team.dart';
 import 'package:OneTask/screens/view_team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../screens/dashboard.dart';
 
 class SearchBarDelegate extends SearchDelegate {
   final String? sourcePage; // stringa che indica in che pagina è presente la searchbar
@@ -54,13 +55,13 @@ class SearchBarDelegate extends SearchDelegate {
             );
             break;
           case 'Statistiche':
-            Navigator.pushReplacement( // torna indietro renderizzando una nuova dashboard
+            Navigator.pushReplacement( // torna indietro renderizzando una nuova pagina statistiche
               context,
               MaterialPageRoute(builder: (context) => const Statistiche()),
             );
             break;
           case 'Progetti e teams':
-            Navigator.pushReplacement( // torna indietro renderizzando una nuova dashboard
+            Navigator.pushReplacement( // torna indietro renderizzando una nuova pagina progetti e teams
               context,
               MaterialPageRoute(builder: (context) => const ProjectTeam()),
             );

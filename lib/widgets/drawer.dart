@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:OneTask/screens/add_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../screens/dashboard.dart';
 import '../screens/projects_and_teams.dart';
-import '../main.dart';
 
+/// Drawer dell'appbar dell'applicazioeìne attraverso cui è possibile navigare in altre pagine
 class OTDrawer extends StatefulWidget {
   const OTDrawer({super.key});
 
@@ -22,6 +23,7 @@ class _OTDrawerState extends State<OTDrawer> {
     _initSelectedTile(); // inizialmente la sezione selezionata è la Home
   }
 
+  // metodo per inizializzare la sezione del drawer
   Future<void> _initSelectedTile() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -29,7 +31,8 @@ class _OTDrawerState extends State<OTDrawer> {
       _selectedTile = prefs.getString('selectedTileDrawer') ?? 'Home';
     });
   }
-
+  
+  // metodo che aggiorna la shared preference quando cambia la sezione del drawer selezionata
   Future<void> _updateSelectedTile(String selectedTile) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedTileDrawer', selectedTile);

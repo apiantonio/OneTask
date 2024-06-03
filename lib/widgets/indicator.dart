@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
+/// widget che rappresenta gli indicatori nella legenda delle statistiche
 class Indicator extends StatelessWidget {
   const Indicator({
     super.key,
-    required this.color,
-    required this.text,
-    this.size = 16,
-    this.textColor,
+    required this.color, // colore dell'indicatore
+    required this.text, // testo affiancato nella legenda
+    this.size = 16, // size del font
+    this.textColor, // colore del testo
   });
 
   final Color color;
@@ -21,7 +22,7 @@ class Indicator extends StatelessWidget {
         Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
+          decoration: BoxDecoration( // rappresenta un cerchio colorato
             shape: BoxShape.circle,
             color: color,
           ),

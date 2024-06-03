@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/database_helper.dart';
 import 'package:OneTask/model/utente.dart';
 
-// Questo widget rappresenterà il form per l'inserimento di un utente
+/// Questo widget rappresenterà il form per l'inserimento di un nuovo utente
 class AddUserForm extends StatefulWidget{
   const AddUserForm({super.key});
 
@@ -178,7 +178,7 @@ class AddUserFormState extends State<AddUserForm> {
     );
   }
   
-  // questa funzione deve essere async e dunque il suo codice non può essere messo direttamente nell'onPressed del pulsante
+  /// questa funzione deve essere async e dunque il suo codice non può essere messo direttamente nell'onPressed del pulsante
   void _addUtenteToDatabase() async {
     // Crea il nuovo utente con i valori inseriti nel form
     Utente newUtente = Utente(

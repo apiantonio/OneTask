@@ -1,7 +1,8 @@
-import 'package:OneTask/main.dart';
 import 'package:OneTask/screens/new_project.dart';
 import 'package:OneTask/screens/new_team.dart';
 import 'package:flutter/material.dart';
+
+import '../screens/dashboard.dart';
 
 // questo widget rappresenta i due pulsanti floating della dashboard che 
 // consentono di navigare alle pagine Nuovo team e Nuovo Progetto
@@ -25,8 +26,7 @@ class FloatingActionButtonsDashboard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NewTeam())
-              ).then(
-                (_) => 
+              ).whenComplete(() => 
                 Navigator.pushReplacement(
                   context, 
                   MaterialPageRoute(builder: (context) => const OTDashboard())
@@ -53,8 +53,7 @@ class FloatingActionButtonsDashboard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NewProject())
-              ).then(
-                (_) => 
+              ).whenComplete(() => 
                 Navigator.pushReplacement(
                   context, 
                   MaterialPageRoute(builder: (context) => const OTDashboard())

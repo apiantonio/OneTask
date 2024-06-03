@@ -6,7 +6,13 @@ class ProjectItem extends StatelessWidget {
   final Progetto project;  
   final void Function(Progetto) viewSingleProject;
   final void Function(Progetto) updateProject;
-  const ProjectItem({super.key, required this.project, required this.viewSingleProject, required this.updateProject});
+  
+  const ProjectItem({
+    super.key, 
+    required this.project,
+    required this.viewSingleProject, 
+    required this.updateProject
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-// questa classe rappresenta un progetto
+/// Questa classe rappresenta un progetto
 class Progetto {
   final String nome; 
   String team;

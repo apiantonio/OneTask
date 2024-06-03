@@ -1,4 +1,4 @@
-// classe che rappresenta l'utente
+/// Classe che rappresenta l'utente
 class Utente {
   final String matricola;
   String nome;

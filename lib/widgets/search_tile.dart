@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Widget che rappresentaun elemento di ricerca della searchbar
 class SearchTile extends StatelessWidget {
   final void Function() onTapElem; // funzione associata al tap sull'elemento della lista
   final void Function() onPressedModify; // funziona associata al tap sulla matita per modificare

@@ -2,7 +2,8 @@ import 'package:OneTask/widgets/searchbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//deve obbligatoriamente implementare PreferredSizedWidget altrimenti non potrei passarla allo Scaffold come appbar
+/// Questo widget rappresengta l'appabar dell'applicazione
+/// deve obbligatoriamente implementare PreferredSizedWidget altrimenti non si potrebbe passare allo Scaffold come appbar
 class OTAppBar extends StatefulWidget implements PreferredSizeWidget{
   //di default se non passato tabbar non viene visualizzata
   const OTAppBar(
@@ -15,8 +16,7 @@ class OTAppBar extends StatefulWidget implements PreferredSizeWidget{
   });
 
   final String? title; // Parametro titolo che è opzionale
-  //il parametro passato risulta opzionale, serve per capire se serva o meno il tabbar per quella schermata
-  final bool withTabbar;
+  final bool withTabbar; // il parametro passato risulta opzionale, serve per capire se serva o meno il tabbar per quella schermata
   final TabController? tabController;
   final bool withSearchbar; 
   final String? sourcePage;
@@ -24,6 +24,7 @@ class OTAppBar extends StatefulWidget implements PreferredSizeWidget{
   @override
   State<OTAppBar> createState() => _OTAppBarState();
   
+  // override necessario per PreferredSizeWidget
   @override
   Size get preferredSize => Size.fromHeight(withTabbar ? 120 : 56); 
 }

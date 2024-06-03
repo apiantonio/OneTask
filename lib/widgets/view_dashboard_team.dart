@@ -3,7 +3,7 @@ import 'package:OneTask/widgets/team_dashboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//rappresenta la sezione della dashboard che ti permette di visualizzare i team
+/// Widget che rappresenta la sezione della dashboard che permette di visualizzare i team
 class ViewDashboardTeam extends StatelessWidget {
   const ViewDashboardTeam({super.key,});
 

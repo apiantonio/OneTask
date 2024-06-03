@@ -1,4 +1,4 @@
-//questa classe rappresenta i singoli team 
+/// Questa classe rappresenta i singoli team 
 class Team { 
   // ogni team ha un nome univoco
   String nome;

@@ -3,6 +3,7 @@ import 'package:OneTask/widgets/task_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Widget che rappresenta la sezione di creazione/eliminazione di task di un progetto
 class TaskApp extends StatefulWidget{
   final Function(List<Task>) onTasksChanged; // funzione di callback per passare lo stato al wodget genitore (form NewProject)
   //i valori dei vecchi task vengono passati soltanto se siamo sulla pagina di modifica

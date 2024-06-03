@@ -2,7 +2,7 @@ import 'package:OneTask/model/utente.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//rappresenta una classe di utilità di appoggio per rappresentare i singoli utenti
+/// Rappresenta una classe di utilità di appoggio per rappresentare i singoli utenti
 class UserModItem extends StatefulWidget {
   final Utente utente;  
   final Function(Utente) onSelect;

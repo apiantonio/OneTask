@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/indicator.dart';
 
-/// Classe che rappresenta la pagina di statistiche
+/// Pagina delle statistiche
 class Statistiche extends StatefulWidget {
   const Statistiche({super.key});
 
@@ -182,8 +182,8 @@ class StatisticheState extends State<Statistiche> {
     );
   }
   
-  // questo metodo restituisce le sezioni da rappresentare nel grafico a torta,
-  // prende in input la lista di progetti calcolata in precedenza
+  /// questo metodo restituisce le sezioni da rappresentare nel grafico a torta,
+  /// prende in input la lista di progetti calcolata in precedenza
   List<PieChartSectionData> _sezioni(List<Progetto> progetti) {
     // dati da rappresentare
     Map<String, double> percentualiProgetti = _calcolaDati(progetti);
@@ -232,9 +232,9 @@ class StatisticheState extends State<Statistiche> {
     ];
   }
   
-  // questo metodo si occupa di calcolare le percentuali da rappresentare nel grafico
-  // reatituisce una mappa in cui le chiavi sono gli stati dei progetti e i valori sono le percentuali
-  // dei progetti in quello stato
+  /// questo metodo si occupa di calcolare le percentuali da rappresentare nel grafico
+  /// reatituisce una mappa in cui le chiavi sono gli stati dei progetti e i valori sono le percentuali
+  /// dei progetti in quello stato
   Map<String, double> _calcolaDati(List<Progetto> progetti)  {
     // numero dei progetti
     final int numProgetti = progetti.length;
@@ -269,6 +269,7 @@ class StatisticheState extends State<Statistiche> {
   } 
 }
 
+/// metodo di utilità per caricare i dati delle statistiche dal db
 Future<DatiStatistiche> _fetchDatiStatistiche() async {
   final progetti = await DatabaseHelper.instance.getAllProgetti();
   final numCompletati = progetti.where((p) => p.completato == true).length; // conta numero di progetti completati
@@ -277,7 +278,7 @@ Future<DatiStatistiche> _fetchDatiStatistiche() async {
   return DatiStatistiche(completati: numCompletati, falliti: numFalliti, totale: progetti.length);
 }
 
-//classe di utilità per le statistiche, non per i grafici
+/// classe di utilità per le statistiche, non per i grafici
 class DatiStatistiche {
   final int completati;
   final int falliti;
