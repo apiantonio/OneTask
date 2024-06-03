@@ -38,7 +38,9 @@ class NewTeamFormState extends State<NewTeamForm> {
 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
   //è il controller del campo di testo in cui è possibile inserire il nome del team
-  final TextEditingController _nomeController = TextEditingController();
+  final  _nomeController = TextEditingController();
+
+  final _scrollRespController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -129,30 +131,35 @@ class NewTeamFormState extends State<NewTeamForm> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
                 //un widget che si aggiorna con i valori nella lista
-                child: ListView.builder(
-                  itemCount: userTeamList.length,
-                  //per visualizzare singolarmente i valori
-                  itemBuilder: (context, index) {
-                    //si salva l'utente al dato indice in una variabile
-                    final utente = userTeamList[index];
-                    //RadioListTile mi restituisce un RadioButton 
-                    return RadioListTile(
-                      value: utente,      //qual è il valore di quel listTile
-                      groupValue: selected,   //indica quale deve essere spuntato
-                      //quando si clicca su un nuovo listTile, il valore di selected cambia
-                      onChanged: (value) => setState(() {
-                        selected = value;
-                      }),
-                      //a video sono mostrate le info dell'utente così come sono esposte nel metodo infoUtente
-                      title: Text(
-                        utente.infoUtente(),
-                        style: GoogleFonts.inter(
-                          fontSize: 16,  
-                          fontWeight: FontWeight.w500,
+                child: Scrollbar(
+                  controller: _scrollRespController,
+                  thumbVisibility: true,
+                  child: ListView.builder(
+                    controller: _scrollRespController,
+                    itemCount: userTeamList.length,
+                    //per visualizzare singolarmente i valori
+                    itemBuilder: (context, index) {
+                      //si salva l'utente al dato indice in una variabile
+                      final utente = userTeamList[index];
+                      //RadioListTile mi restituisce un RadioButton 
+                      return RadioListTile(
+                        value: utente,      //qual è il valore di quel listTile
+                        groupValue: selected,   //indica quale deve essere spuntato
+                        //quando si clicca su un nuovo listTile, il valore di selected cambia
+                        onChanged: (value) => setState(() {
+                          selected = value;
+                        }),
+                        //a video sono mostrate le info dell'utente così come sono esposte nel metodo infoUtente
+                        title: Text(
+                          utente.infoUtente(),
+                          style: GoogleFonts.inter(
+                            fontSize: 16,  
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(

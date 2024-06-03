@@ -288,7 +288,7 @@ class DashboardTasks extends StatelessWidget {
     return SizedBox(
       height: 170, // Altezza fissa per la lista dei task
       child: Scrollbar(
-       controller: scrollController, // controller dello scroll che deve essere associato anche a SingleChildScrollView
+        controller: scrollController, // controller dello scroll che deve essere associato anche a SingleChildScrollView
         thumbVisibility: true,
         child: SingleChildScrollView(
           controller: scrollController,
