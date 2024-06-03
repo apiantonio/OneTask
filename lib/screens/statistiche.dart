@@ -157,7 +157,7 @@ class StatisticheState extends State<Statistiche> {
                                       ),
                                     ),
                                     Text(
-                                      '${percFall.toStringAsFixed(1)}%',
+                                      '${percFall.toStringAsFixed(2)}%',
                                       style: GoogleFonts.inter(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
