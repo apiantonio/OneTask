@@ -68,7 +68,6 @@ class SearchBarDelegate extends SearchDelegate {
           default:
             close(context, null);
         }
-        
       },
     );
   }
