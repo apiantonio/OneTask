@@ -1,4 +1,5 @@
 //import 'package:OneTask/services/database_helper.dart';
+import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/floating_buttons_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,10 +10,10 @@ import 'screens/dashboard_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  //await DatabaseHelper.instance.populateDatabase();
   // Imposta il valore predefinito 'Home' come sezione selezionata del Drawer ad ogni avvio dell'app
   await prefs.setString('selectedTileDrawer', 'Home');
   runApp(const OTDashboard());
-  //DatabaseHelper.instance.populateDatabase();
 }
 
 class OTDashboard extends StatelessWidget {

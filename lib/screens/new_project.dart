@@ -332,12 +332,11 @@ class NewProjectFormState extends State<NewProjectForm> {
         final db = DatabaseHelper.instance;
 
         // inserisco il progetto nel db
-        await db
-            .insertProgetto(newProgetto)
-            .whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Progetto memorizzato!')),
-                )
-            );
+        await db.insertProgetto(newProgetto)
+          .whenComplete(() => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Progetto memorizzato!')),
+              )
+          );
 
         // inserisco le tasks nel db
         Future.wait(_tasks.map((task) => db.insertTask(task)))

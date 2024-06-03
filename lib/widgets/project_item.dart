@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ProjectItem extends StatelessWidget {
   final Progetto project;  
-  final Function(Progetto) viewSingleProject;
-  final Function(Progetto) updateProject;
+  final void Function(Progetto) viewSingleProject;
+  final void Function(Progetto) updateProject;
   const ProjectItem({super.key, required this.project, required this.viewSingleProject, required this.updateProject});
 
   @override
