@@ -38,9 +38,9 @@ class NewTeamFormState extends State<NewTeamForm> {
 
   Utente? selected;   //serve a specificare quale utente è selezionato come responsabile
   //è il controller del campo di testo in cui è possibile inserire il nome del team
-  final  _nomeController = TextEditingController();
-
-  final _scrollRespController = ScrollController();
+  final TextEditingController _nomeController = TextEditingController();
+  // controller per la scrollbar della sezione degli utenti selezionabili come responsabili del team
+  final ScrollController _scrollRespController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +132,8 @@ class NewTeamFormState extends State<NewTeamForm> {
                 height: MediaQuery.of(context).size.height * 0.2,
                 //un widget che si aggiorna con i valori nella lista
                 child: Scrollbar(
-                  controller: _scrollRespController,
-                  thumbVisibility: true,
+                  controller: _scrollRespController, // scrollbar controller da associare anche alla listview
+                  thumbVisibility: true, // visibilità della scrollbar sempre true quando ce n'è bisogno
                   child: ListView.builder(
                     controller: _scrollRespController,
                     itemCount: userTeamList.length,

@@ -46,6 +46,8 @@ class EditTeamFormState extends State<EditTeamForm> {
   late Future<List<Utente>?> listUtentiFuture;
   //stringa che mantiene il nome del team che viene aggiornato durante la sessione
   late String _nomeTeamOnEdit; 
+  // controller per la scrollbar dei parteipanti
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -200,18 +202,23 @@ class EditTeamFormState extends State<EditTeamForm> {
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.2,
-                child: ListView.builder(
-                  itemCount: userTeamList.length,
-                  itemBuilder: (context, index) {
-                    final utente = userTeamList[index];
-                    return ListTile(
-                      title:Text(utente.infoUtente()),
-                      leading: IconButton(
-                        icon: const Icon(Icons.remove, color: Color(0XFFEB701D)), 
-                        onPressed: () => _removeUtente(utente),
-                      ),
-                    );
-                  }
+                child: Scrollbar(
+                  controller: _scrollController, // scrollbar controller da associare qui e alla listview
+                  thumbVisibility: true, // visibilità della scrollbar sempre true quando ce n'è bisogno
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: userTeamList.length,
+                    itemBuilder: (context, index) {
+                      final utente = userTeamList[index];
+                      return ListTile(
+                        title:Text(utente.infoUtente()),
+                        leading: IconButton(
+                          icon: const Icon(Icons.remove, color: Color(0XFFEB701D)), 
+                          onPressed: () => _removeUtente(utente),
+                        ),
+                      );
+                    }
+                  ),
                 ),
               ),
               Text(
