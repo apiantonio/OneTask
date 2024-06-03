@@ -411,8 +411,20 @@ class EditProjectFormState extends State<EditProjectForm> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0XFFEB701D),   //cerchietto attorno al numero selezionato
+              surface: Colors.white,    //colore di sfondo
+              onSurface:Color(0XFF0E4C56),   //colore dei numeri
+            ),
+            //dialogBackgroundColor:const Color.fromARGB(255, 214, 209, 204),   //colore di sfondo del calendario
+          ),
+          child: child!,
+        );
+      },
     );
-
     if (picked != null) {
       setState(() {
         _dateController.text = picked.toString().split(" ")[0];
@@ -499,10 +511,14 @@ class EditProjectFormState extends State<EditProjectForm> {
             // aggiungo tutte le nuove/aggiornate task
             await Future.wait(_tasks.map((task) => db.insertTask(task)));
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Progetto modificato!')),
-            );
+          }else{
+            // aggiorno il progetto
+            await db.updateProgetto(widget.projectName, modifiedProgetto);
           }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Progetto modificato!')),
+          );
         }
 
         setState(() {
