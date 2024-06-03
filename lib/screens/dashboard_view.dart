@@ -47,6 +47,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
 
   Future<void> _loadNumPreference() async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       _numProgettiVisualizzati = prefs.getInt('numProgetti') ?? 5;
     });
@@ -55,6 +56,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
   Future<void> _updateNumPreference(int numProgetti) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('numProgetti', numProgetti);
+    
     setState(() {
       _numProgettiVisualizzati = numProgetti;
     });
@@ -135,32 +137,32 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                   height: 100,
                   child: projects.isEmpty // se non ci sono progetti mostra un testo
                     ? Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Center(
-                        child: Text(
-                          'Nessun progetto presente al momento!',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0XFFEB701D),
+                        padding: const EdgeInsets.all(20.0),
+                        child: Center(
+                          child: Text(
+                            'Nessun progetto presente al momento!',
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0XFFEB701D),
+                            ),
                           ),
                         ),
-                      ),
-                    )
+                      )
                     : ListView.builder( // se ci sono progetti mostra una lista orizzontale
-                      scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
-                      shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
-                      itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
-                      itemBuilder: (context, index) {
-                        Progetto project = projects[index];
-                        return Container(
-                          width: 300, // Larghezza fissa per ogni elemento, regola secondo necessità
-                          padding: const EdgeInsets.all(8.0),
-                          margin: const EdgeInsets.symmetric(horizontal: 8.0), // Spazio tra gli elementi
-                          child: ProjectDashboardWidget(progetto: project)
-                        );
-                      }
-                    ),
+                        scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
+                        shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
+                        itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
+                        itemBuilder: (context, index) {
+                          Progetto project = projects[index];
+                          return Container(
+                            width: 300, // Larghezza fissa per ogni elemento, regola secondo necessità
+                            padding: const EdgeInsets.all(8.0),
+                            margin: const EdgeInsets.symmetric(horizontal: 8.0), // Spazio tra gli elementi
+                            child: ProjectDashboardWidget(progetto: project)
+                          );
+                        }
+                      ),
                 ),
               ],
             ),

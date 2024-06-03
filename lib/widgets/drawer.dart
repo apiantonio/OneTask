@@ -2,6 +2,7 @@ import 'package:OneTask/screens/statistiche.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:OneTask/screens/add_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/projects_and_teams.dart';
 import '../main.dart';
 
@@ -13,7 +14,30 @@ class OTDrawer extends StatefulWidget {
 }
 
 class _OTDrawerState extends State<OTDrawer> {
-  int isSelected = 0;   //variabile che uso per far cambiare il colore all'icona se siamo su quella pagina
+  String _selectedTile = 'Home';   //variabile che uso per far cambiare il colore all'icona se siamo su quella pagina
+
+  @override
+  void initState() {
+    super.initState();
+    _initSelectedTIle(); // inizialmente la sezione selezionata è la Home
+  }
+
+  Future<void> _initSelectedTIle() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    setState(() {
+      _selectedTile = prefs.getString('selectedTileDrawer') ?? 'Home';
+    });
+  }
+
+  Future<void> _updateSelectedTile(String selectedTile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedTileDrawer', selectedTile);
+
+    setState(() {
+      _selectedTile = selectedTile;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
@@ -40,7 +64,7 @@ class _OTDrawerState extends State<OTDrawer> {
           
           //ciascun listTile contiene le voci che sono presenti nel menu ad hamburger
           ListTile(
-            leading: Icon(Icons.home, color: (isSelected == 0) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            leading: Icon(Icons.home, color: (_selectedTile == 'Home') ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
             title: Text(
               'Home', 
               style: GoogleFonts.inter(
@@ -51,9 +75,7 @@ class _OTDrawerState extends State<OTDrawer> {
             ),
             //al click sulla sezione di interesse ti porta alla pagina relativa
             onTap: () {
-              setState(() {
-                isSelected = 0;
-              });
+              _updateSelectedTile('Home');
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const OTDashboard())
@@ -62,7 +84,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.group_work, color: (isSelected == 1) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            leading: Icon(Icons.group_work, color: (_selectedTile == 'Progetti e Team') ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
             title: Text(
               'Progetti e Team',
               style: GoogleFonts.inter(
@@ -72,9 +94,7 @@ class _OTDrawerState extends State<OTDrawer> {
               ),
             ),
             onTap: () {
-              setState(() {
-                isSelected = 1;
-              });
+              _updateSelectedTile('Progetti e Team');
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const ProjectTeam())
@@ -83,7 +103,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.bar_chart, color: (isSelected == 2) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            leading: Icon(Icons.bar_chart, color: (_selectedTile == 'Statistiche') ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
             title: Text(
               'Statistiche',
               style: GoogleFonts.inter(
@@ -93,9 +113,7 @@ class _OTDrawerState extends State<OTDrawer> {
               ),
             ),
             onTap: () {  
-              setState(() {
-                isSelected = 2;
-              });
+              _updateSelectedTile('Statistiche');
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => const Statistiche())
@@ -104,7 +122,7 @@ class _OTDrawerState extends State<OTDrawer> {
           ),
 
           ListTile(
-            leading: Icon(Icons.person_add, color: (isSelected == 3) ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
+            leading: Icon(Icons.person_add, color: (_selectedTile == 'Nuovo Utente') ? const Color(0XFFEB701D) : const Color(0XFF0E4C56)),
             title: Text(
               'Nuovo Utente',
               style: GoogleFonts.inter(
@@ -114,9 +132,7 @@ class _OTDrawerState extends State<OTDrawer> {
               ),
             ),
             onTap: () { 
-              setState(() {
-                isSelected = 3;
-              });
+              _updateSelectedTile('Nuovo Utente');
               Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => AddUser())
