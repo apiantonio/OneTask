@@ -29,6 +29,7 @@ class OTDashboard extends StatelessWidget {
         appBar: OTAppBar(), // appbar dell'app OneTask
         drawer: OTDrawer(), // drawer dell'app
         body: DashboardView(), // view della dashboard
+        backgroundColor: Color(0XFFE8E5E0),
         floatingActionButton: FloatingActionButtonsDashboard(), // pulsanti floating per nuovo team e nuovo progetto
       ),
     );
