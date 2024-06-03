@@ -491,11 +491,14 @@ class EditProjectFormState extends State<EditProjectForm> {
 
           // aggiungo tutte le nuove/aggiornate task
           await Future.wait(_tasks.map((task) => db.insertTask(task)));
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Progetto modificato!')),
-          );
+        }else{
+          // aggiorno il progetto
+          await db.updateProgetto(widget.projectName, modifiedProgetto);
         }
+       
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Progetto modificato!')),
+        );
       }
     });
   }

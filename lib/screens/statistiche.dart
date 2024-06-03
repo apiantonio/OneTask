@@ -108,7 +108,7 @@ class StatisticheState extends State<Statistiche> {
                     ),
                     const SizedBox(height: 20,),
                     // statistiche sulle percentuali di completamento
-                    if (!snapshot.data!.isEmpty )
+                    if (snapshot.data!.isNotEmpty )
                       FutureBuilder<DatiStatistiche>(
                         future: _fetchDatiStatistiche(), 
                         builder: (context, snapshot) {
@@ -119,8 +119,8 @@ class StatisticheState extends State<Statistiche> {
                                 child: Text('Errore nel caricamento dei dettagli progetti'));
                           } else {
                             final datiStat = snapshot.data!;
-                            final percComp = (datiStat.completati/datiStat.totale)*100;
-                            final percFall = (datiStat.falliti/datiStat.totale)*100;
+                            final double percComp = (datiStat.completati/datiStat.totale)*100;
+                            final double percFall = (datiStat.falliti/datiStat.totale)*100;
                             return Column(
                               children: [
                                 Row(
@@ -135,7 +135,7 @@ class StatisticheState extends State<Statistiche> {
                                       ),
                                     ),
                                     Text(
-                                      '$percComp%',
+                                      '${percComp.toStringAsFixed(2)}%',
                                       style: GoogleFonts.inter(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class StatisticheState extends State<Statistiche> {
                                       ),
                                     ),
                                     Text(
-                                      '$percFall%',
+                                      '${percFall.toStringAsFixed(1)}%',
                                       style: GoogleFonts.inter(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
