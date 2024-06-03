@@ -88,7 +88,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 1,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -151,7 +151,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                       )
                     )
                   : SizedBox(
-                    height: 350,
+                    height: 280,
                     child: ListView.builder( // se ci sono progetti mostra una lista orizzontale
                       scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
                       shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
@@ -233,11 +233,14 @@ class _ProjectDashboardWidgetState extends State<ProjectDashboardWidget> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        widget.progetto.nome,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.progetto.nome,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                       Column(
@@ -252,7 +255,10 @@ class _ProjectDashboardWidgetState extends State<ProjectDashboardWidget> {
                       ),
                     ],
                   ),
-                  DashboardTasks(tasks: tasks, onTapTask: _changeStateTask),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DashboardTasks(tasks: tasks, onTapTask: _changeStateTask),
+                  ),
                 ],
               ),
             ),
@@ -280,7 +286,7 @@ class DashboardTasks extends StatelessWidget {
     final ScrollController scrollController = ScrollController(); // controller necessario per lo scroll delle task
 
     return SizedBox(
-      height: 250, // Altezza fissa per la lista dei task
+      height: 170, // Altezza fissa per la lista dei task
       child: Scrollbar(
        controller: scrollController, // controller dello scroll che deve essere associato anche a SingleChildScrollView
         thumbVisibility: true,
