@@ -31,6 +31,7 @@ class StatisticheState extends State<Statistiche> {
     return Scaffold(
       appBar: const OTAppBar(),
       drawer: const OTDrawer(),
+      backgroundColor: const Color(0XFFE8E5E0),
       body: SingleChildScrollView(
         child: FutureBuilder<List<Progetto>>( // il future builder si baserà sui progetti 
           future: progetti,

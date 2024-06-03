@@ -19,10 +19,10 @@ class _OTDrawerState extends State<OTDrawer> {
   @override
   void initState() {
     super.initState();
-    _initSelectedTIle(); // inizialmente la sezione selezionata è la Home
+    _initSelectedTile(); // inizialmente la sezione selezionata è la Home
   }
 
-  Future<void> _initSelectedTIle() async {
+  Future<void> _initSelectedTile() async {
     final prefs = await SharedPreferences.getInstance();
     
     setState(() {
