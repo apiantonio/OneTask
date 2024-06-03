@@ -1,5 +1,6 @@
 import 'package:OneTask/model/progetto.dart';
 import 'package:OneTask/model/task.dart';
+import 'package:flutter/widgets.dart';
 import '../model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -337,13 +338,12 @@ class EditProjectFormState extends State<EditProjectForm> {
                   return tendina;
                 }
               ),
-              if (_validaStatoText != null) // se non è selezionato uno stato mostra testo di errore
+              if (_validaStatoText != null) // se non è selezionato uno stato o lo stato non è valido mostra testo di errore
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     _validaStatoText!,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 ),
               const SizedBox(height: 20),
@@ -429,74 +429,96 @@ class EditProjectFormState extends State<EditProjectForm> {
       return;
     }
 
+    // errore se lo stato è completato ma le task non tutte completate
+    if (_statoController.text == 'completato' && !_checkTaskCompletate()) {
+      setState(() {
+        _validaStatoText = 'Un progetto può essere completato solo se tutti i suoi tasks sono completati!';
+      });
+      return;
+    }
+
     // nuovo nome del team inserito
     final nomeControllerProgetto = _nomeController.text.trim();
 
     // controllo che non esista già un Progetto con lo stesso nome nel db
-    await DatabaseHelper.instance
-    .selectProgettoByNome(nomeControllerProgetto)
-    .then((progettoPresente) async {
-      // se esiste già un progetto con lo stesso nome che non sia lo stesso progetto modificato
-      if (progettoPresente != null && progettoPresente.nome != _nomeProgettoWhenModificato) {
-        // il progetto NON può essere inserito nella tabella, mostro un messaggio di errore
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inserisci un nome del progetto non già usato!'))
-        );
-      } else {
-
-        // salvo la modifica corrente del nome associato al progetto
-        setState(() {
-          _nomeProgettoWhenModificato = nomeControllerProgetto;
-        });
-
-        // salvo le stringhe necessarie per stato e completato
-        String stato = (_statoController.text == 'completato'  ||  _statoController.text == 'fallito')
-          ? 'archiviato' 
-          : _statoController.text;
-
-        bool? completato = _statoController.text == 'completato' 
-          ? true // se lo stato è completato allora true
-          : _statoController.text == 'fallito' 
-            ? false // se è fallito allora false
-            : null; // in tutti gli altri casi null
-
-        // creo un nuovo progetto con i dati inseriti
-        // che sarà usato per aggiornare i dati del progetto modificato
-        Progetto modifiedProgetto = Progetto(
-          nome: nomeControllerProgetto,
-          team: _teamController.text,
-          scadenza: _dateController.text,
-          descrizione: _descrizioneController.text.trim(),
-          stato: stato,
-          completato: completato,
-          motivazioneFallimento: completato == false ? _motivazioneController.text.trim() : null
-        );
-
-        // associa il progetto alle tasks
-        for (var task in _tasks) {
-          task.progetto = modifiedProgetto.nome;
-        }
-
-        final db = DatabaseHelper.instance;
-
-        // aggiorno il progetto nel db
-        // Prendo tutte le task associate precedentemente al progetto
-        final oldTasks = await db.getTasksByProject(widget.projectName);
-        if (oldTasks.isNotEmpty) {
-          // elimino tutte le task associate precedentemente al progetto
-          await Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)));
-
-          // aggiorno il progetto
-          await db.updateProgetto(widget.projectName, modifiedProgetto);
-
-          // aggiungo tutte le nuove/aggiornate task
-          await Future.wait(_tasks.map((task) => db.insertTask(task)));
-
+    await DatabaseHelper.instance.selectProgettoByNome(nomeControllerProgetto)
+      .then((progettoPresente) async {
+        // se esiste già un progetto con lo stesso nome che non sia lo stesso progetto modificato
+        if (progettoPresente != null && progettoPresente.nome != _nomeProgettoWhenModificato) {
+          // il progetto NON può essere inserito nella tabella, mostro un messaggio di errore
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Progetto modificato!')),
+            const SnackBar(content: Text('Inserisci un nome del progetto non già usato!'))
           );
+        } else {
+
+          // salvo la modifica corrente del nome associato al progetto
+          setState(() {
+            _nomeProgettoWhenModificato = nomeControllerProgetto;
+          });
+
+          // salvo le stringhe necessarie per stato e completato
+          String stato = (_statoController.text == 'completato'  ||  _statoController.text == 'fallito')
+            ? 'archiviato' 
+            : _statoController.text;
+
+          bool? completato = _statoController.text == 'completato' 
+            ? true // se lo stato è completato allora true
+            : _statoController.text == 'fallito' 
+              ? false // se è fallito allora false
+              : null; // in tutti gli altri casi null
+
+          // creo un nuovo progetto con i dati inseriti
+          // che sarà usato per aggiornare i dati del progetto modificato
+          Progetto modifiedProgetto = Progetto(
+            nome: nomeControllerProgetto,
+            team: _teamController.text,
+            scadenza: _dateController.text,
+            descrizione: _descrizioneController.text.trim(),
+            stato: stato,
+            completato: completato,
+            motivazioneFallimento: completato == false ? _motivazioneController.text.trim() : null
+          );
+
+          // associa il progetto alle tasks
+          for (var task in _tasks) {
+            task.progetto = modifiedProgetto.nome;
+          }
+
+          final db = DatabaseHelper.instance;
+
+          // aggiorno il progetto nel db
+          // Prendo tutte le task associate precedentemente al progetto
+          final oldTasks = await db.getTasksByProject(widget.projectName);
+          if (oldTasks.isNotEmpty) {
+            // elimino tutte le task associate precedentemente al progetto
+            await Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)));
+
+            // aggiorno il progetto
+            await db.updateProgetto(widget.projectName, modifiedProgetto);
+
+            // aggiungo tutte le nuove/aggiornate task
+            await Future.wait(_tasks.map((task) => db.insertTask(task)));
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Progetto modificato!')),
+            );
+          }
         }
+
+        setState(() {
+         _validaStatoText = null;
+        });
       }
-    });
+    );
+  }
+  
+  // metodo di utilità che restituisce true se tutte le task sono completate
+  bool _checkTaskCompletate() {
+    for (var task in _tasks) {
+      if (task.completato == false) {
+        return false;
+      }
+    }
+    return true;
   }
 }

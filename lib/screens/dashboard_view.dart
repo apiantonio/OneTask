@@ -100,7 +100,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                     const Padding(
                       padding: EdgeInsets.fromLTRB(12.0, 0, 0, 0),
                       child: Text(
-                        'Progetti',
+                        'Progetti attivi',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -133,15 +133,15 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                     ),
                   ],
                 ), 
-                SizedBox( // box che contiene una lista orizzontale di widget che contengono i progetti
-                  height: 100,
-                  child: projects.isEmpty // se non ci sono progetti mostra un testo
-                    ? Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Center(
-                          child: Text(
-                            'Nessun progetto presente al momento!',
-                            style: GoogleFonts.inter(
+                projects.isEmpty 
+                  ? SizedBox( // box che contiene una lista orizzontale di widget che contengono i progetti
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: Text(
+                          'Nessun progetto attivo presente al momento!',
+                          style: GoogleFonts.inter(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: const Color(0XFFEB701D),
@@ -149,21 +149,24 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                           ),
                         ),
                       )
-                    : ListView.builder( // se ci sono progetti mostra una lista orizzontale
-                        scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
-                        shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
-                        itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
-                        itemBuilder: (context, index) {
-                          Progetto project = projects[index];
-                          return Container(
-                            width: 300, // Larghezza fissa per ogni elemento, regola secondo necessità
-                            padding: const EdgeInsets.all(8.0),
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0), // Spazio tra gli elementi
-                            child: ProjectDashboardWidget(progetto: project)
-                          );
-                        }
-                      ),
-                ),
+                    )
+                  : SizedBox(
+                    height: 350,
+                    child: ListView.builder( // se ci sono progetti mostra una lista orizzontale
+                      scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
+                      shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
+                      itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
+                      itemBuilder: (context, index) {
+                        Progetto project = projects[index];
+                        return Container(
+                          width: 300, // Larghezza fissa per ogni elemento, regola secondo necessità
+                          padding: const EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.symmetric(horizontal: 8.0), // Spazio tra gli elementi
+                          child: ProjectDashboardWidget(progetto: project)
+                        );
+                      }
+                    ),
+                  )  
               ],
             ),
           );
@@ -277,7 +280,7 @@ class DashboardTasks extends StatelessWidget {
     final ScrollController scrollController = ScrollController(); // controller necessario per lo scroll delle task
 
     return SizedBox(
-      height: 155, // Altezza fissa per la lista dei task
+      height: 250, // Altezza fissa per la lista dei task
       child: Scrollbar(
        controller: scrollController, // controller dello scroll che deve essere associato anche a SingleChildScrollView
         thumbVisibility: true,
