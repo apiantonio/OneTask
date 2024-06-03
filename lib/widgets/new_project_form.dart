@@ -143,10 +143,10 @@ class NewProjectFormState extends State<NewProjectForm> {
               const SizedBox(
                 height: 6,
               ),
-              //DropDownMenu per selezionare i team scelti da db o file json
+              //DropDownMenu per selezionare uno tra i team presenti nel db
               DropdownMenu(
                 enableFilter: true, // permette di cercare il nome del team e di filtrarli in base a ciò che è scritto
-                enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel b
+                enabled: _nomiTeams.isNotEmpty, // il menù è disattivato se non ci sono team nel db
                 leadingIcon: const Icon(Icons.people, color: Color(0XFFEB701D)), // icoa a sinistra del testo
                 label: Text(_labelDropdownMenu), // testo dentro il menu di base, varia seconda che ci siano o meno team
                 // helperText: 'Seleziona il team che lavorerà al progetto', // piccolo testo sotto al menu
@@ -154,16 +154,14 @@ class NewProjectFormState extends State<NewProjectForm> {
                 controller: _teamController, // controller
                 requestFocusOnTap: true, // permette di scrivere all'interno del menu per cercare gli elementi
                 dropdownMenuEntries: _nomiTeams
-                  .map(
-                    (nomeTeam) => // elementi del menu a tendina (i nomi dei team)
-                        DropdownMenuEntry<String>(
-                          value: nomeTeam,
-                          label: nomeTeam,
-                          style: MenuItemButton.styleFrom(
-                            foregroundColor: Colors.black54,
-                          ),
-                        ))
-                  .toList(),
+                  .map((nomeTeam) => // elementi del menu a tendina (i nomi dei team)
+                    DropdownMenuEntry<String>(
+                      value: nomeTeam,
+                      label: nomeTeam,
+                      style: MenuItemButton.styleFrom(
+                        foregroundColor: Colors.black54,
+                      ),
+                    )).toList(),
                 inputDecorationTheme: const InputDecorationTheme(
                   filled: true,     //dice che deve esserci un riempimento, non trasparente
                   fillColor:Color.fromARGB(255, 214, 209, 204),   //imposta il colore di riempimento della sezione
@@ -298,6 +296,12 @@ class NewProjectFormState extends State<NewProjectForm> {
         _validaTeamText = 'Per favore, seleziona un team.';
       });
       return;
+    } else if (!_nomiTeams.contains(_teamController.text)) {
+      // se è sttao inserito il nome di un team non valido
+      setState(() {
+         _validaTeamText = 'Per favore, inserisci il nome di un team valido.';
+      });
+      return;
     }
 
     // controllo che non esista già un Progetto con lo stesso nome nel db
@@ -308,8 +312,7 @@ class NewProjectFormState extends State<NewProjectForm> {
       if (progettoPresente != null) {
         // il progetto NON può essere inserito nella tabella, mostro un messaggio di errore
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Inserisci un nome del progetto non già usato!')),
+          const SnackBar(content: Text('Inserisci un nome del progetto non già usato!')),
         );
       } else {
         // se il nome del progetto è nuovo
