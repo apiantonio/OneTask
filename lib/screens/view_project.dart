@@ -75,8 +75,7 @@ class ViewProject extends StatelessWidget {
             },
           );
           if (confirmDelete == true) {
-            Progetto? progetto =
-                await DatabaseHelper.instance.selectProgettoByNome(projectName);
+            Progetto? progetto = await DatabaseHelper.instance.selectProgettoByNome(projectName);
             if (progetto != null) {
               await DatabaseHelper.instance.deleteProgetto(progetto.nome);
               Navigator.of(context).pop(); // Torna alla schermata precedente
@@ -131,30 +130,30 @@ class ProjectDetails extends StatelessWidget {
                         color: const Color(0XFFEB701D),
                       ),
                     ),
-                  //per i progetti archiviati voglio mi dica con esattezza se sono completati (dunque non esiste la motivazione di fallimento)
-                  (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento == null) ?              
-                    Text(
-                      'archiviato - completato',
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                      ),
-                    )
-                  //se invece non sono archiviati stampa solo lo stato
-                  : (dataProj.progetto.stato != 'archiviato') ?
-                    Text(
-                      dataProj.progetto.stato,
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                      ),
-                    )
-                  //oppure se sono falliti (e dunque la motivazione del fallimento è necessaria)
-                  //in questo caso voglio venga restituita anche la motivazione oltre che lo stato
-                  : Text(
-                      'archiviato - fallito',
-                      style: GoogleFonts.inter(
-                        fontSize: 17,
-                      ),
-                    ),        
+                  //per i progetti archiviati voglio mi dica con esattezza se sono completati
+                  (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.completato == true) 
+                    ? Text(
+                        'archiviato - completato',
+                        style: GoogleFonts.inter(
+                          fontSize: 17,
+                        ),
+                      )
+                    //se invece non sono archiviati stampa solo lo stato
+                    : (dataProj.progetto.stato != 'archiviato') 
+                      ? Text(
+                          dataProj.progetto.stato,
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                          ),
+                        )
+                      //oppure se sono falliti (e dunque la motivazione del fallimento è necessaria)
+                      //in questo caso voglio venga restituita anche la motivazione oltre che lo stato
+                      : Text(
+                          'archiviato - fallito',
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                          ),
+                        ),        
                   ]
                 ),
                 //se il progetto è archiviato e fallito permetto la visualizzazione della motivazione del fallimento
@@ -254,18 +253,18 @@ class ProjectDetails extends StatelessWidget {
                 ),
                 //poichè un progetto potrebbe non avere al momento task associati 
                 //questo comportamento è stato necessario gestirlo
-                dataProj.tasks.isEmpty ? 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10), 
-                  child: Text(
-                    'Non ci sono tasks associati al progetto', 
-                    style: GoogleFonts.inter(
-                      fontSize: 17, 
-                      color: const Color(0XFF0E4C56),
+                dataProj.tasks.isEmpty 
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10), 
+                      child: Text(
+                        'Non ci sono tasks associati al progetto', 
+                        style: GoogleFonts.inter(
+                          fontSize: 17, 
+                          color: const Color(0XFF0E4C56),
+                        )
+                      )
                     )
-                  )
-                )
-                : TasksList(tasks: dataProj.tasks),
+                  : TasksList(tasks: dataProj.tasks),
               ],
             );
           }

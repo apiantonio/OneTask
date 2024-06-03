@@ -61,8 +61,8 @@ class StatisticheState extends State<Statistiche> {
                   ),
                   snapshot.data!.isEmpty 
                     ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
                           'Per visualizzare le statistiche dei progetti prima inserisci dei progetti!',
                           style: GoogleFonts.inter(
                             fontSize: 16,
@@ -70,25 +70,25 @@ class StatisticheState extends State<Statistiche> {
                             fontWeight: FontWeight.w600,
                           ) ,
                         ),
-                    )
+                      )
                     : Row( // sezione del diagramma a torta
-                      children: [
-                        // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
-                        Expanded(
-                          child: Align(
-                            alignment: AlignmentDirectional.topCenter,
-                            child: AspectRatio(
-                              aspectRatio: 1.5, 
-                              child: PieChart(
-                                PieChartData(
-                                  // spazio al centro
-                                  centerSpaceRadius: 20,
-                                  sections: _sezioni(progetti),
+                        children: [
+                          // Expanded con dentro Align con dentro AspectRatio sono necessari per posizionare correttamente il PieChart
+                          Expanded(
+                            child: Align(
+                              alignment: AlignmentDirectional.topCenter,
+                              child: AspectRatio(
+                                aspectRatio: 1.5, 
+                                child: PieChart(
+                                  PieChartData(
+                                    // spazio al centro
+                                    centerSpaceRadius: 20,
+                                    sections: _sezioni(progetti),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                         // colonna contente la legenda del grafico
                         const Column(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -119,9 +119,11 @@ class StatisticheState extends State<Statistiche> {
                             return const Center(
                                 child: Text('Errore nel caricamento dei dettagli progetti'));
                           } else {
+
                             final datiStat = snapshot.data!;
                             final double percComp = (datiStat.completati/datiStat.totale)*100;
                             final double percFall = (datiStat.falliti/datiStat.totale)*100;
+                            
                             return Column(
                               children: [
                                 Row(

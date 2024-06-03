@@ -146,7 +146,9 @@ class TeamDetails extends StatelessWidget {
         } else if (!snapshot.hasData || snapshot.data == null) {
           return const Center(child: Text('Team non trovato'));
         } else {
+
           final data = snapshot.data!;
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
@@ -157,7 +159,7 @@ class TeamDetails extends StatelessWidget {
                     data.team.nome,
                     style: GoogleFonts.inter(
                       fontSize: 28,
-                      color: const Color(0XFF0E4C56),   //del colore OX sono obbligatorie, FF indica l'opacità
+                      color: const Color(0XFF0E4C56),   //del colore 0X sono obbligatorie, FF indica l'opacità
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -187,24 +189,24 @@ class TeamDetails extends StatelessWidget {
                   ),   
                   //questo widget column contiene tutte le persone che lavorano al team
                   Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: data.members
-                          .map((utente) => ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  '${utente.nome} ${utente.cognome}',
-                                  style:  GoogleFonts.inter(
-                                    fontSize: 17,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  'Matricola: ${utente.matricola}',
-                                  style:  GoogleFonts.inter(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ))
-                          .toList()),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: data.members
+                      .map((utente) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          '${utente.nome} ${utente.cognome}',
+                          style:  GoogleFonts.inter(
+                            fontSize: 17,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Matricola: ${utente.matricola}',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                          ),
+                        ),
+                      )).toList()
+                  ),
                   const SizedBox(height: 6),
                   Text(
                     'Progetti associati al team:',
@@ -216,33 +218,32 @@ class TeamDetails extends StatelessWidget {
                   ),
                   //poichè un team potrebbe non avere al momento progetti associati 
                   //questo comportamento è stato necessario gestirlo
-                  data.progetti.isEmpty ? 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10), 
-                    child: Text(
-                      'Non ci sono progetti associati al team', 
-                      style: GoogleFonts.inter(
-                        fontSize: 17, 
-                        color: const Color(0XFF0E4C56),
-                        )
+                  data.progetti.isEmpty 
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10), 
+                        child: Text(
+                          'Non ci sono progetti associati al team', 
+                          style: GoogleFonts.inter(
+                            fontSize: 17, 
+                            color: const Color(0XFF0E4C56),
+                            )
+                          )
                       )
-                  )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: data.progetti
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: data.progetti
                           .map((progetto) => ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  progetto.nome,
-                                  style: GoogleFonts.inter(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0XFFEB701D),
-                                  ),
-                                ),
-                              )
-                          ).toList()
-                    ),
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              progetto.nome,
+                              style: GoogleFonts.inter(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0XFFEB701D),
+                              ),
+                            ),
+                          )).toList()
+                      ),
                 ],
               ),
             ),
