@@ -19,6 +19,9 @@ class AddUserFormState extends State<AddUserForm> {
   final TextEditingController _matricolaController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cognomeController = TextEditingController();
+  // regex per controllare la validità del nome/cognome inserito
+  // possono contenere solo lettere e apostrofi
+  final RegExp nomCognomeRegex = RegExp(r"^[a-zA-ZàèéìòùÀÈÉÌÒÙ' ]+$");
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +67,8 @@ class AddUserFormState extends State<AddUserForm> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Per favore inserisci un nome';
+                } else if (!nomCognomeRegex.hasMatch(value)){
+                  return 'Per favore inserisci un nome valido';
                 }
                 return null;
               },
@@ -98,6 +103,8 @@ class AddUserFormState extends State<AddUserForm> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Per favore inserisci un cognome';
+                } else if (!nomCognomeRegex.hasMatch(value)){
+                  return 'Per favore inserisci un nome valido';
                 }
                 return null;
               },
