@@ -2,6 +2,7 @@ import 'package:OneTask/model/utente.dart';
 import 'package:OneTask/screens/view_team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // utilità
 class InfoTeamDashboard {
@@ -27,23 +28,31 @@ class TeamDashboardWidget extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return const Center(child: Text('Errore nel caricamento info del team'));
+          return Center(child: Text(
+            'Errore nel caricamento info del team',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+            )
+          ));
         } else {
           InfoTeamDashboard info = snapshot.data!;
           
           return Card(
+            color:const Color.fromARGB(255, 243, 243, 243), // Colore di sfondo,
             child: ListTile(
               onTap: () => Navigator.push(
                 context, 
                 MaterialPageRoute(builder: (context) => ViewTeam(teamName: teamName))
               ),
+              //come leading abbiamo il container che incapsula una riga con dentro
+              //l'icona della persona e il numero di componenti del team
               leading: Container(
                 width: 50,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Colors.white, // Colore di sfondo
+                  color: const Color(0XFFDDD7D1), // Colore di sfondo
                   border: Border.all(
-                    color: Colors.grey, // Colore del bordo
+                    color:const Color(0Xff167485), // Colore del bordo
                     width: 1.0, // settare la larghezza del bordo
                   ),
                   borderRadius: BorderRadius.circular(30.0), //per arrotondare i bordi
@@ -51,23 +60,30 @@ class TeamDashboardWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.person, size: 20,),
+                    const Icon(
+                      Icons.person, 
+                      size: 20,
+                      color: Color(0Xff167485),
+                    ),
                     Text(
                       info.count.toString(), 
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
                       ),
                     )
                   ]
                 ),
               ),
+              //come title del listTile invece abbiamo un widget Column che contiene 
+              //nella parte alta il nome del team, in basso la matricola dell'utente manager
               title: Column(
                 children: [
                   Text(
                     teamName,
-                    style: const TextStyle(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 22,
+                      color: const Color(0XFF0E4C56),
                     ),
                   ),
                   const SizedBox(
@@ -75,6 +91,9 @@ class TeamDashboardWidget extends StatelessWidget {
                   ),
                   Text(
                     'Manager: ${info.manager.matricola}',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                    )
                   )
                 ]
               ),
