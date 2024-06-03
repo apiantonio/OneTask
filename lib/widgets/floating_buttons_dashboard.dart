@@ -1,3 +1,4 @@
+import 'package:OneTask/main.dart';
 import 'package:OneTask/screens/new_project.dart';
 import 'package:OneTask/screens/new_team.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,12 @@ class FloatingActionButtonsDashboard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NewTeam())
+              ).then(
+                (_) => 
+                Navigator.pushReplacement(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const OTDashboard())
+                )
               );
             },
             tooltip: 'Nuovo team',    //il tooltip risulta visibile solo dal browser
@@ -46,6 +53,12 @@ class FloatingActionButtonsDashboard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NewProject())
+              ).then(
+                (_) => 
+                Navigator.pushReplacement(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const OTDashboard())
+                )
               );
             },
             tooltip: 'Nuovo progetto',
