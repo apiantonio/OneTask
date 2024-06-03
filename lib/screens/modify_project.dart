@@ -504,18 +504,15 @@ class EditProjectFormState extends State<EditProjectForm> {
           if (oldTasks.isNotEmpty) {
             // elimino tutte le task associate precedentemente al progetto
             await Future.wait(oldTasks.map((oldTask) => db.deleteTask(oldTask)));
-
-            // aggiorno il progetto
-            await db.updateProgetto(widget.projectName, modifiedProgetto);
-
-            // aggiungo tutte le nuove/aggiornate task
-            await Future.wait(_tasks.map((task) => db.insertTask(task)));
-
-          }else{
-            // aggiorno il progetto
-            await db.updateProgetto(widget.projectName, modifiedProgetto);
           }
+          //a prescindere però da se ci sono task o meno si devono effettuare i seguenti passaggi:
+          //Passo 1: aggiornare il progetto
+          await db.updateProgetto(widget.projectName, modifiedProgetto);
 
+          //Passo 2: aggiungere tutte le nuove/aggiornate task
+          await Future.wait(_tasks.map((task) => db.insertTask(task)));
+
+          //Passo 3: Scaffold che notifica del corretto aggiornamento
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Progetto modificato!')),
           );
