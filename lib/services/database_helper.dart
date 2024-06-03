@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:OneTask/model/utente.dart';
 
-// singleton che gestisce il database
+/// Singleton che gestisce il database
 class DatabaseHelper {
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -23,10 +23,8 @@ class DatabaseHelper {
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
-    print("initDataBase executed");
     
-    
-    /*## DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
+    /*############### DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
     //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
     /*##############################################################################*/
 
@@ -91,7 +89,7 @@ class DatabaseHelper {
   /*
     ### INTERAZIONE CON GLI UTENTI ###
   */
-  // Inserisci un utente nella tabella utente
+  /// Inserisci un utente nella tabella utente
   Future<void> insertUtente(Utente utente) async {
     final db = await database;
     await db.insert(
@@ -101,7 +99,7 @@ class DatabaseHelper {
     );
   }
 
-  // Esegue un UPDATE sulla tabella utente
+  /// Esegue un UPDATE sulla tabella utente
   Future<int> updateUtente(Utente utente) async {
     final db = await database;
     return await db.update(
@@ -112,7 +110,7 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  // Elimina un utente dalla tabella utente
+  /// Elimina un utente dalla tabella utente
   Future<int> deleteUtente(Utente utente) async {
     final db = await database;
     return await db.delete(
@@ -122,7 +120,7 @@ class DatabaseHelper {
     );
   }
 
-  // Cerca un Utente data una matricola
+  /// Cerca un Utente data una matricola
   Future<Utente?> selectUtenteByMatricola(String matricola) async {
     final db = await database;
     final List<Map<String, Object?>> utente = await db.query(
@@ -142,7 +140,7 @@ class DatabaseHelper {
     }
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  /// Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Utente>> getAllUtenti() async {
     final db = await database;
 
@@ -158,10 +156,10 @@ class DatabaseHelper {
     ];
   }
 
-  // restituisce tutti gli utenti che partecipano a meno di 2 team
+  /// restituisce tutti gli utenti che partecipano a meno di 2 team
   Future<List<Utente>?> getUtentiNot2Team() async {
     final db = await database;
-    // uso una query per estrarre gli utenti che non partecipano a 2 team
+    /// uso una query per estrarre gli utenti che non partecipano a 2 team
     final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
       SELECT *
       FROM utente
@@ -176,7 +174,7 @@ class DatabaseHelper {
       )
     '''
     );
-    // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
+    /// ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
     return utentiDelTeam.map((m) => Utente(
       matricola: m['matricola'] as String,
       nome: m['nome'] as String,
@@ -184,12 +182,11 @@ class DatabaseHelper {
     )).toList();
   }
 
-  //metodo per estrarre gli utenti che non partecipano a 2 team (escluso quello corrente)
-  //e che non sono già presenti nel team di partenza
-  //UTILIZZATA IN MODIFY TEAM
+  /// metodo per estrarre gli utenti che non partecipano a 2 team (escluso quello corrente)
+  /// e che non sono già presenti nel team di partenza
   Future<List<Utente>?> getUtentiNotInTeam(List<String> team, String teamName) async {
     final db = await database;
-    //ottengo una stringa costituita dalle matricole degli utenti del team
+    ///ottengo una stringa costituita dalle matricole degli utenti del team
     String listToString = team.map((mat) => "'$mat'").join(',');
     String condition = team.isEmpty ? "" : "AND matricola NOT IN ($listToString)";
     final List<Map<String, Object?>> utenti = await db.rawQuery('''
@@ -219,7 +216,7 @@ class DatabaseHelper {
   /*
     ### INTERAZIONE CON I PROGETTI ###
   */
-  // Inserisci un nuovo progetto nel db
+  /// Inserisci un nuovo progetto nel db
   Future<void> insertProgetto(Progetto progetto) async {
     final db = await database;
     await db.insert(
@@ -229,7 +226,7 @@ class DatabaseHelper {
     );
   }
   
-  // Esegue un UPDATE sulla tabella progetto
+  /// Esegue un UPDATE sulla tabella progetto
   Future<int> updateProgetto(String oldNomeProgetto, Progetto newProgetto) async {
     final db = await database;
     return await db.update(
@@ -251,7 +248,7 @@ class DatabaseHelper {
     );
   }
 
-  // Cerca un Progetto dato un nome
+  /// Cerca un Progetto dato un nome
   Future<Progetto?> selectProgettoByNome(String nome) async {
     final db = await database;
     final List<Map<String, Object?>> progetto = await db.query(
@@ -277,7 +274,7 @@ class DatabaseHelper {
     }
   }
 
-  //seleziona i progetti associati ad un dato team
+  /// Seleziona i progetti associati ad un dato team
   Future<List<Progetto>> selectProgettiByTeam(String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> progetti = await db.query(
@@ -301,7 +298,7 @@ class DatabaseHelper {
       )).toList();
   }
 
-  // Restituisce una lista contenti tutti i progetti memorizzati nel db
+  /// Restituisce una lista contenti tutti i progetti memorizzati nel db
   Future<List<Progetto>> getAllProgetti() async {
   final db = await database;
 
@@ -330,12 +327,11 @@ class DatabaseHelper {
     ];
   }
 
-  //nelle STATISTICHE dovrebbe restituirmi quanti progetti sono completati
-  //ossia quelli per cui il booleano non è null, ma la motivazione di fallimento si
+  /// Restituisce quanti progetti sono completati
+  /// ossia quelli per cui il booleano è true e la motivazione di fallimento è null
   Future<int> getNumProgettiCompletati() async {
     final db = await database;
-    return Sqflite.firstIntValue(await db.rawQuery(
-      '''
+    return Sqflite.firstIntValue(await db.rawQuery('''
         SELECT COUNT(*) 
         FROM progetto 
         WHERE completato == 1
@@ -344,12 +340,11 @@ class DatabaseHelper {
     ) ?? 0;
   }
 
-  //nelle STATISTICHE dovrebbe restituirmi quanti progetti sono falliti
-  //ossia quelli per cui il booleano non è null e neppure la motivazione di fallimento
+  /// Restitusce quanti progetti sono falliti
+  /// ossia quelli per cui il booleano è false e neppure la motivazione di fallimento non è null
   Future<int> getNumProgettiFalliti() async {
     final db = await database;
-    return Sqflite.firstIntValue(await db.rawQuery(
-      '''
+    return Sqflite.firstIntValue(await db.rawQuery('''
         SELECT COUNT(*) 
         FROM progetto 
         WHERE completato == 0 
@@ -358,15 +353,14 @@ class DatabaseHelper {
     ) ?? 0;
   }
   
-
-  /// restituisce il numero di progetti nel DB
+  /// Restituisce il numero di progetti nel DB
   Future<int> countProgetti() async {
     final db = await database;
 
     return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM progetto')) ?? 0;
   }
 
-  /// restituisce tutti i progetti che hanno lo stato specificato.
+  /// Restituisce tutti i progetti che hanno lo stato specificato.
   /// Ricorda: '''stato IN ('attivo', 'sospeso', 'archiviato')'''
   Future<List<Progetto>?> getProgettiByState(String stato) async {
     // se lo stato richiesto è non valido ritorna un errore
@@ -397,7 +391,7 @@ class DatabaseHelper {
             'completato': completato as int?,
             'motivazioneFallimento': motiv as String?,
           } in progetti) 
-            Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, // lo stato è quello passato come argomento
+            Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, /// lo stato è quello passato come argomento
               descrizione: descrizione, motivazioneFallimento: motiv,
               completato: completato != null 
                 ? completato == 1 
@@ -435,7 +429,7 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  // Elimina un team dalla tabella team
+  /// Elimina un team dalla tabella team
   Future<int> deleteTeam(Team team) async {
     final db = await database;
 
@@ -446,7 +440,7 @@ class DatabaseHelper {
     );
   }
 
-  // Cerca un team dato un nome
+  /// Cerca un team dato un nome
   Future<Team?> selectTeamByNome(String nome) async {
     final db = await database;
     final List<Map<String, Object?>> team = await db.query(
@@ -464,7 +458,7 @@ class DatabaseHelper {
     }
   }
 
-  // query per sapere chi è il responsabile del team
+  /// query per sapere chi è il responsabile del team
   Future<Utente?> getTeamManager(String teamName) async {
     final db = await database;
     // prima prendo la matricola del responsabile
@@ -491,7 +485,7 @@ class DatabaseHelper {
     }
   }
 
-  // Restituisce una lista contenente tutti i team della tabella 'team' 
+  /// Restituisce una lista contenente tutti i team della tabella 'team' 
   Future<List<Team>> getAllTeams() async {
     final db = await database;
 
@@ -508,7 +502,7 @@ class DatabaseHelper {
   /*
     ### INTERAZIONE CON LE TASK ###
   */
-  // Inserisci un utente nella tabella task
+  /// Inserisci un utente nella tabella task
   Future<void> insertTask(Task task) async {
     final db = await database;
     await db.insert(
@@ -550,7 +544,7 @@ class DatabaseHelper {
     );
   }
 
-  // Cerca un Utente data una matricola
+  /// Cerca un Utente data una matricola
   Future<Task?> selectTaskByIdAndProject(int id, String nomeProgetto) async {
     final db = await database;
     final List<Map<String, Object?>> task = await db.query(
@@ -590,7 +584,7 @@ class DatabaseHelper {
     }).toList();
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  /// Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Task>> getAllTasks() async {
     final db = await database;
 
@@ -611,7 +605,7 @@ class DatabaseHelper {
     ### INTERAZIONE CON PARTECIPAZIONE ###
     Note: questa tabella associa utente e team
   */
-  // inserisci nuova partecipazione
+  /// inserisci nuova partecipazione
   Future<void> insertPartecipazione(Partecipazione part) async {
     final db = await database;
     await db.insert(
@@ -633,7 +627,7 @@ class DatabaseHelper {
     );
   }
 
-  // Elimina un utente dalla tabella partecipazione
+  /// Elimina un utente dalla tabella partecipazione
   Future<int> deletePartecipazione(Partecipazione part) async {
     final db = await database;
     return await db.delete(
@@ -643,7 +637,7 @@ class DatabaseHelper {
     );
   }
 
-  /// restituisce le partecipazioni ad un team 
+  /// Restituisce le partecipazioni ad un team 
   Future<List<Partecipazione>?> selectPartecipazioniOfTeam(String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
@@ -662,7 +656,7 @@ class DatabaseHelper {
     ];
   }
 
-  // cerca una partecipazione data utente e team 
+  /// Cerca una partecipazione dati utente e team 
   Future<Partecipazione?> selectPartecipazioneByUtenteAndTeam(String matricolaUtente, String nomeTeam) async {
     final db = await database;
     final List<Map<String, Object?>> parts = await db.query(
@@ -682,11 +676,11 @@ class DatabaseHelper {
     }
   }
 
-  // seleziona gli utenti di un team dato il nome del team
+  /// Seleziona gli utenti di un team dato il nome del team
   Future<List<Utente>> selectUtentiByTeam(String nomeTeam) async {
     final db = await database;
     // uso una query per estrarre gli utenti che partecipano al team richiesto
-    // la query non restituisce direttamente una lista du utenti ma una lista
+    // la query non restituisce direttamente una lista do utenti ma una lista
     // contenete mappe che contengono i dati di ciascun utente
     // sarà dunque necessario rimappare ogni mappa in una istanza di Utente
     final List<Map<String, Object?>> utentiDelTeam = await db.rawQuery('''
@@ -696,7 +690,7 @@ class DatabaseHelper {
         WHERE partecipazione.team = ?
     '''
     , [nomeTeam]);
-    // ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
+    /// ritorno gli utenti creati dai dati forniti dalle mappe come detto prima
     return utentiDelTeam.map((m) => Utente(
       matricola: m['matricola'] as String,
       nome: m['nome'] as String,
@@ -704,8 +698,8 @@ class DatabaseHelper {
     )).toList();
   }
 
-  // seleziona le matricole degli utenti del team
-  // UTILIZZATA IN MODIFICA TEAM
+  /// seleziona le matricole degli utenti del team
+  /// UTILIZZATA IN MODIFICA TEAM
   Future<List<String>> selectMatricoleByTeam(String nomeTeam) async {
     final db = await database;
     // uso una query per estrarre le matricole degli utenti che partecipano al team richiesto
@@ -736,7 +730,7 @@ class DatabaseHelper {
     return numUtentiTeam;
   }
 
-  //metodo per la dashboard sui 3 team più grandi, mi restituisce i nomi dei team
+  /// Metodo per la dashboard sui 3 team più grandi, mi restituisce i nomi dei team
   Future<List<String>?> getTeamPiuGrandi(int limit) async {
     final db = await database;
     final List<Map<String, Object?>> teamNumerosi = await db.rawQuery('''
@@ -752,7 +746,7 @@ class DatabaseHelper {
     return teamNumerosi.map((t) => t['team'] as String).toList();
   }
 
-  // Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
+  /// Restituisce una lista contenente tutti gli utenti della tabella 'utente' 
   Future<List<Partecipazione>> getAllPartecipazioni() async {
     final db = await database;
 
@@ -768,9 +762,7 @@ class DatabaseHelper {
     ];
   }
 
-  /**
-   * ## METODO DI TESTING
-   */
+  /// ## METODO DI TESTING per popolare il DB con valori di default ##
   Future<void> populateDatabase() async {
     
     // Crea alcune istanze di Utente
@@ -782,10 +774,12 @@ class DatabaseHelper {
     Team team1 = Team(nome: 'Team Alpha');
     Team team2 = Team(nome: 'Team Beta');
 
+    // Crea istanze di progetto
     Progetto progetto1 = Progetto(nome: 'progetto1', team: 'Team Alpha', stato: 'attivo', scadenza: '2020-05-20', descrizione: 'progetto test1');
     Progetto progetto2 = Progetto(nome: 'progetto2', team: 'Team Beta', stato: 'sospeso', scadenza: '2020-05-20', descrizione: 'progetto test1');
     Progetto progetto3 = Progetto(nome: 'progetto3', team: 'Team Alpha', stato: 'archiviato', scadenza: '2020-05-20', descrizione: 'progetto test1', completato: true);
 
+    // Crea istanze di task
     Task task11 = Task(id: 0, attivita: 'task0 prg1', progetto: 'progetto1', completato: false);
     Task task12 = Task(id: 1, attivita: 'task1 prg1', progetto: 'progetto1', completato: true);
     Task task21 = Task(id: 0, attivita: 'task0 prg2', progetto: 'progetto2', completato: false);
