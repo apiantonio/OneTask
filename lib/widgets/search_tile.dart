@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchTile extends StatelessWidget {
   final void Function() onTapElem; // funzione associata al tap sull'elemento della lista
@@ -18,16 +19,18 @@ class SearchTile extends StatelessWidget {
     String simbolo = result['type'] == 'Team' ? 'T' : 'P';
 
     return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      tileColor: Colors.blue.shade100,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),   //istruzione per consentire i bordi tondeggianti
+      tileColor:const Color.fromARGB(255, 171, 197, 202),   //colore di sfondo del list Tile
       //subtitle: Text(result['type']),
       onTap: onTapElem,
+      //nel container seguente abbiamo una P o una T a seconda che l'elemento 
+      //sia rispettivamente progetto o team
       leading: Container(
         alignment: Alignment.center,
         width: 40,
         height: 40,
         decoration: const BoxDecoration(
-          color: Colors.blue,
+          color:Color.fromARGB(255, 237, 134, 60) ,
           shape: BoxShape.circle,
         ),
         child: Text(
@@ -39,13 +42,14 @@ class SearchTile extends StatelessWidget {
           ),
         ),
       ),
-      // conentuo del tile
+      // contenuto del tile
       title: Text(
         result['nome'],
         softWrap: true,   // Se non c'è abbastanza spazio manda a capo
-        style: const TextStyle(
-          fontSize: 20,
+        style: GoogleFonts.inter(
+          fontSize: 21,
           fontWeight: FontWeight.bold,
+          color: const Color(0XFF0E4C56),
         ),
       ),
       // pulsante per la modifica, visibile solo se il progetto non è archiviato
@@ -53,10 +57,10 @@ class SearchTile extends StatelessWidget {
         ? IconButton(
             iconSize: 20,
             icon: const Icon(Icons.edit),
-            color: Colors.black,
+            color: const Color(0XFFEB701D),
             onPressed: onPressedModify,
           ) 
-        : null
+        : null  //altrimenti non viene visualizzato nulla
     );
   }
 }
