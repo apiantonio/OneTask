@@ -33,22 +33,31 @@ class ProjectViewState extends State<ProjectView> {
             builder: (context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
-              }
-              else 
-                if(snapshot.hasError){
-                  return Text(
-                    'Errore caricamento progetti dal db',
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                }else{
-                  //se non da problemi crea/restituisci la lista di progetti
-                  List<Progetto> projects = snapshot.data ?? [];
-                  //devo obbligatoriamente usare questo e non ListView altrimenti darebbe problemi con singleChildScrollView
-                  return ListView.builder(
+              } else if(snapshot.hasError) {
+                return Text(
+                  'Errore caricamento progetti dal db',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              } else {
+                //se non da problemi crea/restituisci la lista di progetti
+                List<Progetto> projects = snapshot.data ?? [];
+                //devo obbligatoriamente usare questo e non ListView altrimenti darebbe problemi con singleChildScrollView
+                return projects.isEmpty 
+                  ? Center(
+                      child: Text(
+                        'Nessun progetto presente al momento.\nCreane qualcuno per visualizzarli!',
+                        style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0Xff167485),
+                          ),
+                        ),
+                      )
+                  : ListView.builder(
                     shrinkWrap: true, 
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: projects.length,
@@ -65,7 +74,7 @@ class ProjectViewState extends State<ProjectView> {
                       );
                     }
                   );
-                }
+              }
             }
           ),
         ),

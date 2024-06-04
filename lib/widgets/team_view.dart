@@ -32,21 +32,31 @@ class TeamViewState extends State<TeamView> {
             builder: (context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
-              }
-              else 
-                if(snapshot.hasError){
-                  return Text(
-                    'Errore caricamento team dal db',
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                }else{
-                  //se non da problemi crea/restituisci la lista di teams
-                  List<Team> teams = snapshot.data ?? [];
-                  return ListView.builder(
+              } else if(snapshot.hasError){
+                return Text(
+                  'Errore caricamento team dal db',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.black,   //del colore OX sono obbligatorie, FF indica l'opacità
+                    fontWeight: FontWeight.w500,
+                  ),
+                );
+              } else {
+                //se non da problemi crea/restituisci la lista di teams
+                List<Team> teams = snapshot.data ?? [];
+                
+                return teams.isEmpty 
+                 ? Center(
+                    child: Text(
+                      'Nessun team presente al momento.\nCreane qualcuno per visualizzarli!',
+                      style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0Xff167485),
+                        ),
+                      ),
+                    )
+                 : ListView.builder(
                     shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
                     itemCount: teams.length,
                     physics: const NeverScrollableScrollPhysics(),
@@ -63,8 +73,8 @@ class TeamViewState extends State<TeamView> {
                       );
                     }
                   );
-                }
               }
+            }
           ),
         ),
         //questo widget contiene il floating button che riporta alla pagina per creare un nuovo team
