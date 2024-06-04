@@ -309,7 +309,7 @@ class EditTeamFormState extends State<EditTeamForm> {
       return;
     } 
     // controllo se c'è almeno un utente che coincide con il responsabile ottenuto
-    if (!matricoleUtentiTeam.any((matricola) => _respController.text.contains(matricola))) {
+    if (!userTeamList.any((utente) => utente.infoUtente() == _respController.text.trim())) {
       setState(() {
         _validaRespText = 'Per favore scegli un responsabile valido.';
       });
