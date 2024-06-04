@@ -28,6 +28,7 @@ class ViewDashboardTeam extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.all(8.0),
             margin: const EdgeInsets.symmetric(vertical: 8.0),
+            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 166, 200, 206),
               borderRadius: BorderRadius.circular(8.0),
@@ -60,7 +61,8 @@ class ViewDashboardTeam extends StatelessWidget {
                   ? Padding(
                     //se non ci sono team, segnaliamo la mancanza all'utente con un blocco di testo
                     padding: const EdgeInsets.all(20.0),
-                    child: Text(
+                    child: Center(
+                      child: Text(
                         'Nessun team presente al momento!',
                         style: GoogleFonts.inter(
                           fontSize: 16,
@@ -68,6 +70,7 @@ class ViewDashboardTeam extends StatelessWidget {
                           color: const Color(0XFFEB701D),
                         ),
                       ),
+                    ),
                   )
                   //altrimenti in un listViewBuilder sono visualizzati i 3 team
                   : ListView.builder(
