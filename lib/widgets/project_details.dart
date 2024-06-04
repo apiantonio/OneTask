@@ -77,26 +77,22 @@ class ProjectDetails extends StatelessWidget {
                 ),
                 //se il progetto è archiviato e fallito permetto la visualizzazione della motivazione del fallimento
                 (dataProj.progetto.stato == 'archiviato' && dataProj.progetto.motivazioneFallimento != null) ?
-                Column(
+                Wrap(
                   children: [
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Text(
-                          'Causa fallimento: ',
-                          style: GoogleFonts.inter(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0XFFEB701D),
-                          ),
-                        ),
-                        Text(
-                          '${dataProj.progetto.motivazioneFallimento}',
-                          style: GoogleFonts.inter(
-                            fontSize: 17,
-                          ),
-                        ),
-                      ]
+                    Text(
+                      'Causa fallimento: ',
+                      style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0XFFEB701D),
+                      ),
+                    ),
+                    Text(
+                      '${dataProj.progetto.motivazioneFallimento}',
+                      style: GoogleFonts.inter(
+                        fontSize: 17,
+                      ),
                     ),
                     const SizedBox(height: 16),
                   ],
