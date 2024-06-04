@@ -88,9 +88,9 @@ class EditTeamFormState extends State<EditTeamForm> {
                   }
                 },
                 //serve a personalizzare lo stile del bottone
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(const Color(0Xff167485)),
-                  elevation: WidgetStateProperty.all(4),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0Xff167485),
+                  elevation: 5,
                 ),
                 child: Text(
                   'Aggiorna Team',
