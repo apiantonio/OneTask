@@ -5,7 +5,6 @@ import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/user_mod_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart';
 
 /// Form per la modifica di un team
 class EditTeamForm extends StatefulWidget {
