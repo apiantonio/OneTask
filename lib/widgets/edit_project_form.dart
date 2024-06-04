@@ -426,6 +426,11 @@ class EditProjectFormState extends State<EditProjectForm> {
         _validaTeamText = 'Per favore, seleziona un team.';
       });
       return;
+    } else if (!_nomiTeams.contains(_teamController.text)) {
+       setState(() {
+        _validaTeamText = 'Per favore, inserisci un team valido.';
+      });
+      return;
     }
 
     // errore se lo stato è completato ma le task non tutte completate
