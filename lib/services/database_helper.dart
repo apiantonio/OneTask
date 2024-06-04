@@ -763,6 +763,7 @@ class DatabaseHelper {
   }
 
   /// ## METODO DI TESTING per popolare il DB con valori di default ##
+  /*
   Future<void> populateDatabase() async {
     
     // Crea alcune istanze di Utente
@@ -814,4 +815,5 @@ class DatabaseHelper {
     await insertTask(task31);
     await insertTask(task32);
   }
+  */
 }
