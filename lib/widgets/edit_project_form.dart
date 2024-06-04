@@ -355,7 +355,7 @@ class EditProjectFormState extends State<EditProjectForm> {
                   )
                 ),
                 validator: (value) {
-                  if (_statoController.text == 'fallito' && (value == null || value.isEmpty)) {
+                  if (_statoController.text == 'fallito' && (value == null || value.isEmpty || value.trim().isEmpty)) {
                     return "La motivazione è obbligatoria per i progetti falliti!";
                   }
                   return null;
