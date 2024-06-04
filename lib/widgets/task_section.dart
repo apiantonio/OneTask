@@ -142,7 +142,7 @@ class _TaskAppState extends State<TaskApp> {
   //meTask invocato quando si preme il +. Di default i task appena creati non hanno il check
   void _addTask(String att) {
     setState(() {
-      if(att.isNotEmpty) {
+      if(att.isNotEmpty && att.trim().isNotEmpty) {
         tasks.add(Task(id: count++, progetto: '', attivita: att.trim())); // Aggiungiamo un nuovo Task alla lista di Tasks
         widget.onTasksChanged(tasks);
         _taskController.clear();

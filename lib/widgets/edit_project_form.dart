@@ -120,7 +120,7 @@ class EditProjectFormState extends State<EditProjectForm> {
               TextFormField(
                 controller: _nomeController,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return "Per favore, inserisci un nome al progetto.";
                   }
                   return null;

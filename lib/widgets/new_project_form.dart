@@ -78,7 +78,7 @@ class NewProjectFormState extends State<NewProjectForm> {
               TextFormField(
                 controller: _nomeController,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return "Per favore, inserisci un nome al progetto.";
                   }
                   return null;
@@ -304,9 +304,12 @@ class NewProjectFormState extends State<NewProjectForm> {
       return;
     }
 
+    // nome del progetto pulito dagli spazio
+    final nomeControllerText = _nomeController.text.trim();
+
     // controllo che non esista già un Progetto con lo stesso nome nel db
     await DatabaseHelper.instance
-        .selectProgettoByNome(_nomeController.text.trim())
+        .selectProgettoByNome(nomeControllerText)
         .then((progettoPresente) async {
       // se esiste già un progetto con lo stesso nome
       if (progettoPresente != null) {
@@ -320,7 +323,7 @@ class NewProjectFormState extends State<NewProjectForm> {
         // nota che i campi 'stato', 'completato' e 'motivazioneFallimento' assumeranno i valori di default
         // rispettivamente 'attivo', false e NULL
         Progetto newProgetto = Progetto(
-          nome: _nomeController.text.trim(),
+          nome: nomeControllerText,
           team: _teamController.text,
           scadenza: _dateController.text,
           descrizione: _descrizioneController.text.trim(),

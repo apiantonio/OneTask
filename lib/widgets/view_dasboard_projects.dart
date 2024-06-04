@@ -173,7 +173,7 @@ class _ViewDasboardProjectsState extends State<ViewDasboardProjects> {
                     child: ListView.builder( // se ci sono progetti mostra una lista orizzontale
                       scrollDirection: Axis.horizontal, // lista orizzontale dei progetti
                       shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
-                      itemCount:  projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
+                      itemCount: projects.length < _numProgettiVisualizzati ? projects.length : _numProgettiVisualizzati, // se ci sono meno progetti di quelli selezionati da visualizzare allora renderizza solo quelli che ci sono
                       itemBuilder: (context, index) {
                         Progetto project = projects[index];
                         return Container(
