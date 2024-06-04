@@ -105,7 +105,7 @@ class EditTeamFormState extends State<EditTeamForm> {
               TextFormField(
                 controller: _nomeController,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
                     return "Per favore, inserisci un nome al team.";
                   }
                   return null;
