@@ -4,7 +4,6 @@ import 'package:OneTask/model/team.dart';
 import 'package:OneTask/services/database_helper.dart';
 import 'package:OneTask/widgets/task_section.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Form per la modifica di un progetto
@@ -505,6 +504,7 @@ class EditProjectFormState extends State<EditProjectForm> {
           await Future.wait(_tasks.map((task) => db.insertTask(task)));
 
           //Passo 3: Scaffold che notifica del corretto aggiornamento
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Progetto modificato!')),
           );

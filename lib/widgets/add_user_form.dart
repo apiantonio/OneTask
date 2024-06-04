@@ -194,6 +194,7 @@ class AddUserFormState extends State<AddUserForm> {
     
     if (utentePresente != null) {
       // Mostra un messaggio di errore se la matricola esiste già
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inserisci una matricola non già associata ad un utente!')),
       );
@@ -202,6 +203,7 @@ class AddUserFormState extends State<AddUserForm> {
       await DatabaseHelper.instance.insertUtente(newUtente);
 
       // Mostra uno Snackbar per confermare l'aggiunta dell'utente
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Utente aggiunto!')),
       );

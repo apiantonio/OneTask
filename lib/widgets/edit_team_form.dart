@@ -89,8 +89,8 @@ class EditTeamFormState extends State<EditTeamForm> {
                 },
                 //serve a personalizzare lo stile del bottone
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(const Color(0Xff167485)),
-                  elevation: MaterialStateProperty.all(4),
+                  backgroundColor: WidgetStateProperty.all(const Color(0Xff167485)),
+                  elevation: WidgetStateProperty.all(4),
                 ),
                 child: Text(
                   'Aggiorna Team',
@@ -276,7 +276,7 @@ class EditTeamFormState extends State<EditTeamForm> {
         return true;
       }
     } else {
-      ScaffoldMessenger.of(this.context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Team al completo!')),
       );
       return false;
@@ -321,7 +321,8 @@ class EditTeamFormState extends State<EditTeamForm> {
     // controllo che non ci sia un team con lo stesso nome già presente nel db
     final teamPresente = await db.selectTeamByNome(nomeTeamController);
     if (teamPresente != null && teamPresente.nome != _nomeTeamOnEdit) {
-      ScaffoldMessenger.of(this.context).showSnackBar(
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inserisci un nome del team non già usato!'))
       );
       return;
@@ -337,8 +338,9 @@ class EditTeamFormState extends State<EditTeamForm> {
     setState(() {
       _nomeTeamOnEdit = nomeTeamController;
     });
-
-    ScaffoldMessenger.of(this.context).showSnackBar(
+    
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Team aggiornato con successo!')),
     );
   }

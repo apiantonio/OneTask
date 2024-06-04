@@ -24,6 +24,7 @@ class DeleteTeamActionButton extends StatelessWidget {
       onPressed: () async {
         List<Progetto>? checkProgetti = await DatabaseHelper.instance.selectProgettiByTeam(teamName);
         if (checkProgetti.isNotEmpty) {
+          if (!context.mounted) return;
           return await showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -61,6 +62,7 @@ class DeleteTeamActionButton extends StatelessWidget {
             }
           );
         } else {
+          if (!context.mounted) return;
           bool? confirmDelete = await showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -114,6 +116,7 @@ class DeleteTeamActionButton extends StatelessWidget {
               Team? team = await DatabaseHelper.instance.selectTeamByNome(teamName);
               if (team != null) {
                 await DatabaseHelper.instance.deleteTeam(team);
+                if (!context.mounted) return;
                 Navigator.of(context).pop(); // Torna alla schermata precedente
             }
           }

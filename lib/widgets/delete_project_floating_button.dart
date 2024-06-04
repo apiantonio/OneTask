@@ -74,6 +74,7 @@ class DeleteProjectFloatingButton extends StatelessWidget {
           Progetto? progetto = await DatabaseHelper.instance.selectProgettoByNome(projectName);
           if (progetto != null) {
             await DatabaseHelper.instance.deleteProgetto(progetto.nome);
+            if (!context.mounted) return;
             Navigator.of(context).pop(); // Torna alla schermata precedente
           }
         }

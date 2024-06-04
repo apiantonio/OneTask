@@ -374,31 +374,26 @@ class DatabaseHelper {
       whereArgs: [stato]
     );
 
-    try {
-      if(progetti.isEmpty) {
-        return null;
-      } else {
-        return [
-          for ( final {
-            'nome': nome as String,
-            'team': team as String,
-            'scadenza': scadenza as String,
-          //'stato': è già fornito come parametro
-            'descrizione': descrizione as String?,
-            'completato': completato as int?,
-            'motivazioneFallimento': motiv as String?,
-          } in progetti) 
-            Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, /// lo stato è quello passato come argomento
-              descrizione: descrizione, motivazioneFallimento: motiv,
-              completato: completato != null 
-                ? completato == 1 
-                : null
-            ),
-        ];
-      }
-    } catch (e) {
-      print('Errore nella query del database: $e');
-      return [];
+    if(progetti.isEmpty) {
+      return null;
+    } else {
+      return [
+        for ( final {
+          'nome': nome as String,
+          'team': team as String,
+          'scadenza': scadenza as String,
+        //'stato': è già fornito come parametro
+          'descrizione': descrizione as String?,
+          'completato': completato as int?,
+          'motivazioneFallimento': motiv as String?,
+        } in progetti) 
+          Progetto(nome: nome, team: team, scadenza: scadenza, stato: stato, /// lo stato è quello passato come argomento
+            descrizione: descrizione, motivazioneFallimento: motiv,
+            completato: completato != null 
+              ? completato == 1 
+              : null
+          ),
+      ];
     }
   } 
 
