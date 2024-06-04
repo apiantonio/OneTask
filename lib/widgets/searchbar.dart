@@ -73,6 +73,13 @@ class SearchBarDelegate extends SearchDelegate {
     );
   }
 
+  // funzione per controllare se il database non ha progetti e teams
+  Future<bool> _isDatabaseWithoutProjectsAndTeams() async {
+    final List<Team?> teams = await DatabaseHelper.instance.getAllTeams();
+    final List<Progetto?> progetti = await DatabaseHelper.instance.getAllProgetti();
+    return teams.isEmpty && progetti.isEmpty;
+  }
+
   // esegue una ricerca tra team e progetti, restituisce una lista di mappe
   // contenenti coppe di tipo String, dinamic perché il value può essere stringa o Team/Progetto
   Future<List<Map<String, dynamic>>> _searchResults(String query) async {
@@ -98,66 +105,94 @@ class SearchBarDelegate extends SearchDelegate {
   // gestisce i suggerimenti visualizzati mentre l'utente digita
   @override
   Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
-      future: _searchResults(query),
+    // Prima controllo se non ci sono progetti e team
+    return FutureBuilder(future: _isDatabaseWithoutProjectsAndTeams(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-          return Center(child: Text(
-            'Non ci sono team o progetti al momento.',
-            style: GoogleFonts.inter(
-              fontSize: 16,
+        if (snapshot.data == true) {
+          // se non ci sono progetti e team visualizzo un messaggio
+          return Container(
+            alignment: Alignment.topCenter,
+            child: Text(
+              'Non ci sono team o progetti al momento.',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color(0Xff167485),
+              ),
             ),
-          ));
+          );
         }
-
-        final results = snapshot.data as List<Map<String, dynamic>>;
-
-        return ListView.builder(
-          itemCount: results.length,
-          itemBuilder: (context, index) {
-            var result = results[index];
-
-            // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
-            void Function() onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
-            void Function() onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
-            String nomeElem = result['nome'];
-            // se è un Team porta alle pagine del Team
-            if (result['type'] == 'Team') {
-              onTapElem = () => Navigator.push(
-                context,
-                MaterialPageRoute( builder: (context) => ViewTeam(teamName: nomeElem))
-              );
-              onPressedModify = () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ModifyTeam(teamName: nomeElem))
-              );
-            } else if (result['type'] == 'Progetto') {
-              // altrimenti per progetto
-              onTapElem = () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
-              );
-              onPressedModify = () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
+        // Se ci sono progetti e team allora visualizzo i risultati delal ricerca
+        return FutureBuilder(
+          future: _searchResults(query),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+              // Se la ricerca non ha prodotto risultati
+              return Container(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  'Nessun risultato trovato.',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0Xff167485),
+                  ),
+                )
               );
             }
+            // Se la ricerca ha prodotto risultati li visualizzo
+            final results = snapshot.data!;
 
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SearchTile(
-                onTapElem: onTapElem,
-                onPressedModify: onPressedModify,
-                result: result
-              ),
+            return ListView.builder(
+              itemCount: results.length,
+              itemBuilder: (context, index) {
+                var result = results[index];
+
+                // credo delle funzioni di callback che saranno associate agli eventi di tap e modifica
+                void Function() onTapElem = () => {}; // funzione associata al tap sull'elemento della lista
+                void Function() onPressedModify = () => {}; // funziona associata al tap sulla matita per modificare
+                String nomeElem = result['nome'];
+                // se è un Team porta alle pagine del Team
+                if (result['type'] == 'Team') {
+                  onTapElem = () => Navigator.push(
+                    context,
+                    MaterialPageRoute( builder: (context) => ViewTeam(teamName: nomeElem))
+                  );
+                  onPressedModify = () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ModifyTeam(teamName: nomeElem))
+                  );
+                } else if (result['type'] == 'Progetto') {
+                  // altrimenti per progetto
+                  onTapElem = () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ViewProject(projectName: nomeElem))
+                  );
+                  onPressedModify = () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ModifyProject(projectName: nomeElem))
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SearchTile(
+                    onTapElem: onTapElem,
+                    onPressedModify: onPressedModify,
+                    result: result
+                  ),
+                );
+              },
             );
           },
         );
-      },
-    );
+      });   
   }
 
   // Visualizza i risultati della ricerca
@@ -172,11 +207,13 @@ class SearchBarDelegate extends SearchDelegate {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-            return Center(child: Text(
-              'Nessun risultato trovato.',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-              )),
+            return Center(
+              child: Text(
+                'Nessun risultato trovato.',
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                )
+              ),
             );
           }
 

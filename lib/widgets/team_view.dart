@@ -41,39 +41,38 @@ class TeamViewState extends State<TeamView> {
                     fontWeight: FontWeight.w500,
                   ),
                 );
-              } else {
-                //se non da problemi crea/restituisci la lista di teams
-                List<Team> teams = snapshot.data ?? [];
-                
-                return teams.isEmpty 
-                 ? Center(
-                    child: Text(
-                      'Nessun team presente al momento.\nCreane qualcuno per visualizzarli!',
-                      style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0Xff167485),
-                        ),
-                      ),
-                    )
-                 : ListView.builder(
-                    shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
-                    itemCount: teams.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                    Team team = teams[index]; //salvo il valore corrente di team in una variabile Team
-                    return Container(
-                        margin: const EdgeInsets.only(bottom: 8.0),
-                        //per ciascun team della lista viene creato un apposito widget per gestirne la visualizzazione/modifica
-                        child: TeamItem(
-                          team: team,
-                          viewSingleTeam: _onTapTeam,
-                          updateTeam: _onEditTeam,
-                        ),
-                      );
-                    }
-                  );
+              } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) { 
+                return Center(
+                  child: Text(
+                    'Nessun team presente al momento.\nCreane qualcuno per visualizzarli!',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0Xff167485),
+                    ),
+                  ),
+                );
               }
+              //se non da problemi crea/restituisci la lista di teams
+              List<Team> teams = snapshot.data!;
+              
+              return ListView.builder(
+                shrinkWrap: true,     //il listView si ridimensiona in base al contenuto, evita problemi di layout
+                itemCount: teams.length,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                Team team = teams[index]; //salvo il valore corrente di team in una variabile Team
+                return Container(
+                    margin: const EdgeInsets.only(bottom: 8.0),
+                    //per ciascun team della lista viene creato un apposito widget per gestirne la visualizzazione/modifica
+                    child: TeamItem(
+                      team: team,
+                      viewSingleTeam: _onTapTeam,
+                      updateTeam: _onEditTeam,
+                    ),
+                  );
+                }
+              );
             }
           ),
         ),

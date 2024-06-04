@@ -42,39 +42,38 @@ class ProjectViewState extends State<ProjectView> {
                     fontWeight: FontWeight.w500,
                   ),
                 );
-              } else {
-                //se non da problemi crea/restituisci la lista di progetti
-                List<Progetto> projects = snapshot.data ?? [];
-                //devo obbligatoriamente usare questo e non ListView altrimenti darebbe problemi con singleChildScrollView
-                return projects.isEmpty 
-                  ? Center(
-                      child: Text(
-                        'Nessun progetto presente al momento.\nCreane qualcuno per visualizzarli!',
-                        style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0Xff167485),
-                          ),
-                        ),
-                      )
-                  : ListView.builder(
-                    shrinkWrap: true, 
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: projects.length,
-                    itemBuilder: (context, index) {
-                      Progetto project = projects[index];   //salvo il valore corrente di team in una variabile Progetto
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 8.0),
-                        //per ciascun progetto della lista viene creato un apposito widget per gestirne la visualizzazione/modifica
-                        child: ProjectItem(
-                          project: project,
-                          viewSingleProject: _onTapProject,
-                          updateProject: _onEditProject,
-                        ),
-                      );
-                    }
-                  );
+              } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+                return Center(
+                  child: Text(
+                    'Nessun progetto presente al momento.\nCreane qualcuno per visualizzarli!',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0Xff167485),
+                    ),
+                  ),
+                );
               }
+              //se non da problemi crea/restituisci la lista di progetti
+              List<Progetto> projects = snapshot.data!;
+              //devo obbligatoriamente usare questo e non ListView altrimenti darebbe problemi con singleChildScrollView
+              return ListView.builder(
+                shrinkWrap: true, 
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: projects.length,
+                itemBuilder: (context, index) {
+                  Progetto project = projects[index];   //salvo il valore corrente di team in una variabile Progetto
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8.0),
+                    //per ciascun progetto della lista viene creato un apposito widget per gestirne la visualizzazione/modifica
+                    child: ProjectItem(
+                      project: project,
+                      viewSingleProject: _onTapProject,
+                      updateProject: _onEditProject,
+                    ),
+                  );
+                }
+              );
             }
           ),
         ),
