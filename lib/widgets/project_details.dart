@@ -139,7 +139,7 @@ class ProjectDetails extends StatelessWidget {
                   ]
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
                   children: [
                     Text(
                       'Team: ',

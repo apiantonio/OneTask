@@ -277,7 +277,7 @@ class EditTeamFormState extends State<EditTeamForm> {
         return true;
       }
     } else {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+      ScaffoldMessenger.of(this.context).showSnackBar(
         const SnackBar(content: Text('Team al completo!')),
       );
       return false;
