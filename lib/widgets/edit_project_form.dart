@@ -404,7 +404,9 @@ class EditProjectFormState extends State<EditProjectForm> {
               surface: Colors.white,    //colore di sfondo
               onSurface:Color(0XFF0E4C56),   //colore dei numeri
             ),
-            //dialogBackgroundColor:const Color.fromARGB(255, 214, 209, 204),   //colore di sfondo del calendario
+            textTheme: const TextTheme(
+              bodyLarge: TextStyle(color: Colors.black),
+            )
           ),
           child: child!,
         );
