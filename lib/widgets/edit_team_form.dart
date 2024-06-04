@@ -165,7 +165,7 @@ class EditTeamFormState extends State<EditTeamForm> {
                 onSelected: (String? value) {
                   setState(() {
                     _respController.text = value!;
-                    _validaRespText = null; // se il manager è selezionato allora tutt ok
+                    _validaRespText = null; // se il manager è selezionato allora tutto ok
                   });
                 },
               ),
@@ -198,7 +198,7 @@ class EditTeamFormState extends State<EditTeamForm> {
                     itemBuilder: (context, index) {
                       final utente = userTeamList[index];
                       return ListTile(
-                        title:Text(utente.infoUtente()),
+                        title: Text(utente.infoUtente()),
                         leading: IconButton(
                           icon: const Icon(Icons.remove, color: Color(0XFFEB701D)), 
                           onPressed: () => _removeUtente(utente),
@@ -240,17 +240,17 @@ class EditTeamFormState extends State<EditTeamForm> {
                       ),
                     )
                     //altrimenti in un widget Column saranno visualizzati i diversi utenti
-                    :Column(
-                      children: utenti.map((utente) =>
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 8.0),
-                          child: UserModItem(
-                            utente: utente,
-                            onSelect: _addUtente,
+                    : Column(
+                        children: utenti.map((utente) =>
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 8.0),
+                            child: UserModItem(
+                              utente: utente,
+                              onSelect: _addUtente,
+                            ),
                           ),
-                        ),
-                      ).toList(),
-                    );
+                        ).toList(),
+                      );
                   }
                 }
               ),
@@ -305,6 +305,13 @@ class EditTeamFormState extends State<EditTeamForm> {
     if (_respController.text.isEmpty) {
       setState(() {
         _validaRespText = 'È necessario scegliere un responsabile del team!';
+      });
+      return;
+    } 
+    // controllo se c'è almeno un utente che coincide con il responsabile ottenuto
+    if (!matricoleUtentiTeam.any((matricola) => _respController.text.contains(matricola))) {
+      setState(() {
+        _validaRespText = 'Per favore scegli un responsabile valido.';
       });
       return;
     }
