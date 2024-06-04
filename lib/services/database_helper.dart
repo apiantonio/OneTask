@@ -23,10 +23,7 @@ class DatabaseHelper {
 
   // crea una connessione col db e crea le tabelle
   Future<Database> _initDatabase() async {
-    
-    /*############### DA USARE QUANDO SI CAMBIA QUALCOSA DEL DB #################################*/
-    //await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db'));
-    /*##############################################################################*/
+    //## await deleteDatabase(join(await getDatabasesPath(), 'OneTask_database.db')) ##;
 
     return await openDatabase(
       // getdatabasePath restituisce la directory del db che varia a seconda dell'OS
