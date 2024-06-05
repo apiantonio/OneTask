@@ -47,16 +47,14 @@ class NewTeamFormState extends State<NewTeamForm> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Servono almeno 2 persone nel team')),
                     );
-                  }else{
+                  } else if (selected == null) {
                     //se rispetta il vincolo min utenti, check se è stato selezionato un responsabile
-                    if(selected == null){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Perfavore, seleziona un responsabile per il tuo team')),
-                      );
-                    }else{
-                      // aggiungi il team al db
-                      _addNewTeam();
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Perfavore, seleziona un responsabile per il tuo team')),
+                    );
+                  }else{
+                    // aggiungi il team al db
+                    _addNewTeam();
                   }
                 }
               },
